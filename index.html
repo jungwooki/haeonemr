@@ -48,8 +48,8 @@ input[type="number"]::-webkit-inner-spin-button,input[type="number"]::-webkit-ou
 .a4-page{width:100%;aspect-ratio:210/297;overflow-y:auto;background:#fff;margin:0 0 16px 0;box-shadow:0 4px 16px rgba(0,0,0,.06);border-radius:8px;box-sizing:border-box;padding:28px 32px;display:flex;flex-direction:column;scroll-snap-align:start;scroll-margin-top:24px;}
 .report-columns{display:flex;gap:20px;max-width:1400px;margin:0 auto;align-items:flex-start;padding:0 20px;}
 .report-col{flex:1;min-width:0;display:flex;flex-direction:column;}
-.report-col-left::before{content:'패턴진단 결과 (환자 제공용)';display:block;font-size:11px;font-weight:800;color:#8E8E93;letter-spacing:.05em;text-transform:uppercase;margin-bottom:8px;padding-left:4px;}
-.report-col-right::before{content:'한의사 참고용';display:block;font-size:11px;font-weight:800;color:#8E8E93;letter-spacing:.05em;text-transform:uppercase;margin-bottom:8px;padding-left:4px;}
+.report-col-left::before{content:'1차 리포트';display:block;font-size:11px;font-weight:800;color:#8E8E93;letter-spacing:.05em;text-transform:uppercase;margin-bottom:8px;padding-left:4px;}
+.report-col-right::before{content:'메모 및 진료안내';display:block;font-size:11px;font-weight:800;color:#8E8E93;letter-spacing:.05em;text-transform:uppercase;margin-bottom:8px;padding-left:4px;}
 .a4-page:last-child{margin-bottom:0}
 .rp-header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid var(--ios-tint);padding-bottom:10px;margin-bottom:14px}
 .rp-brand{display:flex;align-items:center;gap:8px}
@@ -118,8 +118,8 @@ button.bg-black,button[class*="bg-[#FFCC00]"],button[class*="bg-[#fc582b]"],butt
 .report-col-left{background:#FAF9FE;border-right:1px solid #E8E9F2}
 .report-col-right{background:#FFF}
 .report-col-left::before,.report-col-right::before{font-size:15px;color:#202333;letter-spacing:0;margin-bottom:18px;padding:0;font-weight:750}
-.report-col-left::before{content:'문진 결과 · 환자용 리포트'}
-.report-col-right::before{content:'메모 및 진료 정보'}
+.report-col-left::before{content:'1차 리포트'}
+.report-col-right::before{content:'메모 및 진료안내'}
 .a4-page{aspect-ratio:auto;overflow:visible;padding:22px;margin-bottom:20px;border:1px solid #E8E9F2;border-radius:14px;box-shadow:0 3px 14px #25214704;flex-shrink:0;scroll-snap-align:none}
 .rp-title{font-size:22px;color:#202333;line-height:1.4}
 .rp-sub,.rp-info-label,.rp-footer{font-size:12px}
@@ -271,6 +271,37 @@ button.bg-black,button[class*="bg-[#FFCC00]"],button[class*="bg-[#fc582b]"],butt
 #mental-report-view .mental-answer{font-size:14px;line-height:1.8;padding:12px 0;border-bottom:1px solid #E8E9F2;overflow-wrap:anywhere}
 #mental-report-view .rp-info-value{overflow-wrap:anywhere}
 @media print{#mental-report-view.active{position:static}#mental-report-view .report-col-right{display:none!important}}
+</style><style>/* One patient-facing report column; private notes and investigations stay on the right. */
+.emr-opinion-text{white-space:pre-wrap;overflow-wrap:anywhere;font-size:15px;line-height:1.8}
+.emr-doctor-opinion{margin-top:20px}
+.emr-doctor-opinion.is-empty .emr-opinion-text{color:#8E8E93}
+.report-col-left .rp-footer{margin-top:18px}
+#mental-report-view .emr-response-page>.rp-card{border:0;padding:0}
+@media print{
+  @page{size:A4;margin:10mm}
+  html,body{height:auto!important;overflow:visible!important;background:#FFF!important}
+  body>*{display:none!important}
+  body>[id$="report-view"].active{display:block!important;position:static!important;inset:auto!important;width:100%!important;height:auto!important;overflow:visible!important}
+  body>[id$="report-view"].active,body>[id$="report-view"].active *{visibility:visible!important}
+  [id$="report-view"].active .report-scroll,[id$="report-view"].active .report-columns,[id$="report-view"].active .report-col-left{display:block!important;height:auto!important;min-height:0!important;overflow:visible!important;padding:0!important;margin:0!important;width:100%!important}
+  [id$="report-view"].active .report-col-right,[id$="report-view"].active .emr-sidebar,[id$="report-view"].active .no-print{display:none!important}
+  [id$="report-view"].active .a4-page{display:block;width:100%!important;min-height:0!important;height:auto!important;aspect-ratio:auto!important;overflow:visible!important;padding:0!important;margin:0!important;border:0!important;border-radius:0!important;box-shadow:none!important;break-after:page;page-break-after:always}
+  [id$="report-view"].active .a4-page:last-child{break-after:auto;page-break-after:auto}
+  .rp-card,.rp-info-bar,.rp-header{break-inside:avoid;page-break-inside:avoid}
+  .rp-card{padding:10px;margin-bottom:10px}
+  .rp-section-title{break-after:avoid;font-size:13px}
+  .rp-header .rp-title{font-size:20px}
+  .rp-footer{font-size:10px}
+  .emr-opinion-text{font-size:12px;line-height:1.65}
+  .emr-doctor-opinion.is-empty .emr-opinion-text{visibility:hidden!important;min-height:24mm}
+  .emr-response-page>.rp-card{break-inside:auto;page-break-inside:auto}
+  #mental-report-view .mental-answer{font-size:10px;line-height:1.5;padding:3px 0;margin:0;break-inside:avoid}
+}
+@media print{
+  #mental-rp-answers{columns:2;column-gap:6mm}
+  #mental-report-view .emr-response-page .rp-section-title{column-span:all}
+  #mental-report-view .emr-doctor-opinion{break-inside:avoid}
+}
 </style></head>
 <body class="p-0 text-[17px] m-0 overflow-hidden">
 
@@ -1770,10 +1801,23 @@ function privateNoteBoxHtml(prefix){
     </div>
   </div>`;
 }
+function interpretationNoteBoxHtml(prefix){
+  return `<div class="rp-card">
+    <div class="rp-section-title">판독결과 메모 <span class="text-[12px] font-normal text-slate-500">(진료 참고용 · 인쇄 제외)</span></div>
+    <textarea id="${prefix}-interpretation-note" class="w-full" aria-label="판독결과 메모" placeholder="검사 및 이미지 판독 내용을 기록해 주세요."></textarea>
+    <div class="flex justify-between items-center mt-1">
+      <span id="${prefix}-interpretation-note-toast" class="text-[11px] opacity-0" role="status"></span>
+      <button onclick="saveNote('${prefix}','interpretationNote')">저장</button>
+    </div>
+  </div>`;
+}
+const EMR_NOTE_SUFFIX={doctorNote:'doctor-note',privateNote:'private-note',interpretationNote:'interpretation-note'};
 window._currentRecordTs = null;
 window._currentRecordName = '';
 window._currentDoctorNote = '';
 window._currentPrivateNote = '';
+window._currentInterpretationNote = '';
+window._currentRecordCategory = '';
 function fillNoteBoxes(prefix){
   const d = document.getElementById(`${prefix}-doctor-note`);
   const p = document.getElementById(`${prefix}-private-note`);
@@ -1782,7 +1826,7 @@ function fillNoteBoxes(prefix){
   mountEmrWorkspace(prefix);
 }
 function showNoteToast(prefix, field, ok, message){
-  const idSuffix = field==='doctorNote' ? 'doctor-note' : 'private-note';
+  const idSuffix = EMR_NOTE_SUFFIX[field];
   const toast = document.getElementById(`${prefix}-${idSuffix}-toast`);
   if(!toast) return;
   toast.style.color = ok ? '#16a34a' : '#dc2626';
@@ -1791,8 +1835,9 @@ function showNoteToast(prefix, field, ok, message){
   clearTimeout(toast._hideTimer);
   toast._hideTimer = setTimeout(()=>{ toast.style.opacity='0'; }, ok ? 1800 : 3200);
 }
-window.saveNote = function(prefix, field){
-  const idSuffix = field==='doctorNote' ? 'doctor-note' : 'private-note';
+window.saveNote = async function(prefix, field){
+  if(!EMR_NOTE_SUFFIX[field]) return;
+  const idSuffix = EMR_NOTE_SUFFIX[field];
   const ta = document.getElementById(`${prefix}-${idSuffix}`);
   if(!ta) return;
   const value = ta.value;
@@ -1801,13 +1846,21 @@ window.saveNote = function(prefix, field){
     return;
   }
   if(!isSheetConfigured()){ showNoteToast(prefix, field, false, '저장소 미설정'); return; }
-  const ts = window._currentRecordTs, name = window._currentRecordName;
+  const ts = window._currentRecordTs, name = window._currentRecordName, category=window._currentRecordCategory;
+  if(field==='interpretationNote'){
+    try{
+      const params=new URLSearchParams({type:'noteCapabilities',q:'__emr_note_probe__'});
+      const response=await fetch(CONFIG.SHEET_URL+'?'+params,{signal:AbortSignal.timeout(15000)});
+      const json=await response.json();
+      if(json.protocol!=='haeon-notes-v2') throw new Error('판독 메모 저장을 위해 최신 Code.gs를 배포해 주세요.');
+    }catch(error){showNoteToast(prefix,field,false,'판독 메모 저장을 위해 최신 Code.gs를 배포해 주세요.');return;}
+  }
   showNoteToast(prefix, field, true, '저장 중...');
   // no-cors 응답은 실제 성공 여부를 알려주지 않으므로, 저장 후 다시 조회해서
   // 값이 실제로 반영됐는지 확인한 뒤에만 "저장완료"로 표시한다.
   fetch(CONFIG.SHEET_URL, {
     method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain;charset=utf-8'},
-    body: JSON.stringify({ type:'updateNote', ts, name, field, value })
+    body: JSON.stringify({ type:'updateNote', ts, name, category, field, value })
   })
   .then(()=> new Promise(resolve=>setTimeout(resolve, 700))) // 시트 반영 대기
   .then(()=> fetch(`${CONFIG.SHEET_URL}?q=${encodeURIComponent(name)}`))
@@ -1819,22 +1872,26 @@ window.saveNote = function(prefix, field){
         if(p.name !== name) return;
         p.records.forEach(r=>{
           const rt = new Date(r.ts).getTime(), tt = new Date(ts).getTime();
-          if(!isNaN(rt) && !isNaN(tt) && Math.abs(rt-tt) < 2000){
-            const savedVal = field==='doctorNote' ? r.doctorNote : r.privateNote;
+          if(!isNaN(rt) && !isNaN(tt) && rt===tt && (!category||r.category===category)){
+            const savedVal = r[field];
             if((savedVal||'') === value) verified = true;
           }
         });
       });
     }
     if(verified){
-      if(field==='doctorNote') window._currentDoctorNote = value; else window._currentPrivateNote = value;
+      if(window._currentRecordTs===ts&&window._currentRecordName===name&&window._currentRecordCategory===category){
+        if(field==='doctorNote') window._currentDoctorNote=value;
+        else if(field==='privateNote') window._currentPrivateNote=value;
+        else window._currentInterpretationNote=value;
+      }
       // 검색 목록 캐시(window._patients)에도 반영 - 뒤로가기 후 다시 열어도 최신 메모가 보이도록
       if(window._patients){
         window._patients.forEach(p=>{
           if(p.name !== name) return;
           p.records.forEach(r=>{
             const rt = new Date(r.ts).getTime(), tt = new Date(ts).getTime();
-            if(!isNaN(rt) && !isNaN(tt) && Math.abs(rt-tt) < 2000){
+            if(!isNaN(rt) && !isNaN(tt) && rt===tt && (!category||r.category===category)){
               r[field] = value;
             }
           });
@@ -2462,6 +2519,8 @@ window.viewPatientRecord = function(patientIdx, recIdx){
   window._currentRecordName = p.name;
   window._currentDoctorNote = rec.doctorNote || '';
   window._currentPrivateNote = rec.privateNote || '';
+  window._currentInterpretationNote = rec.interpretationNote || '';
+  window._currentRecordCategory = cat;
   document.getElementById('search-view').style.display='none';
   if(cat === 'MPS 멘탈'){ MentalEmr.open(parsed,rec); return; }
   if(cat === '심층진료'){ Object.assign(deepFormData, parsed); deepCameFromSearch=true; generateDeepReportAndShow(true); return; }
@@ -4584,13 +4643,14 @@ function savePostpartumRecordToSheet(){
 
 
 /* Shared workspace keeps the original result nodes, charts and save handlers. */
-const emrNoteOrigins = new Map();
+
 function emrCanNavigate(){
   const active=document.querySelector('[id$="report-view"].active');
   if(!active) return true;
   const doctor=active.querySelector('textarea[id$="-doctor-note"]');
   const privateNote=active.querySelector('textarea[id$="-private-note"]');
-  const dirty=(doctor && doctor.value!==(window._currentDoctorNote||'')) || (privateNote && privateNote.value!==(window._currentPrivateNote||''));
+  const interpretation=active.querySelector('textarea[id$="-interpretation-note"]');
+  const dirty=(interpretation && interpretation.value!==(window._currentInterpretationNote||'')) || (doctor && doctor.value!==(window._currentDoctorNote||'')) || (privateNote && privateNote.value!==(window._currentPrivateNote||''));
   return !dirty || confirm('저장하지 않은 메모가 있습니다. 저장하지 않고 다른 기록으로 이동할까요?');
 }
 function emrOpenRecord(patientIndex,recordIndex){
@@ -4619,27 +4679,44 @@ function mountEmrWorkspace(prefix){
     const notes=document.createElement('section');
     notes.className='emr-notes'; notes.setAttribute('aria-label','진료 메모');
     right.prepend(notes);
-    const heading=document.createElement('h3');
-    heading.className='emr-reference-heading';heading.textContent='한의사 참고 정보';
-    notes.after(heading);
-    [note,document.getElementById(prefix+'-private-note-slot')].filter(Boolean).forEach(slot=>{
-      const origin=document.createComment('Original print position: '+slot.id);
-      slot.before(origin);emrNoteOrigins.set(slot,{origin,notes});notes.append(slot);
+    // Keep editable notes on the clinician side; only a text mirror is printed.
+    [document.getElementById(prefix+'-private-note-slot'),note].filter(Boolean).forEach(slot=>notes.append(slot));
+    const interpretation=document.createElement('div');
+    interpretation.id=prefix+'-interpretation-note-slot';
+    interpretation.innerHTML=interpretationNoteBoxHtml(prefix);notes.append(interpretation);
+    // Move existing result nodes, preserving all IDs, charts and rendering handlers.
+    const left=columns.querySelector('.report-col-left');
+    [...right.children].filter(child=>child!==notes).forEach(child=>{
+      if(child.classList.contains('a4-page')) left.append(child);
+      else{
+        let appendix=left.querySelector('.emr-response-page');
+        if(!appendix){appendix=document.createElement('div');appendix.className='a4-page emr-response-page';left.append(appendix);}
+        appendix.append(child);
+      }
+    });
+    const opinion=document.createElement('section');opinion.className='rp-card emr-doctor-opinion';
+    const title=document.createElement('div');title.className='rp-section-title';title.textContent='한의사 소견';
+    const content=document.createElement('div');content.className='emr-opinion-text';
+    opinion.append(title,content);left.append(opinion);
+    view.addEventListener('input',event=>{
+      if(event.target.id===prefix+'-doctor-note') syncEmrOpinion(prefix);
     });
   }
+  document.getElementById(prefix+'-interpretation-note').value=window._currentInterpretationNote||'';
+  syncEmrOpinion(prefix);
   renderEmrPatients(sidebar,sidebar.querySelector('input').value);
   const records=sidebar.querySelector('.emr-records');
   records.replaceChildren();
   const patient=window._patients?.[window._currentPatientIdx];
   let imageHost=right.querySelector('.emr-report-image-host');
   if(!imageHost){imageHost=document.createElement('div');imageHost.className='emr-report-image-host no-print';right.querySelector('.emr-notes').after(imageHost);}
-  const activeRecord=patient?.records.find(record=>record.ts===window._currentRecordTs);
+  const activeRecord=patient?.records.find(record=>record.ts===window._currentRecordTs&&(!window._currentRecordCategory||record.category===window._currentRecordCategory));
   if(patient && activeRecord) mountEmrImages(imageHost,patient,activeRecord);else imageHost.replaceChildren();
   if(patient && window._currentRecordTs){
     const title=document.createElement('h3'); title.textContent='선택 환자의 문진 기록';records.append(title);
     patient.records.forEach((record,index)=>{
       const button=document.createElement('button');button.className='emr-record';
-      button.setAttribute('aria-current',String(record.ts===window._currentRecordTs));
+      button.setAttribute('aria-current',String(record.ts===window._currentRecordTs&&(!window._currentRecordCategory||record.category===window._currentRecordCategory)));
       button.textContent=record.category||'소아';
       const date=document.createElement('small');const timestamp=new Date(record.ts);
       date.textContent=isNaN(timestamp)?'날짜 미상':timestamp.toLocaleString('ko-KR');button.append(date);
@@ -4669,14 +4746,25 @@ function renderEmrPatients(sidebar,query=''){
     empty.textContent=patients.length?'검색 결과가 없습니다.':'현재 문진 결과입니다. 환자 목록은 홈의 EMR에서 조회할 수 있습니다.';list.append(empty);
   }
 }
-// Restore the patient-facing note to its original page for printing.
+// The report mirror is text, so long notes wrap and print without textarea clipping.
+function syncEmrOpinion(prefix){
+  const note=document.getElementById(prefix+'-doctor-note');
+  const view=note?.closest('[id$="report-view"]');
+  if(!view) return;
+  const left=view.querySelector('.report-col-left');
+  const opinion=left.querySelector('.emr-doctor-opinion');
+  if(!opinion) return;
+  const pages=[...left.querySelectorAll(':scope > .a4-page')].filter(page=>page.style.display!=='none'&&!page.hidden);
+  const last=pages[pages.length-1];
+  if(last) last.append(opinion);
+  opinion.querySelector('.emr-opinion-text').textContent=note.value||'주치의 안내에 작성한 내용이 이곳에 반영됩니다.';
+  opinion.classList.toggle('is-empty',!note.value.trim());
+}
 window.addEventListener('beforeprint',()=>{
-  emrNoteOrigins.forEach(({origin},slot)=>origin.after(slot));
+  const active=document.querySelector('[id$="report-view"].active');
+  const note=active?.querySelector('textarea[id$="-doctor-note"]');
+  if(note) syncEmrOpinion(note.id.replace(/-doctor-note$/,''));
 });
-window.addEventListener('afterprint',()=>{
-  emrNoteOrigins.forEach(({notes},slot)=>notes.append(slot));
-});
-
 /* Patient images are stored on Drive through the configured Apps Script. */
 const emrImageWidgets=new Set();
 let emrImagePassword='';
@@ -4738,7 +4826,7 @@ function mountEmrImages(host,patient,record){
   }
   host.replaceChildren();
   const section=document.createElement('section');section.className='emr-image-card no-print';
-  section.innerHTML='<div class="emr-image-header"><h3>검사지 · 이미지 자료 <span class="emr-image-count">0 / 3</span></h3><label class="emr-image-upload">이미지 첨부<input type="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple aria-label="환자 이미지 자료 첨부"></label></div><p class="emr-image-help">서버 보관 · 이 문진 기록에 최대 3개 · JPG, PNG, WEBP, GIF · 파일당 10MB<br>이미지를 클릭하면 크게 볼 수 있습니다. 다른 기기에서도 같은 문진 기록의 자료를 확인할 수 있습니다.</p><button type="button" class="emr-image-reload" style="color:#2563EB;font-size:13px;margin-bottom:12px">목록 새로고침</button><div class="emr-image-grid"></div><p class="emr-image-status" role="status" aria-live="polite"></p>';
+  section.innerHTML='<div class="emr-image-header"><h3>검사(이미지자료) <span class="emr-image-count">0 / 3</span></h3><label class="emr-image-upload">이미지 첨부<input type="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple aria-label="환자 이미지 자료 첨부"></label></div><p class="emr-image-help">서버 보관 · 이 문진 기록에 최대 3개 · JPG, PNG, WEBP, GIF · 파일당 10MB<br>이미지를 클릭하면 크게 볼 수 있습니다. 다른 기기에서도 같은 문진 기록의 자료를 확인할 수 있습니다.</p><button type="button" class="emr-image-reload" style="color:#2563EB;font-size:13px;margin-bottom:12px">목록 새로고침</button><div class="emr-image-grid"></div><p class="emr-image-status" role="status" aria-live="polite"></p>';
   host.append(section);
   const key=emrImageRecordKey(patient,record),input=section.querySelector('input'),status=section.querySelector('.emr-image-status');
   const widget={key,element:section,urls:[],version:0,refresh:async()=>{
