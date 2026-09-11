@@ -1,0 +1,25 @@
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const vm=require('node:vm');
+module.exports=(async()=>{
+  let now=0,calls=0;
+  const ctx=vm.createContext({Date:{now:()=>now},Map,Promise});
+  vm.runInContext(fs.readFileSync(path.join(__dirname,'../src/scripts/request-cache.js'),'utf8'),ctx);
+  const read=async()=>++calls;
+  assert.deepEqual(await Promise.all([ctx.cachedEmrRead('a',read),ctx.cachedEmrRead('a',read)]),[1,1]);
+  assert.equal(await ctx.cachedEmrRead('a',read),1);
+  now=60001;assert.equal(await ctx.cachedEmrRead('a',read),2);
+  ctx.invalidateEmrReadCache('a');assert.equal(await ctx.cachedEmrRead('a',read),3);
+  await assert.rejects(ctx.cachedEmrRead('error',async()=>{throw Error('offline');}));
+  assert.equal(await ctx.cachedEmrRead('error',read),4);
+  let resolveOld;
+  const old=ctx.cachedEmrRead('pending',()=>new Promise(resolve=>{resolveOld=resolve;}));
+  await Promise.resolve();ctx.clearEmrReadCache();
+  assert.equal(await ctx.cachedEmrRead('pending',read),5);
+  resolveOld('old');await old;
+  assert.equal(await ctx.cachedEmrRead('pending',read),5);
+  for(let i=0;i<30;i++) await ctx.cachedEmrRead('limit'+i,read);
+  assert.equal(vm.runInContext('emrReadCache.size',ctx),24);
+  console.log('PASS: deduplicated reads, TTL, invalidation, failed retry, logout race, bounded cache');
+})();

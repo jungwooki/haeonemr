@@ -1,0 +1,38 @@
+{
+  "scripts": [
+    "src/scripts/config.js",
+    "src/scripts/request-cache.js",
+    "src/scripts/notes.js",
+    "src/scripts/state.js",
+    "src/scripts/age.js",
+    "src/scripts/ui.js",
+    "src/scripts/options.js",
+    "src/scripts/pediatric-sections.js",
+    "src/scripts/navigation.js",
+    "src/scripts/gateway.js",
+    "src/scripts/records.js",
+    "src/scripts/completion.js",
+    "src/scripts/analysis.js",
+    "src/scripts/growth.js",
+    "src/scripts/pediatric-report.js",
+    "src/scripts/deep.js",
+    "src/scripts/diet.js",
+    "src/scripts/women.js",
+    "src/scripts/pain.js",
+    "src/scripts/sports.js",
+    "src/scripts/postpartum.js",
+    "src/scripts/workspace.js",
+    "src/scripts/images.js",
+    "src/scripts/record-delete.js",
+    "src/scripts/mental-survey.js",
+    "src/scripts/mental-emr.js",
+    "src/scripts/guides.js",
+    "src/scripts/bootstrap.js"
+  ],
+  "server": [
+    "server/records.gs",
+    "server/images.gs",
+    "server/record-delete.gs",
+    "server/mental.gs"
+  ]
+}

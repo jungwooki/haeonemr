@@ -1,0 +1,15 @@
+<!-- ===================== 작성 완료 화면 (환자용 - 결과 비공개) ===================== -->
+<div id="completion-view" class="fixed inset-0 z-50 flex-col items-center bg-white px-6 py-8 overflow-y-auto text-center" style="display:none;">
+  <div class="w-20 h-20 shrink-0 mt-auto rounded-full bg-emerald-50 flex items-center justify-center mb-6">
+    <i data-lucide="check" class="w-10 h-10 text-emerald-500"></i>
+  </div>
+  <h2 class="text-[26px] font-extrabold text-black mb-2">작성이 완료되었습니다</h2>
+  <p class="text-[15px] text-[#8E8E93] mb-6 max-w-xs">소중한 답변 감사합니다. 진료 준비를 위해 소중히 활용하겠습니다.</p>
+  <div class="w-full max-w-3xl grid grid-cols-1 md:grid-cols-3 gap-3 mb-6 text-left">
+    <button onclick="openHaeonGuide('process')" class="rounded-[16px] border border-slate-200 bg-slate-50 p-5 text-left text-[16px] font-bold text-slate-900">진료는 이런 과정을 거칩니다.<span class="block text-blue-600 text-[13px] mt-2">자세히 보기 →</span></button>
+    <button onclick="openHaeonGuide('prescription')" class="rounded-[16px] border border-slate-200 bg-slate-50 p-5 text-left text-[16px] font-bold text-slate-900">해온한의원 한약요법들<span class="block text-blue-600 text-[13px] mt-2">자세히 보기 →</span></button>
+    <button onclick="openHaeonGuide('treatment')" class="rounded-[16px] border border-slate-200 bg-slate-50 p-5 text-left text-[16px] font-bold text-slate-900">해온한의원 치료방법들<span class="block text-blue-600 text-[13px] mt-2">자세히 보기 →</span></button>
+  </div>
+  <button onclick="returnToHubFromCompletion()" class="mb-auto bg-blue-600 text-white font-bold text-[16px] px-10 py-4 rounded-[14px] active:scale-[0.98] transition-all">확인</button>
+</div>
+

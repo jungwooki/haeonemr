@@ -1,0 +1,45 @@
+<div id="app-shell" class="flex-col w-screen h-screen bg-[var(--ios-bg)] relative overflow-hidden" style="display:none;">
+  <div class="h-16 bg-white/90 backdrop-blur-md border-b border-[#EDEEF1] flex items-center justify-between px-4 shrink-0 z-30 relative">
+    <button onclick="prevStep()" id="btn-back" class="text-slate-800 flex items-center gap-1 font-semibold text-[16px] active:opacity-50 transition-opacity w-20">
+      <i data-lucide="chevron-left" class="w-6 h-6 -ml-2"></i> <span id="btn-back-label">메인으로</span>
+    </button>
+    <div id="nav-brand" class="flex items-center gap-2 absolute left-1/2 -translate-x-1/2">
+      <div class="w-7 h-7 bg-[#FFF9E0] rounded-[8px] flex items-center justify-center border border-[#FFE58F]">
+        <i data-lucide="baby" class="w-4 h-4 text-[#C79000]"></i>
+      </div>
+      <span id="nav-title" class="font-bold text-[17px] text-black">소개</span>
+    </div>
+    <div class="w-20"></div>
+  </div>
+  <div id="progress-track" class="h-[3px] w-full bg-[#EDEEF1] shrink-0">
+    <div id="progress-fill" class="h-full bg-[#FFCC00] transition-all duration-300" style="width:0%"></div>
+  </div>
+
+  <div id="scroll-container" class="flex-1 overflow-y-auto w-full px-5 pt-6 pb-10 scroll-smooth">
+    <div id="steps-container" class="w-full max-w-2xl md:max-w-3xl mx-auto flex flex-col">
+
+      <div id="step-1" class="step-content active animate-fade-in flex-col items-center text-center justify-center mt-10">
+        <div class="w-[100px] h-[100px] bg-white rounded-[28px] flex items-center justify-center mb-8 shadow-sm border border-gray-100">
+          <i data-lucide="heart-handshake" class="w-[50px] h-[50px] text-[#FFCC00]"></i>
+        </div>
+        <h2 class="text-[32px] font-extrabold tracking-tight text-black mb-4">환영합니다</h2>
+        <p class="text-[17px] text-[#3C3C43] leading-[26px] mb-12 max-w-md px-4">
+          3대를 이어가는 한의원, 해온한의원을 찾아주셔서 감사합니다.<br>소아(청소년)과 문진표는 아이의 만 나이에 맞춰 문항이 자동으로 구성되며, 작성해 주신 내용을 바탕으로 오장변증·기혈수 밸런스와 성장 리포트를 정성껏 준비해 드립니다.
+        </p>
+        <button onclick="nextStep()" class="w-full max-w-xs bg-[#FFCC00] text-black font-bold text-[18px] py-4 rounded-[16px] shadow-sm hover:bg-[#E6B800] active:scale-[0.98] transition-all">
+          문진표 작성 시작하기
+        </button>
+        <button onclick="openSearchView()" class="mt-4 text-[14px] font-semibold text-[#8E8E93] underline active:opacity-50">
+          지난 문진 기록 검색
+        </button>
+      </div>
+
+      <div id="dynamic-container" class="step-content flex-col gap-3 w-full"></div>
+    </div>
+  </div>
+
+  <div id="bottom-action" class="shrink-0 bg-white border-t border-gray-200 p-4 pb-6 flex justify-center hidden z-40">
+    <button onclick="nextStep()" id="next-btn" class="w-full max-w-2xl bg-[#FFCC00] text-black font-bold text-[18px] py-4 rounded-[16px] shadow-sm hover:bg-[#E6B800] active:scale-[0.98] transition-all">다음 단계</button>
+  </div>
+</div>
+

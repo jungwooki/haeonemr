@@ -1,0 +1,31 @@
+/* One patient-facing report column; private notes and investigations stay on the right. */
+.emr-opinion-text{white-space:pre-wrap;overflow-wrap:anywhere;font-size:15px;line-height:1.8}
+.emr-doctor-opinion{margin-top:20px}
+.emr-doctor-opinion.is-empty .emr-opinion-text{color:#8E8E93}
+.report-col-left .rp-footer{margin-top:18px}
+#mental-report-view .emr-response-page>.rp-card{border:0;padding:0}
+@media print{
+  @page{size:A4;margin:10mm}
+  html,body{height:auto!important;overflow:visible!important;background:#FFF!important}
+  body>*{display:none!important}
+  body>[id$="report-view"].active{display:block!important;position:static!important;inset:auto!important;width:100%!important;height:auto!important;overflow:visible!important}
+  body>[id$="report-view"].active,body>[id$="report-view"].active *{visibility:visible!important}
+  [id$="report-view"].active .report-scroll,[id$="report-view"].active .report-columns,[id$="report-view"].active .report-col-left{display:block!important;height:auto!important;min-height:0!important;overflow:visible!important;padding:0!important;margin:0!important;width:100%!important}
+  [id$="report-view"].active .report-col-right,[id$="report-view"].active .emr-sidebar,[id$="report-view"].active .no-print{display:none!important}
+  [id$="report-view"].active .a4-page{display:block;width:100%!important;min-height:0!important;height:auto!important;aspect-ratio:auto!important;overflow:visible!important;padding:0!important;margin:0!important;border:0!important;border-radius:0!important;box-shadow:none!important;break-after:page;page-break-after:always}
+  [id$="report-view"].active .a4-page:last-child{break-after:auto;page-break-after:auto}
+  .rp-card,.rp-info-bar,.rp-header{break-inside:avoid;page-break-inside:avoid}
+  .rp-card{padding:10px;margin-bottom:10px}
+  .rp-section-title{break-after:avoid;font-size:13px}
+  .rp-header .rp-title{font-size:20px}
+  .rp-footer{font-size:10px}
+  .emr-opinion-text{font-size:12px;line-height:1.65}
+  .emr-doctor-opinion.is-empty .emr-opinion-text{visibility:hidden!important;min-height:24mm}
+  .emr-response-page>.rp-card{break-inside:auto;page-break-inside:auto}
+  #mental-report-view .mental-answer{font-size:10px;line-height:1.5;padding:3px 0;margin:0;break-inside:avoid}
+}
+@media print{
+  #mental-rp-answers{columns:2;column-gap:6mm}
+  #mental-report-view .emr-response-page .rp-section-title{column-span:all}
+  #mental-report-view .emr-doctor-opinion{break-inside:avoid}
+}

@@ -1,0 +1,114 @@
+<!-- ===================== 여성건강 리포트 ===================== -->
+<div id="women-report-view">
+<div class="report-scroll">
+  <div class="report-toolbar no-print">
+    <button onclick="womenBackToForm()" class="flex items-center gap-1 font-semibold text-[15px] text-slate-800 active:opacity-50">
+      <i data-lucide="chevron-left" class="w-5 h-5"></i> 문진표로 돌아가기
+    </button>
+    <span id="women-save-status" class="text-[12px] font-semibold text-[#8E8E93]"></span>
+    <div class="flex gap-2">
+      <button onclick="goHome()" class="text-slate-500 font-semibold text-[14px] px-4 py-2">홈으로 가기</button>
+      <button onclick="window.print()" class="bg-black text-white font-bold text-[14px] px-5 py-2.5 rounded-[10px] flex items-center gap-2">
+        <i data-lucide="printer" class="w-4 h-4"></i> 인쇄 / PDF 미리보기
+      </button>
+    </div>
+  </div>
+
+  <div class="report-columns"><div class="report-col report-col-left">
+  <!-- PAGE 1 : 오장 · 기혈수 · H-SCALE -->
+  <div class="a4-page">
+    <div class="rp-header" style="border-bottom-color:#a6a1fb;">
+      <div class="rp-brand">
+        <i data-lucide="flower-2" class="w-6 h-6 text-[#a6a1fb]"></i>
+        <div><div class="rp-title">HAEON K-MEDI 여성건강 리포트</div><div class="rp-sub">오장변증 · 기혈수 밸런스</div></div>
+      </div>
+      <div class="rp-page-badge" style="color:#8480c8;background:#e3e3ff;border-color:#bbbbf9;" id="women-badge-1">1 / 2</div>
+    </div>
+
+    <div class="rp-info-bar">
+      <div class="rp-info-item"><div class="rp-info-label">이름</div><div class="rp-info-value" id="women-rp-name">-</div></div>
+      <div class="rp-info-item"><div class="rp-info-label">만나이</div><div class="rp-info-value" id="women-rp-age">-</div></div>
+      <div class="rp-info-item"><div class="rp-info-label">키 / 체중</div><div class="rp-info-value" id="women-rp-body">-</div></div>
+      <div class="rp-info-item"><div class="rp-info-label">LMP</div><div class="rp-info-value" id="women-rp-lmp">-</div></div>
+      <div class="rp-info-item"><div class="rp-info-label">측정일</div><div class="rp-info-value" id="women-rp-date">-</div></div>
+    </div>
+
+    <div class="rp-card flex items-center gap-5 mb-3">
+      <div class="rp-ring" id="women-hscale-ring" style="width:96px;height:96px;">
+        <div class="rp-ring-inner" style="width:70px;height:70px;">
+          <div class="text-[19px] font-extrabold text-black" id="women-hscale-score">-</div>
+          <div class="text-[8px] text-[#8E8E93] font-bold">H-SCALE</div>
+        </div>
+      </div>
+      <div class="flex-1">
+        <div class="text-[15px] font-extrabold text-black mb-0.5" id="women-hscale-grade">종합 건강 스코어</div>
+        <p class="text-[11px] leading-[16px] text-[#3C3C43]">오장·기혈수 밸런스를 종합한 해온 자체 건강 지표입니다.</p>
+      </div>
+    </div>
+
+    <div class="rp-card rp-soft">
+      <div class="rp-section-title"><i data-lucide="message-circle" class="w-4 h-4 text-[#a6a1fb]"></i>주호소 (가장 불편한 증상)</div>
+      <p class="text-[13px] leading-[20px] text-[#3C3C43]" id="women-rp-complaint">-</p>
+    </div>
+
+    <div class="flex gap-4">
+      <div class="rp-card flex-1 flex flex-col items-center">
+        <div class="rp-section-title self-start"><i data-lucide="activity" class="w-4 h-4 text-[#a6a1fb]"></i>오장(五臟) 균형도</div>
+        <div id="women-rp-radar"></div>
+        <p class="text-[10px] text-[#8E8E93] mt-1 text-center">중심에서 <b>멀수록 튼튼</b>, 가까울수록 <b>관리가 필요</b>합니다</p>
+        <div id="women-rp-organ-legend" class="w-full mt-2"></div>
+      </div>
+      <div class="rp-card flex-1 flex flex-col items-center">
+        <div class="rp-section-title self-start"><i data-lucide="droplets" class="w-4 h-4 text-[#a6a1fb]"></i>기·혈·수 밸런스</div>
+        <div id="women-rp-qhs-radar"></div>
+        <p class="text-[10px] text-[#8E8E93] mt-1 text-center">6가지 변증 유형 — <b>바깥쪽일수록 안정적</b>입니다</p>
+        <div id="women-rp-qhs-legend" class="w-full mt-2"></div>
+      </div>
+    </div>
+
+    <div class="rp-card">
+      <div class="rp-section-title"><i data-lucide="thermometer" class="w-4 h-4 text-[#a6a1fb]"></i>전신 생리 지표 요약</div>
+      <div id="women-rp-lifestyle" class="text-[12px] leading-[20px] text-[#3C3C43]"></div>
+    </div>
+
+    <div id="women-rp-doctor-note-slot"></div>
+    <div class="rp-footer"><span>해온한의원 · 본 리포트는 진료 참고용이며 의학적 진단을 대체하지 않습니다.</span><span id="women-rp-footer-1"></span></div>
+  </div>
+
+  </div><div class="report-col report-col-right">
+  <!-- PAGE 2 : 월경 · 과거력 · 종합소견 -->
+  <div class="a4-page">
+    <div class="rp-header" style="border-bottom-color:#a6a1fb;">
+      <div class="rp-brand">
+        <i data-lucide="clipboard-list" class="w-6 h-6 text-[#a6a1fb]"></i>
+        <div><div class="rp-title">자궁 · 월경 · 종합소견</div><div class="rp-sub">진료 시 참고할 배경 정보</div></div>
+      </div>
+      <div class="rp-page-badge" style="color:#8480c8;background:#e3e3ff;border-color:#bbbbf9;">2 / 2</div>
+    </div>
+
+    <div class="rp-card rp-soft mb-3">
+      <div class="rp-section-title"><i data-lucide="heart" class="w-4 h-4 text-[#a6a1fb]"></i>자궁 및 월경 건강</div>
+      <div id="women-rp-period" class="text-[12px] leading-[20px] text-[#3C3C43]"></div>
+    </div>
+
+    <div class="rp-card mb-3">
+      <div class="rp-section-title"><i data-lucide="history" class="w-4 h-4 text-[#a6a1fb]"></i>과거력 · 수술 이력</div>
+      <div id="women-rp-history" class="text-[12px] leading-[20px] text-[#3C3C43]"></div>
+    </div>
+
+    <div class="rp-card">
+      <div class="rp-section-title"><i data-lucide="lightbulb" class="w-4 h-4 text-[#a6a1fb]"></i>종합 소견</div>
+      <p class="text-[13px] leading-[20px] text-[#3C3C43]" id="women-rp-overall">-</p>
+    </div>
+
+    <div class="rp-card rp-soft">
+      <p class="text-[12px] leading-[19px] text-[#3C3C43]">위 소견은 문진 응답을 기준으로 한 예비 분석입니다. 진료실에서 직접 진맥·설진 등 정밀 진찰 후 체질에 맞는 처방과 관리 계획을 안내해 드립니다.</p>
+    </div>
+
+    <div id="women-rp-private-note-slot"></div>
+    <div class="rp-footer"><span>해온한의원 · 본 리포트는 진료 참고용이며 의학적 진단을 대체하지 않습니다.</span><span id="women-rp-footer-2"></span></div>
+  </div>
+  </div></div>
+</div>
+</div>
+

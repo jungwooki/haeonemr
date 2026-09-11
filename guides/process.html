@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>진료는 이런 과정을 거칩니다. · 해온 AI EMR</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        haeon: {
+                            base: '#F8FAFC', // 따뜻한 배경색
+                            primary: '#2563EB', // 신뢰의 블루
+                            gold: '#2563EB', // 치유의 골드/엠버
+                            text: '#4a4a4a',
+                            light: '#F2EFFC'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['"Pretendard"', 'sans-serif'],
+                        serif: ['"Pretendard"', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #F8FAFC;
+            color: #333;
+        }
+
+        /* 3D Flip Card Styles */
+        .flip-card {
+            background-color: transparent;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+        
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            border-radius: 1rem;
+        }
+        
+        .flip-card.flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+        
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 1rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+        
+        .flip-card-front {
+            background-color: white;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .flip-card-back {
+            background-color: #fffbeb; /* Amber-50 */
+            color: #333;
+            transform: rotateY(180deg);
+            border: 1px solid #fcd34d;
+        }
+
+        /* Animations */
+        .fade-in {
+            animation: fadeIn 1s ease-out forwards;
+            opacity: 0;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .path-draw {
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+            animation: draw 2.5s ease-out forwards;
+        }
+
+        @keyframes draw {
+            to { stroke-dashoffset: 0; }
+        }
+
+        .doctor-select {
+            transition: all 0.3s ease;
+        }
+        .doctor-select:hover {
+            transform: translateY(-2px);
+        }
+        .doctor-select.active {
+            border-color: #2563EB; /* haeon-primary */
+            background-color: #eff6ff;
+        }
+        .doctor-select.active img {
+            border-color: #2563EB;
+            transform: scale(1.05);
+        }
+    </style>
+<style>@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css');
+*{box-sizing:border-box}body{margin:0;background:#F8FAFC;color:#0F172A;font-family:Pretendard,sans-serif!important;font-size:16px;line-height:1.65}button,input,a{font:inherit}button,a{-webkit-tap-highlight-color:transparent}button{cursor:pointer}a{color:#2563EB;text-decoration:none}button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #2563EB;outline-offset:3px}.guide-nav{padding:16px 24px;background:white;border-bottom:1px solid #E2E8F0;display:flex;justify-content:space-between;gap:16px}.guide-shell{max-width:1120px;margin:auto;padding:40px 24px 64px}.guide-hero{background:linear-gradient(135deg,#F2EFFC,#EFF6FF);border-radius:24px;padding:32px;margin-bottom:28px}.guide-eyebrow{color:#2563EB;font-size:12px;font-weight:800;letter-spacing:.12em}h1{font-size:32px;letter-spacing:-.04em;line-height:1.3;margin:12px 0}h2{font-size:21px;line-height:1.4}p{margin:8px 0}.guide-muted{color:#64748B}.guide-search{width:100%;padding:15px 18px;border:1px solid #CBD5E1;border-radius:14px;background:white;font-size:16px}.guide-filters{display:flex;gap:8px;overflow-x:auto;padding:16px 2px}.guide-filters button{flex-shrink:0;background:white;border:1px solid #E2E8F0;border-radius:24px;padding:9px 18px;color:#475569}.guide-filters button[aria-pressed=true]{color:white;background:#2563EB;border-color:#2563EB}.guide-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.guide-card{display:block;text-align:left;padding:24px;background:white;border:1px solid #E2E8F0;border-radius:18px;color:#0F172A;transition:box-shadow .2s}.guide-card:hover{box-shadow:0 8px 28px #2563eb12;border-color:#93C5FD}.guide-card h2{margin:12px 0}.guide-tag{display:inline-block;border-radius:8px;background:#F2EFFC;color:#475569;padding:4px 9px;font-size:12px;margin:3px}.guide-count{color:#64748B;margin:0 0 16px;font-size:14px}.guide-detail{border:1px solid #E2E8F0;border-radius:24px;width:min(820px,calc(100% - 24px));max-height:90dvh;padding:0;color:#0F172A}.guide-detail::backdrop{background:#0F172A88}.guide-detail header{position:sticky;top:0;background:white;padding:16px 24px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #E2E8F0;z-index:1}.guide-detail button{border:0;background:#EFF6FF;border-radius:12px;padding:10px 18px;color:#2563EB}.guide-detail article{padding:24px}.guide-detail section{margin:20px 0}.guide-detail svg{display:block;width:min(100%,360px);height:auto;margin:auto}.guide-detail ul{padding-left:22px}.guide-detail li{margin:8px 0}.guide-detail h3{font-size:17px;color:#2563EB}.font-serif,.font-sans{font-family:Pretendard,sans-serif!important}body.process{background:#F8FAFC}.process .flip-card-back{background:#EFF6FF;border-color:#BFDBFE}.process .flip-card{min-height:340px}.process .flip-card-front,.process .flip-card-back{padding:20px}.process main{max-width:1120px}.process h1,.process h2,.process h3{letter-spacing:-.03em}@media(max-width:760px){.guide-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:520px){.guide-grid{grid-template-columns:1fr}.guide-shell{padding:24px 16px 40px}.guide-hero{padding:24px}h1{font-size:26px}.guide-nav{padding:14px 16px;font-size:14px}.guide-detail article{padding:20px}.process main{padding-left:16px;padding-right:16px}.process .flip-card{min-height:370px}}@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+.process .guide-hero h1{font-size:32px;font-weight:800;line-height:1.35;margin:12px 0}.process .guide-nav a{color:#2563EB}.process .fade-in{animation:none;opacity:1}@media(max-width:520px){.process .guide-hero h1{font-size:26px}}
+</style></head>
+<body class="antialiased process"><nav class="guide-nav" aria-label="안내 페이지 이동"><a href="index.html">← 해온한의원 가이드</a><a href="../index.html" target="_top">처음 화면</a></nav>
+
+    <!-- Header -->
+    <header class="sticky top-0 z-50 bg-[#F8FAFC]/90 backdrop-blur-sm border-b border-violet-100">
+        <div class="max-w-5xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-haeon-primary rounded-full flex items-center justify-center text-white font-serif font-bold text-xl shadow-md">H</div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight text-slate-800 font-serif">해온한의원</h1>
+                    <p class="text-xs text-blue-600 font-medium">진심을 담은 치유</p>
+                </div>
+            </div>
+            <div class="text-sm font-medium text-slate-400">
+                Treatment Guide
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-6 py-12 space-y-20">
+
+        <div class="guide-hero"><span class="guide-eyebrow">HAEON GUIDE</span><h1>진료는 이런 과정을 거칩니다.</h1></div><!-- Intro -->
+        <section class="text-center space-y-4 fade-in">
+            <span class="inline-block px-3 py-1 bg-blue-100 text-blue-800 text-xs font-bold rounded-full mb-2">Since 3 Generations</span>
+            <h2 class="text-3xl md:text-4xl font-serif font-bold text-slate-800">
+                환자분의 회복을 위한<br>
+                <span class="text-haeon-primary">해온의 3가지 약속</span>
+            </h2>
+            <p class="text-slate-500 max-w-2xl mx-auto text-sm md:text-base leading-relaxed">
+                해온한의원은 3대째 내려오는 전통의 지혜에 현대 의학의 정밀함을 더했습니다.<br>
+                카드를 클릭하여 저희의 진심이 담긴 치료 이야기를 확인해보세요.
+            </p>
+        </section>
+
+        <!-- Section 1: 3 Flip Cards (Treatments) -->
+        <section class="grid md:grid-cols-3 gap-6 fade-in" style="animation-delay: 0.2s;">
+            
+            <!-- Card 1 -->
+            <div class="flip-card h-80" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}" onclick="this.classList.toggle('flipped')">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front">
+                        <div class="absolute top-4 right-4 text-slate-300 text-sm"><i class="fas fa-undo"></i> Click</div>
+                        <div class="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center text-haeon-primary mb-6 shadow-sm">
+                            <i class="fas fa-hand-holding-heart text-3xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-800 mb-2">전통과 정성</h3>
+                        <p class="text-blue-600 font-serif font-medium mb-4">침 · 뜸 · 부항 · 한약</p>
+                        <p class="text-slate-400 text-sm">3대째 이어온 가업의<br>경험과 노하우</p>
+                    </div>
+                    <div class="flip-card-back px-6 text-left items-start">
+                        <h4 class="text-lg font-bold text-blue-800 mb-3 border-b border-blue-200 w-full pb-2">기본에 충실한 치료</h4>
+                        <ul class="text-sm text-slate-700 space-y-3 w-full">
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-blue-500 mt-1"></i>
+                                <span><strong>3대째 노하우:</strong> 오랜 임상 경험을 바탕으로 불편감의 근본 원인을 찾습니다.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-blue-500 mt-1"></i>
+                                <span><strong>안전한 시술:</strong> 모든 침구는 멸균된 1회용만을 사용하여 감염 걱정이 없습니다.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-blue-500 mt-1"></i>
+                                <span><strong>프리미엄 한약:</strong> 3대 노하우와 현대적 근거가 융합된 프리미엄 한약입니다.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="flip-card h-80" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}" onclick="this.classList.toggle('flipped')">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front">
+                        <div class="absolute top-4 right-4 text-slate-300 text-sm"><i class="fas fa-undo"></i> Click</div>
+                        <div class="w-16 h-16 bg-teal-50 rounded-2xl flex items-center justify-center text-teal-600 mb-6 shadow-sm">
+                            <i class="fas fa-microscope text-3xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-800 mb-2">선진 의료 기술</h3>
+                        <p class="text-teal-600 font-serif font-medium mb-4">프리미엄 약침</p>
+                        <p class="text-slate-400 text-sm">한중일 + 유럽 방식의<br>과학적 접근</p>
+                    </div>
+                    <div class="flip-card-back px-6 text-left items-start bg-teal-50 border-teal-200">
+                        <h4 class="text-lg font-bold text-teal-800 mb-3 border-b border-teal-200 w-full pb-2">빠르고 강력한 효과</h4>
+                        <ul class="text-sm text-slate-700 space-y-3 w-full">
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-teal-500 mt-1"></i>
+                                <span><strong>선진국형 시스템:</strong> 독일, 캐나다 등 의료 선진국에서 사용하는 약침 방식을 도입했습니다.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-teal-500 mt-1"></i>
+                                <span><strong>다양한 한약액:</strong> 염증 제거, 근육 이완, 신경 재생 등 증상별 맞춤 약액을 사용합니다.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-teal-500 mt-1"></i>
+                                <span><strong>초음파 유도:</strong> 필요한 경우 초음파로 병변을 보며 정확하게 시술합니다.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="flip-card h-80" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}" onclick="this.classList.toggle('flipped')">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front">
+                        <div class="absolute top-4 right-4 text-slate-300 text-sm"><i class="fas fa-undo"></i> Click</div>
+                        <div class="w-16 h-16 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-600 mb-6 shadow-sm">
+                            <i class="fas fa-dumbbell text-3xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-800 mb-2">스포츠 의학</h3>
+                        <p class="text-indigo-600 font-serif font-medium mb-4"> 추나 & 약침, 테이핑</p>
+                        <p class="text-slate-400 text-sm">스포츠한의학회 기반<br>기능 회복</p>
+                    </div>
+                    <div class="flip-card-back px-6 text-left items-start bg-indigo-50 border-indigo-200">
+                        <h4 class="text-lg font-bold text-indigo-800 mb-3 border-b border-indigo-200 w-full pb-2">움직임의 회복</h4>
+                        <ul class="text-sm text-slate-700 space-y-3 w-full">
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-indigo-500 mt-1"></i>
+                                <span><strong>스포츠 추나:</strong> 틀어진 뼈와 근막, 연부조직을 바로잡아 신체 밸런스를 회복합니다.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-indigo-500 mt-1"></i>
+                                <span><strong>밸런스 테이핑:</strong> 근막의 기능을 보조하고 부상을 방지하여 일상 복귀를 돕습니다.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-indigo-500 mt-1"></i>
+                                <span><strong>재활 운동 안내:</strong> 단순 치료를 넘어 이완, 강화 운동까지 안내해드립니다.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section: Convergent Diagnosis (New High-Tech Section) -->
+        <section class="fade-in" style="animation-delay: 0.3s;">
+            <div class="bg-gradient-to-br from-slate-50 to-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden relative">
+                <!-- High-tech Decoration Background -->
+                <div class="absolute top-0 right-0 w-80 h-80 bg-blue-100 rounded-full blur-3xl -mr-20 -mt-20 opacity-40 pointer-events-none"></div>
+                <div class="absolute bottom-0 left-0 w-64 h-64 bg-blue-50 rounded-full blur-3xl -ml-16 -mb-16 opacity-50 pointer-events-none"></div>
+
+                <div class="p-8 relative z-10">
+                    <div class="text-center mb-10">
+                        <span class="inline-block px-3 py-1 bg-indigo-600 text-white text-xs font-bold rounded-full mb-3 shadow-sm tracking-wide">High-Tech Diagnostic System</span>
+                        <h2 class="text-2xl md:text-3xl font-serif font-bold text-slate-800">
+                            과학적 데이터와 한의학적 통찰의 만남<br>
+                            <span class="text-haeon-primary">해온 융합적 진단 시스템</span>
+                        </h2>
+                        <p class="text-slate-500 mt-3 text-sm max-w-2xl mx-auto">
+                            눈에 보이지 않는 원인까지 찾아내기 위해, <br class="md:hidden">최첨단 의료 장비 검사와 한의학적 변증을 통합하여 분석합니다.
+                        </p>
+                    </div>
+
+                    <div class="grid md:grid-cols-12 gap-6">
+                        <!-- Traditional/Functional (Left Column) -->
+                        <div class="md:col-span-4 bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-blue-200 shadow-sm flex flex-col justify-center relative overflow-hidden group hover:shadow-md transition-all">
+                            <div class="absolute right-0 top-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                                <i class="fas fa-file-medical-alt text-8xl text-blue-500"></i>
+                            </div>
+                            <div class="flex items-center gap-3 mb-4">
+                                <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600"><i class="fas fa-user-md"></i></div>
+                                <h3 class="font-bold text-lg text-slate-800">기초 진단</h3>
+                            </div>
+                            <ul class="space-y-4 relative z-10">
+                                <li class="bg-blue-50 p-3 rounded-lg border border-blue-100">
+                                    <strong class="block text-blue-900 text-sm mb-1"><i class="fas fa-check-circle mr-1 text-blue-500"></i> 한의학적 변증</strong>
+                                    <span class="text-xs text-slate-600 block pl-5">기혈수(氣血水)의 흐름과 한열허실을 파악하여 체질적 원인을 찾습니다.</span>
+                                </li>
+                                <li class="bg-blue-50 p-3 rounded-lg border border-blue-100">
+                                    <strong class="block text-blue-900 text-sm mb-1"><i class="fas fa-check-circle mr-1 text-blue-500"></i> 기능의학적 평가</strong>
+                                    <span class="text-xs text-slate-600 block pl-5">신체 기능의 불균형과 대사 상태를 종합적으로 평가합니다.</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Modern Tech (Right Column) -->
+                        <div class="md:col-span-8 grid grid-cols-2 md:grid-cols-3 gap-3">
+                            <!-- Header for Tech part -->
+                            <div class="col-span-2 md:col-span-3 mb-1 flex items-center gap-2">
+                                <div class="h-px bg-slate-200 flex-1"></div>
+                                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Scientific Analysis Tools</span>
+                                <div class="h-px bg-slate-200 flex-1"></div>
+                            </div>
+
+                            <!-- Item 1: Ultrasound (Big Card) -->
+                            <div class="col-span-2 bg-indigo-50 rounded-xl p-4 border border-indigo-200 flex items-center gap-4 hover:bg-indigo-100 transition-colors shadow-sm group">
+                                <div class="w-12 h-12 rounded-xl bg-white flex items-center justify-center text-indigo-600 shadow-sm text-2xl group-hover:scale-110 transition-transform"><i class="fas fa-wave-square"></i></div>
+                                <div>
+                                    <div class="font-bold text-indigo-900">초음파 진단 (Ultrasound)</div>
+                                    <div class="text-xs text-indigo-700 mt-1">근육, 인대, 관절 상태를 실시간 영상으로 정밀 확인</div>
+                                </div>
+                            </div>
+
+                            <!-- Item 2: Physical Exam -->
+                            <div class="bg-white rounded-xl p-4 border border-slate-200 flex flex-col items-center text-center justify-center hover:border-blue-400 hover:shadow-md transition-all group">
+                                <i class="fas fa-bone text-blue-400 mb-2 text-2xl group-hover:text-blue-600 transition-colors"></i>
+                                <div class="font-bold text-slate-700 text-sm">이학적 검사</div>
+                                <div class="text-xs text-slate-400 mt-1">관절 가동범위<br>통증 유발 테스트</div>
+                            </div>
+
+                            <!-- Item 3: CBC -->
+                            <div class="bg-white rounded-xl p-4 border border-slate-200 flex flex-col items-center text-center justify-center hover:border-red-400 hover:shadow-md transition-all group">
+                                <i class="fas fa-vial text-red-400 mb-2 text-2xl group-hover:text-red-600 transition-colors"></i>
+                                <div class="font-bold text-slate-700 text-sm">CBC 혈액검사</div>
+                                <div class="text-xs text-slate-400 mt-1">염증 수치 확인<br>기초 건강 상태</div>
+                            </div>
+
+                            <!-- Item 4: BWA -->
+                            <div class="bg-white rounded-xl p-4 border border-slate-200 flex flex-col items-center text-center justify-center hover:border-teal-400 hover:shadow-md transition-all group">
+                                <i class="fas fa-child text-teal-400 mb-2 text-2xl group-hover:text-teal-600 transition-colors"></i>
+                                <div class="font-bold text-slate-700 text-sm">BWA 2.0s</div>
+                                <div class="text-xs text-slate-400 mt-1">체수분 균형<br>세포 건강 정밀분석</div>
+                            </div>
+
+                            <!-- Item 5: HRV -->
+                            <div class="bg-white rounded-xl p-4 border border-slate-200 flex flex-col items-center text-center justify-center hover:border-purple-400 hover:shadow-md transition-all group">
+                                <i class="fas fa-heartbeat text-purple-400 mb-2 text-2xl group-hover:text-purple-600 transition-colors"></i>
+                                <div class="font-bold text-slate-700 text-sm">HRV 검사</div>
+                                <div class="text-xs text-slate-400 mt-1">자율신경 스트레스<br>혈관 노화도 측정</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Interactive Tabs (Prescription) -->
+        <section class="fade-in" style="animation-delay: 0.4s;">
+            <div class="bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden">
+                <div class="p-8 pb-0">
+                    <h2 class="text-2xl font-serif font-bold text-slate-800 mb-2">맞춤형 처방 안내</h2>
+                    <p class="text-slate-500 text-sm">환자분의 상태와 치료 목적에 따라 최적의 처방을 선택합니다.</p>
+                </div>
+
+                <div class="flex border-b border-slate-100 mt-6 px-8">
+                    <button onclick="switchTab('symptom')" id="tab-symptom" class="pb-4 px-4 text-haeon-primary border-b-2 border-haeon-primary font-bold transition-colors">
+                        증상 조절 처방
+                    </button>
+                    <button onclick="switchTab('function')" id="tab-function" class="pb-4 px-4 text-slate-400 border-b-2 border-transparent hover:text-slate-600 font-medium transition-colors">
+                        기능 회복 처방
+                    </button>
+                    <button onclick="switchTab('physical')" id="tab-physical" class="pb-4 px-4 text-slate-400 border-b-2 border-transparent hover:text-slate-600 font-medium transition-colors">
+                        전기 치료 기기
+                    </button>
+                </div>
+
+                <div class="p-8 bg-slate-50 min-h-[300px]">
+                    
+                    <!-- Content 1: Symptom Control -->
+                    <div id="content-symptom" class="grid md:grid-cols-2 gap-8 items-center animate-fade-in">
+                        <div class="space-y-4">
+                            <div class="bg-white p-5 rounded-xl border border-blue-100 shadow-sm">
+                                <div class="flex justify-between items-center mb-2">
+                                    <h4 class="font-bold text-lg text-slate-800">한약 제제 & 보험 한약</h4>
+                                    <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">건강보험 적용</span>
+                                </div>
+                                <p class="text-slate-600 text-sm mb-3">급성 통증, 염증, 감기 등 당장의 불편한 증상을 빠르게 완화시킵니다.</p>
+                                <div class="flex gap-2 text-xs text-slate-500">
+                                    <span class="bg-slate-100 px-2 py-1 rounded"><i class="fas fa-capsules mr-1"></i>연조엑기스</span>
+                                    <span class="bg-slate-100 px-2 py-1 rounded"><i class="fas fa-tablets mr-1"></i>알약/환</span>
+                                    <span class="bg-slate-100 px-2 py-1 rounded"><i class="fas fa-prescription-bottle mr-1"></i>가루약</span>
+                                </div>
+                            </div>
+                            <div class="bg-blue-50 p-4 rounded-xl border border-blue-100 text-sm text-blue-900">
+                                <i class="fas fa-info-circle mr-2"></i> 비용 부담은 줄이고 효과는 높인 경제적인 처방입니다.
+                            </div>
+                        </div>
+                        <div class="flex justify-center">
+                            <div class="relative w-64 h-64 bg-white rounded-full flex items-center justify-center border-4 border-blue-50 shadow-inner">
+                                <div class="text-center">
+                                    <i class="fas fa-file-prescription text-5xl text-blue-200 mb-4 block"></i>
+                                    <p class="font-serif text-lg text-slate-700">즉각적인<br>증상 완화</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Content 2: Function Recovery -->
+                    <div id="content-function" class="hidden grid md:grid-cols-2 gap-8 items-center animate-fade-in">
+                        <div class="space-y-4">
+                            <div class="bg-white p-5 rounded-xl border border-blue-100 shadow-sm">
+                                <div class="flex justify-between items-center mb-2">
+                                    <h4 class="font-bold text-lg text-slate-800">맞춤 탕약 & 보약</h4>
+                                    <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">1:1 맞춤 조제</span>
+                                </div>
+                                <p class="text-slate-600 text-sm mb-3">손상된 조직을 재생하고, 약해진 기능을 강화하여 재발을 방지합니다.</p>
+                                <div class="flex flex-wrap gap-2 text-xs text-slate-500">
+                                    <span class="bg-slate-100 px-2 py-1 rounded"><i class="fas fa-mug-hot mr-1"></i>일반 탕약</span>
+                                    <span class="bg-slate-100 px-2 py-1 rounded"><i class="fas fa-wine-bottle mr-1"></i>농축 탕약</span>
+                                    <span class="bg-slate-100 px-2 py-1 rounded"><i class="fas fa-leaf mr-1"></i>공진단/경옥고</span>
+                                </div>
+                            </div>
+                            <div class="bg-blue-50 p-4 rounded-xl border border-blue-100 text-sm text-blue-900">
+                                <i class="fas fa-star mr-2"></i> 만성 통증, 수술 후 회복, 체력 저하 시 필수적인 선택입니다.
+                            </div>
+                        </div>
+                        <div class="flex justify-center">
+                            <div class="relative w-64 h-64 bg-white rounded-full flex items-center justify-center border-4 border-blue-50 shadow-inner">
+                                <div class="text-center">
+                                    <i class="fas fa-mortar-pestle text-5xl text-blue-200 mb-4 block"></i>
+                                    <p class="font-serif text-lg text-slate-700">근본적인<br>기능 회복</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Content 3: Physical Therapy -->
+                    <div id="content-physical" class="hidden animate-fade-in">
+                        <p class="text-sm text-slate-500 mb-6 text-center">아이콘을 클릭하면 기기별 상세 효과를 확인할 수 있습니다.</p>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <button onclick="showPtDetail('mid')" class="p-4 bg-white rounded-xl border border-slate-200 hover:border-purple-300 hover:bg-purple-50 transition-all group text-center">
+                                <i class="fas fa-bolt text-2xl text-purple-300 group-hover:text-purple-600 mb-2"></i>
+                                <p class="font-bold text-sm text-slate-700">중주파/저주파</p>
+                            </button>
+                            <button onclick="showPtDetail('inter')" class="p-4 bg-white rounded-xl border border-slate-200 hover:border-purple-300 hover:bg-purple-50 transition-all group text-center">
+                                <i class="fas fa-wave-square text-2xl text-purple-300 group-hover:text-purple-600 mb-2"></i>
+                                <p class="font-bold text-sm text-slate-700">간섭파(ICT)</p>
+                            </button>
+                            <button onclick="showPtDetail('high')" class="p-4 bg-white rounded-xl border border-slate-200 hover:border-purple-300 hover:bg-purple-50 transition-all group text-center">
+                                <i class="fas fa-temperature-high text-2xl text-purple-300 group-hover:text-purple-600 mb-2"></i>
+                                <p class="font-bold text-sm text-slate-700">고주파 온열</p>
+                            </button>
+                            <button onclick="showPtDetail('sound')" class="p-4 bg-white rounded-xl border border-slate-200 hover:border-purple-300 hover:bg-purple-50 transition-all group text-center">
+                                <i class="fas fa-wifi text-2xl text-purple-300 group-hover:text-purple-600 mb-2"></i>
+                                <p class="font-bold text-sm text-slate-700">이온 냉각 온열 도입</p>
+                            </button>
+                        </div>
+                        <div id="pt-detail-box" class="mt-6 p-4 bg-purple-50 rounded-xl border border-purple-100 text-purple-900 text-sm hidden">
+                            <!-- JS로 내용 채움 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Interactive Recovery Graph -->
+        <section class="fade-in" style="animation-delay: 0.6s;">
+            <div class="bg-white rounded-2xl shadow-xl border border-slate-100 p-8">
+                <div class="flex flex-col md:flex-row justify-between items-end mb-8 border-b border-slate-100 pb-4">
+                    <div>
+                        <h2 class="text-2xl font-serif font-bold text-slate-800">치료 경과 로드맵</h2>
+                        <p class="text-slate-500 text-sm mt-1">회복 단계(Phase) 버튼을 눌러 상세 가이드를 확인하세요.</p>
+                    </div>
+                    <div class="flex gap-2 mt-4 md:mt-0">
+                        <div class="flex items-center text-xs text-slate-500"><span class="w-3 h-3 rounded-full bg-red-400 mr-1"></span>통증(Pain)</div>
+                        <div class="flex items-center text-xs text-slate-500"><span class="w-3 h-3 rounded-full bg-blue-500 mr-1"></span>움직임(Motion)</div>
+                    </div>
+                </div>
+
+                <!-- Graph -->
+                <div class="relative h-64 w-full mb-8">
+                    <!-- SVG Chart -->
+                    <svg class="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                        <!-- Grid Lines -->
+                        <line x1="0" y1="25" x2="100" y2="25" stroke="#f1f5f9" stroke-width="0.5" stroke-dasharray="2" />
+                        <line x1="0" y1="50" x2="100" y2="50" stroke="#f1f5f9" stroke-width="0.5" stroke-dasharray="2" />
+                        <line x1="0" y1="75" x2="100" y2="75" stroke="#f1f5f9" stroke-width="0.5" stroke-dasharray="2" />
+                        
+                        <!-- Pain Curve (Red) -->
+                        <path d="M0,10 Q20,10 30,50 T100,90" fill="none" stroke="#f87171" stroke-width="2" stroke-linecap="round" class="path-draw" />
+                        
+                        <!-- Motion Curve (Blue) -->
+                        <path d="M0,90 Q30,85 50,40 T100,10" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" class="path-draw" style="animation-delay: 0.5s;" />
+
+                        <!-- Phase Areas (Clickable Overlay) -->
+                        <rect x="0" y="0" width="33" height="100" fill="transparent" class="cursor-pointer hover:fill-red-50/30" onclick="showPhaseInfo(1)" />
+                        <rect x="33" y="0" width="33" height="100" fill="transparent" class="cursor-pointer hover:fill-blue-50/30" onclick="showPhaseInfo(2)" />
+                        <rect x="66" y="0" width="34" height="100" fill="transparent" class="cursor-pointer hover:fill-indigo-50/30" onclick="showPhaseInfo(3)" />
+                    </svg>
+
+                    <!-- Phase Labels (Bottom) -->
+                    <div class="absolute bottom-0 left-0 w-full flex text-center text-xs text-slate-400 pt-2 border-t border-slate-200">
+                        <div class="w-1/3 cursor-pointer hover:text-red-500 transition-colors" onclick="showPhaseInfo(1)">Phase 1<br>(급성기)</div>
+                        <div class="w-1/3 cursor-pointer hover:text-blue-500 transition-colors" onclick="showPhaseInfo(2)">Phase 2<br>(아급성기)</div>
+                        <div class="w-1/3 cursor-pointer hover:text-indigo-500 transition-colors" onclick="showPhaseInfo(3)">Phase 3<br>(만성기)</div>
+                    </div>
+                </div>
+
+                <!-- Info Box -->
+                <div id="phase-info-box" class="bg-slate-50 rounded-xl p-6 border border-slate-200 transition-all duration-300">
+                    <div class="flex items-start gap-4">
+                        <div class="w-12 h-12 rounded-full bg-white flex items-center justify-center text-xl shadow-sm text-haeon-primary shrink-0">
+                            <i class="fas fa-info"></i>
+                        </div>
+                        <div>
+                            <h4 id="phase-title" class="text-lg font-bold text-slate-800 mb-1">단계를 선택해주세요</h4>
+                            <p id="phase-desc" class="text-sm text-slate-600 leading-relaxed">
+                                위 그래프의 각 Phase 영역을 클릭하면, 해당 시기의 증상 특징과 필요한 치료, 주의사항을 자세히 안내해 드립니다.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Medical Staff (New) -->
+        <section class="fade-in" style="animation-delay: 0.8s;">
+            <div class="bg-white rounded-2xl shadow-xl border border-slate-100 p-8">
+                <div class="text-center mb-10">
+                    <span class="inline-block px-3 py-1 bg-blue-50 text-blue-800 text-xs font-bold rounded-full mb-2">Medical Team</span>
+                    <h2 class="text-2xl font-serif font-bold text-slate-800">3대째 가업, 해온의 의료진을 소개합니다</h2>
+                    <p class="text-slate-500 mt-2 text-sm">신뢰할 수 있는 전문성과 따뜻한 마음으로 진료합니다.</p>
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                    <!-- Doctor 1: Lee Jung-wook -->
+                    <button onclick="showDoctor(0)" id="doc-btn-0" class="doctor-select active group flex flex-col items-center p-4 rounded-xl border border-slate-200 bg-blue-50/50">
+                        <div class="w-20 h-20 rounded-full bg-slate-200 mb-3 overflow-hidden border-2 border-haeon-primary shadow-md relative">
+                            <img src="https://cdn.imweb.me/thumbnail/20250731/6cfba1b61688d.jpg" alt="이정욱 원장" class="w-full h-full object-cover">
+                        </div>
+                        <h4 class="font-bold text-slate-800">이정욱 원장</h4>
+                        <p class="text-xs text-slate-500">대표원장 / 교수</p>
+                    </button>
+
+                    <!-- Doctor 2: Jeong Ji-eun -->
+                    <button onclick="showDoctor(1)" id="doc-btn-1" class="doctor-select group flex flex-col items-center p-4 rounded-xl border border-slate-200 bg-white hover:bg-slate-50">
+                        <div class="w-20 h-20 rounded-full bg-slate-100 mb-3 overflow-hidden border-2 border-transparent group-hover:border-slate-300 shadow-sm relative">
+                             <img src="https://cdn.imweb.me/thumbnail/20250731/80aa1cb99bdb9.jpg" alt="정지은 원장" class="w-full h-full object-cover">
+                        </div>
+                        <h4 class="font-bold text-slate-800">정지은 원장</h4>
+                        <p class="text-xs text-slate-500">전문의 / 교수</p>
+                    </button>
+
+                    <!-- Doctor 3: Han Yu-kyung -->
+                    <button onclick="showDoctor(2)" id="doc-btn-2" class="doctor-select group flex flex-col items-center p-4 rounded-xl border border-slate-200 bg-white hover:bg-slate-50">
+                         <div class="w-20 h-20 rounded-full bg-slate-100 mb-3 overflow-hidden border-2 border-transparent group-hover:border-slate-300 shadow-sm relative">
+                             <img src="https://cdn.imweb.me/thumbnail/20250801/bf8c943efdc87.jpg" alt="한유경 원장" class="w-full h-full object-cover">
+                        </div>
+                        <h4 class="font-bold text-slate-800">한유경 원장</h4>
+                        <p class="text-xs text-slate-500">한방내과 / 스포츠한의 팀닥터</p>
+                    </button>
+
+                    <!-- Doctor 4: Jo Nae-kyung -->
+                    <button onclick="showDoctor(3)" id="doc-btn-3" class="doctor-select group flex flex-col items-center p-4 rounded-xl border border-slate-200 bg-white hover:bg-slate-50">
+                         <div class="w-20 h-20 rounded-full bg-slate-100 mb-3 overflow-hidden border-2 border-transparent group-hover:border-slate-300 shadow-sm relative">
+                             <img src="https://cdn.imweb.me/thumbnail/20250731/4618b2bf06bb4.jpg" alt="조내경 원장" class="w-full h-full object-cover">
+                        </div>
+                        <h4 class="font-bold text-slate-800">조내경 원장</h4>
+                        <p class="text-xs text-slate-500">전문 진료 원장</p>
+                    </button>
+                </div>
+
+                <!-- Doctor Detail Box -->
+                <div class="relative bg-haeon-primary rounded-xl p-8 text-white shadow-lg overflow-hidden">
+                    <div class="absolute top-0 right-0 p-8 opacity-10">
+                        <i class="fas fa-quote-right text-9xl"></i>
+                    </div>
+                    <div class="relative z-10 transition-opacity duration-300" id="doctor-content">
+                        <!-- Content Injected via JS -->
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="text-center py-10 text-xs border-t border-slate-100 mt-10">
+            <div class="w-12 h-1 bg-blue-400 mx-auto mb-6 rounded-full"></div>
+            <p class="text-lg font-serif font-bold text-slate-700 mb-2">"마음의 아픔까지 공감합니다"</p>
+            <p class="text-slate-400 mb-4">환자분의 삶이 더 건강하고 행복해지도록 해온이 함께하겠습니다.</p>
+            <p class="text-slate-300">&copy; HAEON Korean Medicine Clinic. All rights reserved.</p>
+        </footer>
+
+    </main>
+
+    <script>
+        // Tab Switching Logic
+        function switchTab(tabName) {
+            // Hide all contents
+            document.getElementById('content-symptom').classList.add('hidden');
+            document.getElementById('content-function').classList.add('hidden');
+            document.getElementById('content-physical').classList.add('hidden');
+            
+            // Reset tab styles
+            const tabs = ['symptom', 'function', 'physical'];
+            tabs.forEach(t => {
+                const el = document.getElementById('tab-' + t);
+                el.classList.remove('text-haeon-primary', 'border-haeon-primary', 'font-bold');
+                el.classList.add('text-slate-400', 'border-transparent', 'font-medium');
+            });
+
+            // Show selected content & style tab
+            document.getElementById('content-' + tabName).classList.remove('hidden');
+            const activeTab = document.getElementById('tab-' + tabName);
+            activeTab.classList.remove('text-slate-400', 'border-transparent', 'font-medium');
+            activeTab.classList.add('text-haeon-primary', 'border-haeon-primary', 'font-bold');
+        }
+
+        // Physical Therapy Details
+        const ptDetails = {
+            'mid': '<strong>중주파/저주파:</strong> 전기 자극을 통해 뭉친 근육을 부드럽게 이완시키고, 통증 신호를 차단하여 급/만성 통증을 완화합니다.',
+            'inter': '<strong>간섭파(ICT):</strong> 서로 다른 주파수의 전류를 교차시켜 피부 저항 없이 깊은 곳까지 부드럽게 마사지하듯 치료합니다.',
+            'high': '<strong>고주파 온열:</strong> 심부 조직에 열을 발생시켜 혈액 순환을 촉진하고, 뻣뻣해진 관절과 인대를 유연하게 만듭니다.',
+            'sound': '<strong>초음파/이온:</strong> 미세한 진동으로 세포 재생을 돕거나, 냉각/온열과 함께 약물을 침투시켜 염증을 가라앉힙니다.'
+        };
+
+        function showPtDetail(type) {
+            const box = document.getElementById('pt-detail-box');
+            box.innerHTML = ptDetails[type];
+            box.classList.remove('hidden');
+            box.classList.add('fade-in'); // simple animation reset
+            setTimeout(() => box.classList.remove('fade-in'), 500);
+        }
+
+        // Phase Info Logic
+        const phaseData = {
+            1: {
+                title: "Phase 1. 급성기 (염증/어혈기)",
+                desc: "통증이 가장 심하고 부종이나 열감이 있을 수 있는 시기입니다. <br><br><strong class='text-red-600'>• 목표:</strong> 염증 제어, 통증 완화, 추가 손상 방지<br><strong class='text-red-600'>• 치료:</strong> 아이스팩, 약침(소염), 고정(테이핑), 휴식<br><strong class='text-slate-500'>• 주의:</strong> 무리한 움직임을 피하고 안정을 취해주세요.",
+                color: "bg-red-50",
+                icon: "fa-exclamation-circle",
+                iconColor: "text-red-500"
+            },
+            2: {
+                title: "Phase 2. 아급성기 (재생/증식기)",
+                desc: "통증이 줄어들고 조직이 아물어가는 시기입니다. 굳어진 근육을 풀고 가동범위를 회복해야 합니다.<br><br><strong class='text-blue-600'>• 목표:</strong> 조직 재생 촉진, 관절 가동범위 회복<br><strong class='text-blue-600'>• 치료:</strong> 온열요법, 추나요법(이완), 물리치료<br><strong class='text-slate-500'>• 주의:</strong> 통증이 없는 범위 내에서 가벼운 스트레칭을 시작하세요.",
+                color: "bg-blue-50",
+                icon: "fa-sync-alt",
+                iconColor: "text-blue-500"
+            },
+            3: {
+                title: "Phase 3. 만성기 (리모델링/강화기)",
+                desc: "일상 복귀를 준비하고 재발을 막기 위해 조직을 튼튼하게 만드는 시기입니다.<br><br><strong class='text-indigo-600'>• 목표:</strong> 기능 완전 회복, 근력 강화, 재발 방지<br><strong class='text-indigo-600'>• 치료:</strong> 기능 회복용 탕약, 운동 요법, 밸런스 교정<br><strong class='text-slate-500'>• 주의:</strong> 꾸준한 강화 운동으로 부상 이전보다 더 튼튼하게 만드세요.",
+                color: "bg-indigo-50",
+                icon: "fa-running",
+                iconColor: "text-indigo-500"
+            }
+        };
+
+        function showPhaseInfo(phase) {
+            const data = phaseData[phase];
+            const box = document.getElementById('phase-info-box');
+            const title = document.getElementById('phase-title');
+            const desc = document.getElementById('phase-desc');
+            
+            // Remove old classes
+            box.className = `rounded-xl p-6 border transition-all duration-300 ${data.color} border-slate-200`;
+            
+            title.innerHTML = data.title;
+            desc.innerHTML = data.desc;
+            
+            // Icon change logic could be added here if separated
+        }
+
+        // Doctor Info Logic
+        const doctors = [
+            {
+                name: "이정욱 원장",
+                role: "대표원장 / 교수, 팀닥터",
+                desc: "\"환자의 몸뿐만 아니라 앞으로 살아갈 삶의 방식까지 함께 고민합니다.\"",
+                details: "• 3대째 이어온 한의사 가업 계승<br>• 가천대 한의과대학 교수 / FIFA 축구의학 학위(Diploma) & 공인팀닥터 / 미국스포츠의학 초음파수료 <br>• '나의 진료가 누군가의 인생을 바꿀 수 있다'는 신념으로 진료합니다."
+            },
+            {
+                name: "정지은 원장",
+                role: "전문의 / 교수",
+                desc: "\"세심한 관찰과 정확한 진단으로 편안한 회복을 돕습니다.\"",
+                details: "• 해온한의원 통합 진료 시스템 전담<br>• 소아 여성 및 만성 통증 환자를 위한 섬세한 맞춤 진료<br>• 환자분의 작은 불편함까지 귀 기울여 듣습니다."
+            },
+            {
+                name: "한유경 원장",
+                role: "스포츠한의 팀닥터/ RMSK(미국 근골격계초음파진단자격취득)",
+                desc: "\"따뜻한 공감과 근거 중심의 치료를 약속드립니다.\"",
+                details: "• 해온한의원 스포츠 재활 시스템 전담<br>• 스포츠 및 여성 환자의 섬세한 맞춤 진료<br>• 가족을 대하는 마음으로 정성을 다합니다."
+            },
+            {
+                name: "조내경 원장",
+                role: "전문 진료 원장",
+                desc: "\"통증 없는 건강한 일상으로의 복귀를 함께합니다.\"",
+                details: "• 근골격계 통증 및 재활 치료 중점<br>• 빠르고 효과적인 일상 복귀를 위한 단계별 관리<br>• 환자분께 가장 필요한 치료만을 정직하게 제안합니다."
+            }
+        ];
+
+        function showDoctor(index) {
+            // Update UI State
+            document.querySelectorAll('.doctor-select').forEach((el, idx) => {
+                if(idx === index) {
+                    el.classList.add('active', 'bg-blue-50/50', 'border-haeon-primary');
+                    el.classList.remove('bg-white', 'border-slate-200');
+                    el.querySelector('div').classList.add('border-haeon-primary');
+                    el.querySelector('div').classList.remove('border-transparent');
+                } else {
+                    el.classList.remove('active', 'bg-blue-50/50', 'border-haeon-primary');
+                    el.classList.add('bg-white', 'border-slate-200');
+                    el.querySelector('div').classList.remove('border-haeon-primary');
+                    el.querySelector('div').classList.add('border-transparent');
+                }
+            });
+
+            // Update Content
+            const doc = doctors[index];
+            const content = document.getElementById('doctor-content');
+            
+            // Fade out effect simulation
+            content.style.opacity = '0';
+            
+            setTimeout(() => {
+                content.innerHTML = `
+                    <h3 class="text-2xl font-serif font-bold mb-2 text-white">${doc.name} <span class="text-sm font-sans font-normal opacity-80 ml-2">${doc.role}</span></h3>
+                    <p class="text-lg italic font-serif mb-6 text-blue-100 border-l-4 border-blue-400 pl-4 py-1">${doc.desc}</p>
+                    <div class="text-sm leading-relaxed opacity-90 font-light bg-black/10 p-4 rounded-lg">
+                        ${doc.details}
+                    </div>
+                `;
+                content.style.opacity = '1';
+            }, 200);
+        }
+
+        // Initialize First Doctor
+        document.addEventListener("DOMContentLoaded", () => {
+            showDoctor(0);
+        });
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,86 @@
+<!-- ===================== 통증 리포트 ===================== -->
+<div id="pain-report-view">
+<div class="report-scroll">
+  <div class="report-toolbar no-print">
+    <button onclick="painBackToForm()" class="flex items-center gap-1 font-semibold text-[15px] text-slate-800 active:opacity-50">
+      <i data-lucide="chevron-left" class="w-5 h-5"></i> 문진표로 돌아가기
+    </button>
+    <span id="pain-save-status" class="text-[12px] font-semibold text-[#8E8E93]"></span>
+    <div class="flex gap-2">
+      <button onclick="goHome()" class="text-slate-500 font-semibold text-[14px] px-4 py-2">홈으로 가기</button>
+      <button onclick="window.print()" class="bg-black text-white font-bold text-[14px] px-5 py-2.5 rounded-[10px] flex items-center gap-2">
+        <i data-lucide="printer" class="w-4 h-4"></i> 인쇄 / PDF 미리보기
+      </button>
+    </div>
+  </div>
+
+  <div class="report-columns"><div class="report-col report-col-left">
+  <!-- PAGE 1 : 통증 부위 -->
+  <div class="a4-page">
+    <div class="rp-header" style="border-bottom-color:#fc582b;">
+      <div class="rp-brand">
+        <i data-lucide="target" class="w-6 h-6 text-[#fc582b]"></i>
+        <div><div class="rp-title">해온한의원 통증 재활 리포트</div><div class="rp-sub">통증 부위 · 특징 요약</div></div>
+      </div>
+      <div class="rp-page-badge" style="color:#c94622;background:#f8e1db;border-color:#f2aa9c;">1 / 2</div>
+    </div>
+
+    <div class="rp-info-bar">
+      <div class="rp-info-item"><div class="rp-info-label">이름</div><div class="rp-info-value" id="pain-rp-name">-</div></div>
+      <div class="rp-info-item"><div class="rp-info-label">현재 통증</div><div class="rp-info-value" id="pain-rp-current">-</div></div>
+      <div class="rp-info-item"><div class="rp-info-label">최고 통증</div><div class="rp-info-value" id="pain-rp-max">-</div></div>
+      <div class="rp-info-item"><div class="rp-info-label">발생 시기</div><div class="rp-info-value" id="pain-rp-duration">-</div></div>
+      <div class="rp-info-item"><div class="rp-info-label">측정일</div><div class="rp-info-value" id="pain-rp-date">-</div></div>
+    </div>
+
+    <div class="rp-card flex flex-col items-center">
+      <div class="rp-section-title self-start"><i data-lucide="user" class="w-4 h-4 text-[#fc582b]"></i>통증 표시 부위</div>
+      <div class="flex gap-6 justify-center">
+        <div id="pain-rp-bodymap-front" style="position:relative;width:150px;"></div>
+        <div id="pain-rp-bodymap-back" style="position:relative;width:150px;"></div>
+      </div>
+      <div id="pain-rp-areas" class="w-full mt-3 flex flex-wrap gap-1"></div>
+    </div>
+
+    <div class="rp-card rp-soft">
+      <div class="rp-section-title"><i data-lucide="align-left" class="w-4 h-4 text-[#fc582b]"></i>기타 부위 / 방사통</div>
+      <p class="text-[13px] leading-[20px] text-[#3C3C43]" id="pain-rp-areadetail">-</p>
+    </div>
+
+    <div id="pain-rp-doctor-note-slot"></div>
+    <div class="rp-footer"><span>해온한의원 · 본 리포트는 진료 참고용이며 의학적 진단을 대체하지 않습니다.</span><span id="pain-rp-footer-1"></span></div>
+  </div>
+
+  </div><div class="report-col report-col-right">
+  <!-- PAGE 2 : 통증 특징 · 전신 상태 -->
+  <div class="a4-page">
+    <div class="rp-header" style="border-bottom-color:#fc582b;">
+      <div class="rp-brand">
+        <i data-lucide="clipboard-list" class="w-6 h-6 text-[#fc582b]"></i>
+        <div><div class="rp-title">통증 특징 · 전신 상태</div><div class="rp-sub">진료 시 참고할 배경 정보</div></div>
+      </div>
+      <div class="rp-page-badge" style="color:#c94622;background:#f8e1db;border-color:#f2aa9c;">2 / 2</div>
+    </div>
+
+    <div class="rp-card mb-3">
+      <div class="rp-section-title"><i data-lucide="activity" class="w-4 h-4 text-[#fc582b]"></i>통증 특징</div>
+      <div id="pain-rp-feature" class="text-[12px] leading-[20px] text-[#3C3C43]"></div>
+    </div>
+
+    <div class="rp-card mb-3">
+      <div class="rp-section-title"><i data-lucide="heart-pulse" class="w-4 h-4 text-[#fc582b]"></i>동반 증상 · 전신 상태</div>
+      <div id="pain-rp-symptoms" class="text-[12px] leading-[20px] text-[#3C3C43]"></div>
+    </div>
+
+    <div class="rp-card">
+      <div class="rp-section-title"><i data-lucide="history" class="w-4 h-4 text-[#fc582b]"></i>기저질환 · 생활습관 · 복용약</div>
+      <div id="pain-rp-history" class="text-[12px] leading-[20px] text-[#3C3C43]"></div>
+    </div>
+
+    <div id="pain-rp-private-note-slot"></div>
+    <div class="rp-footer"><span>해온한의원 · 본 리포트는 진료 참고용이며 의학적 진단을 대체하지 않습니다.</span><span id="pain-rp-footer-2"></span></div>
+  </div>
+  </div></div>
+</div>
+</div>
+

@@ -1,0 +1,110 @@
+<!-- ===================== 다이어트 리포트 ===================== -->
+<div id="diet-report-view">
+<div class="report-scroll">
+  <div class="report-toolbar no-print">
+    <button onclick="dietBackToForm()" class="flex items-center gap-1 font-semibold text-[15px] text-slate-800 active:opacity-50">
+      <i data-lucide="chevron-left" class="w-5 h-5"></i> 문진표로 돌아가기
+    </button>
+    <span id="diet-save-status" class="text-[12px] font-semibold text-[#8E8E93]"></span>
+    <div class="flex gap-2">
+      <button onclick="goHome()" class="text-slate-500 font-semibold text-[14px] px-4 py-2">홈으로 가기</button>
+      <button onclick="window.print()" class="bg-black text-white font-bold text-[14px] px-5 py-2.5 rounded-[10px] flex items-center gap-2">
+        <i data-lucide="printer" class="w-4 h-4"></i> 인쇄 / PDF 미리보기
+      </button>
+    </div>
+  </div>
+
+  <div class="report-columns"><div class="report-col report-col-left">
+  <!-- PAGE 1 : 오장 · 기혈수 · H-SCORE -->
+  <div class="a4-page">
+    <div class="rp-header" style="border-bottom-color:#799bf4;">
+      <div class="rp-brand">
+        <i data-lucide="scale" class="w-6 h-6 text-[#799bf4]"></i>
+        <div><div class="rp-title">해온 다이어트 H-SCORE 리포트</div><div class="rp-sub">오장 균형 · 기혈수(氣血水) 변증</div></div>
+      </div>
+      <div class="rp-page-badge" style="color:#607cc3;background:#e5ecfd;border-color:#b0caff;" id="diet-badge-1">1 / 2</div>
+    </div>
+
+    <div class="rp-info-bar">
+      <div class="rp-info-item"><div class="rp-info-label">이름</div><div class="rp-info-value" id="diet-rp-name">-</div></div>
+      <div class="rp-info-item"><div class="rp-info-label">성별</div><div class="rp-info-value" id="diet-rp-gender">-</div></div>
+      <div class="rp-info-item"><div class="rp-info-label">희망 체중</div><div class="rp-info-value" id="diet-rp-target">-</div></div>
+      <div class="rp-info-item"><div class="rp-info-label">다이어트 이유</div><div class="rp-info-value" id="diet-rp-reason" style="font-size:11px;">-</div></div>
+      <div class="rp-info-item"><div class="rp-info-label">측정일</div><div class="rp-info-value" id="diet-rp-date">-</div></div>
+    </div>
+
+    <div class="rp-card flex items-center gap-5 mb-3">
+      <div class="rp-ring" id="diet-hscore-ring" style="width:96px;height:96px;">
+        <div class="rp-ring-inner" style="width:70px;height:70px;">
+          <div class="text-[19px] font-extrabold text-black" id="diet-hscore-score">-</div>
+          <div class="text-[8px] text-[#8E8E93] font-bold">H-SCORE</div>
+        </div>
+      </div>
+      <div class="flex-1">
+        <div class="text-[15px] font-extrabold text-black mb-0.5" id="diet-hscore-grade">종합 건강 스코어</div>
+        <p class="text-[11px] leading-[16px] text-[#3C3C43]">오장 균형과 기혈수 변증을 종합한 해온 자체 건강 지표입니다.</p>
+      </div>
+    </div>
+
+    <div class="flex gap-4">
+      <div class="rp-card flex-1 flex flex-col items-center">
+        <div class="rp-section-title self-start"><i data-lucide="activity" class="w-4 h-4 text-[#799bf4]"></i>오장(五臟) 균형도</div>
+        <div id="diet-rp-radar"></div>
+        <p class="text-[10px] text-[#8E8E93] mt-1 text-center">중심에서 <b>멀수록 튼튼</b>, 가까울수록 <b>관리가 필요</b>합니다</p>
+        <div id="diet-rp-organ-legend" class="w-full mt-2"></div>
+      </div>
+      <div class="rp-card flex-1 flex flex-col items-center">
+        <div class="rp-section-title self-start"><i data-lucide="droplets" class="w-4 h-4 text-[#799bf4]"></i>기·혈·수 밸런스</div>
+        <div id="diet-rp-qhs-radar"></div>
+        <p class="text-[10px] text-[#8E8E93] mt-1 text-center">7가지 변증 유형 — <b>바깥쪽일수록 안정적</b>입니다</p>
+        <div id="diet-rp-qhs-legend" class="w-full mt-2"></div>
+      </div>
+    </div>
+
+    <div class="rp-card">
+      <div class="rp-section-title"><i data-lucide="notebook-pen" class="w-4 h-4 text-[#799bf4]"></i>생활습관 요약</div>
+      <div id="diet-rp-lifestyle" class="text-[12px] leading-[20px] text-[#3C3C43]"></div>
+    </div>
+
+    <div id="diet-rp-doctor-note-slot"></div>
+    <div class="rp-footer"><span>해온한의원 · 본 리포트는 진료 참고용이며 의학적 진단을 대체하지 않습니다.</span><span id="diet-rp-footer-1"></span></div>
+  </div>
+
+  </div><div class="report-col report-col-right">
+  <!-- PAGE 2 : 병력 · 여성건강 · 다이어트 가이드 · 종합소견 -->
+  <div class="a4-page">
+    <div class="rp-header" style="border-bottom-color:#799bf4;">
+      <div class="rp-brand">
+        <i data-lucide="clipboard-list" class="w-6 h-6 text-[#799bf4]"></i>
+        <div><div class="rp-title">병력 · 감량 가이드 · 종합소견</div><div class="rp-sub">진료 시 참고할 배경 정보</div></div>
+      </div>
+      <div class="rp-page-badge" style="color:#607cc3;background:#e5ecfd;border-color:#b0caff;">2 / 2</div>
+    </div>
+
+    <div class="rp-card rp-soft mb-3" id="diet-rp-women-card" style="display:none;">
+      <div class="rp-section-title"><i data-lucide="heart" class="w-4 h-4 text-pink-500"></i>여성 건강</div>
+      <div id="diet-rp-women" class="text-[12px] leading-[20px] text-[#3C3C43]"></div>
+    </div>
+
+    <div class="rp-card mb-3">
+      <div class="rp-section-title"><i data-lucide="history" class="w-4 h-4 text-[#799bf4]"></i>비만 치료 이력 · 가족력</div>
+      <div id="diet-rp-history" class="text-[12px] leading-[20px] text-[#3C3C43]"></div>
+    </div>
+
+    <div class="rp-card mb-3">
+      <div class="rp-section-title"><i data-lucide="salad" class="w-4 h-4 text-[#799bf4]"></i>건강한 감량을 위한 일반 가이드</div>
+      <div id="diet-rp-tips" class="text-[12px] leading-[20px] text-[#3C3C43]"></div>
+    </div>
+
+    <div class="rp-card">
+      <div class="rp-section-title"><i data-lucide="lightbulb" class="w-4 h-4 text-[#799bf4]"></i>종합 소견</div>
+      <p class="text-[13px] leading-[20px] text-[#3C3C43]" id="diet-rp-overall">-</p>
+    </div>
+
+    <div id="diet-rp-private-note-slot"></div>
+    <div class="rp-footer"><span>해온한의원 · 본 리포트는 진료 참고용이며 의학적 진단을 대체하지 않습니다.</span><span id="diet-rp-footer-2"></span></div>
+  </div>
+  </div></div>
+</div>
+</div>
+

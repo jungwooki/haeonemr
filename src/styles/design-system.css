@@ -1,0 +1,70 @@
+
+/* Shared HAEON visual system: all survey flows and clinical results. */
+:root{--ios-bg:#FAF9FE;--ios-card:#FFFFFF;--ios-tint:#2563EB;--ios-tint-deep:#5145CD;--ios-text:#202333;--ios-gray:#697386;--ios-separator:#E8E9F2;--haeon-lavender:#F3EFFE;--haeon-blue:#2563EB}
+body{font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;color:var(--ios-text);font-size:16px;line-height:1.55}
+button,input,select,textarea{font-family:inherit}
+button{transition:background-color .18s,box-shadow .18s}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #93B4FF!important;outline-offset:3px}
+input,select,textarea{accent-color:var(--haeon-blue)}
+#gateway-view>div:first-child,#hub-view,[id$="app-shell"]{background:linear-gradient(180deg,#F0EBFF 0,#FAF8FF 260px,#FFFFFF 600px)!important}
+h1,h2{color:#202333!important;letter-spacing:-.035em}
+h1{font-size:clamp(32px,3vw,40px)!important;line-height:1.3!important}
+h2{font-size:clamp(28px,2.5vw,32px)!important;line-height:1.35!important}
+[id$="progress-fill"]{background:#2563EB!important}
+button[id$="next-btn"],button[onclick*="NextStep()"],button[onclick="nextStep()"]{background:linear-gradient(110deg,#2563EB 0%,#6555E7 65%,#B849C5 100%)!important;color:#FFF!important;box-shadow:0 6px 18px #5145CD20}
+[id$="app-shell"] [class*="bg-[#FFCC00]"],[id$="app-shell"] [class*="bg-[#fc582b]"],[id$="app-shell"] [class*="bg-[#799bf4]"],[id$="app-shell"] [class*="bg-[#a6a1fb]"]{background-color:#2563EB!important;color:#FFF}
+[id$="app-shell"] [class*="border-[#FFCC00]"],[id$="app-shell"] [class*="border-[#fc582b]"],[id$="app-shell"] [class*="border-[#799bf4]"],[id$="app-shell"] [class*="border-[#a6a1fb]"]{border-color:#2563EB!important}
+button.bg-black,button[class*="bg-[#FFCC00]"],button[class*="bg-[#fc582b]"],button[class*="bg-blue-600"]{background-color:#2563EB!important;color:white!important}
+[class*="text-[#C79000]"],[class*="text-[#fc582b]"]{color:#5145CD!important}
+[class*="bg-[#FFF9E0]"],[class*="bg-[#FFFBEA]"]{background-color:#F3EFFE!important}
+.rp-page-badge,.rp-chip{background:#F0EBFF!important;color:#5145CD!important;border-color:#DDD5FA!important}
+.rp-header{border-bottom-color:#DDD5FA!important}
+.clinic-list-pane input{min-width:0;width:100%}
+@media screen{
+.report-scroll{display:flex;flex-direction:column;overflow:hidden;padding:0;background:#FFF;scroll-snap-type:none}
+.report-toolbar{position:relative;flex-shrink:0;min-height:68px;margin:0;padding:12px 24px;background:linear-gradient(100deg,#EEE8FF,#F8F6FF 65%,#FFF);gap:12px;flex-wrap:wrap}
+.report-toolbar>button:first-child{color:#2563EB;font-size:14px}
+.report-columns{display:grid;grid-template-columns:240px minmax(0,1.15fr) minmax(0,1fr);gap:0;max-width:none;width:100%;flex:1;min-height:0;margin:0;padding:0;align-items:stretch;overflow:hidden}
+.report-col{overflow-y:auto;padding:24px;min-height:0;scrollbar-gutter:stable}
+.report-col-left{background:#FAF9FE;border-right:1px solid #E8E9F2}
+.report-col-right{background:#FFF}
+.report-col-left::before,.report-col-right::before{font-size:15px;color:#202333;letter-spacing:0;margin-bottom:18px;padding:0;font-weight:750}
+.report-col-left::before{content:'1차 리포트'}
+.report-col-right::before{content:'메모 및 진료안내'}
+.a4-page{aspect-ratio:auto;overflow:visible;padding:22px;margin-bottom:20px;border:1px solid #E8E9F2;border-radius:14px;box-shadow:0 3px 14px #25214704;flex-shrink:0;scroll-snap-align:none}
+.rp-title{font-size:22px;color:#202333;line-height:1.4}
+.rp-sub,.rp-info-label,.rp-footer{font-size:12px}
+.rp-info-bar{grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:12px 0;padding:14px 0;background:#F8F6FE}
+.rp-info-value{font-size:15px;color:#202333;overflow-wrap:anywhere}
+.rp-section-title{font-size:16px;color:#202333;flex-wrap:wrap}
+.rp-card{padding:16px;border-radius:12px;margin-bottom:14px}
+.rp-soft{background:#F9F7FE}
+.a4-page [class*="text-[10px]"],.a4-page [class*="text-[11px]"],.a4-page [class*="text-[12px]"]{font-size:13px;line-height:1.6}
+.rp-organ-row{font-size:14px;padding:8px 0}
+.emr-sidebar{display:flex;flex-direction:column;min-height:0;background:#FFF;border-right:1px solid #E8E9F2}
+.emr-sidebar-head{padding:20px 16px;border-bottom:1px solid #E8E9F2}
+.emr-brand{color:#2563EB;font-weight:800;font-size:15px;letter-spacing:.06em}
+.emr-sidebar-head p{font-size:12px;color:#697386;margin:4px 0 14px}
+.emr-sidebar input{border:1px solid #E8E9F2;border-radius:8px;padding:10px;width:100%;font-size:13px;background:#FAF9FE;box-sizing:border-box}
+.emr-patients{overflow-y:auto;flex:1;min-height:0}
+.emr-patient,.emr-record{display:block;text-align:left;width:100%;padding:14px 16px;border:0;border-bottom:1px solid #EEF0F5;background:white;color:#202333;cursor:pointer}
+.emr-patient:hover,.emr-record:hover{background:#F8F6FE}
+.emr-patient[aria-current="true"]{background:#EEF3FF;box-shadow:inset 3px 0 #2563EB}
+.emr-patient strong{display:block;font-size:15px}
+.emr-patient small,.emr-record small{display:block;font-size:12px;color:#697386;margin-top:4px}
+.emr-records{border-top:1px solid #E8E9F2;max-height:35%;overflow-y:auto}
+.emr-records h3{padding:12px 16px 0;margin:0;font-size:13px;color:#5145CD;font-weight:700}
+.emr-record{font-size:13px;padding:12px 16px}
+.emr-record[aria-current="true"]{color:#2563EB;background:#F3F6FF}
+.emr-empty{padding:20px 16px;font-size:13px;color:#697386}
+.emr-notes [id$="note-slot"]>.rp-card{border:1px solid #E8E9F2!important;background:#FFF!important;padding:20px}
+.emr-notes textarea{min-height:160px;resize:vertical;padding:12px;border:1px solid #E8E9F2;border-radius:8px;font-size:15px;line-height:1.7;background:#FCFBFF}
+.emr-notes button{font-size:13px;background:#EEF3FF;color:#2563EB!important;border-radius:7px;padding:7px 16px}
+.emr-notes .rp-section-title span{font-size:12px}
+.emr-reference-heading{font-size:14px;color:#697386;margin:10px 0 16px;font-weight:700}
+@media(min-width:860px){.clinic-list-pane{width:260px}}
+@media(max-width:1199px){.report-columns{grid-template-columns:200px minmax(0,1fr) minmax(0,1fr)}.report-col{padding:14px}.a4-page{padding:16px}.a4-page>.flex{flex-wrap:wrap}.a4-page>.flex>.rp-card{min-width:160px}.rp-title{font-size:20px}}
+@media(max-width:900px){.report-scroll{overflow-y:auto}.report-columns{display:flex;flex-direction:column;overflow:visible;flex:none}.emr-sidebar{max-height:280px;border-bottom:1px solid #E8E9F2;flex-shrink:0}.emr-sidebar-head{padding:12px 16px}.emr-sidebar-head p{display:none}.emr-sidebar input{margin-top:8px}.emr-patients{min-height:85px}.emr-records{max-height:100px}.report-col{overflow:visible;flex:none;padding:16px}.report-toolbar{padding:12px 16px}.report-toolbar>div{flex-wrap:wrap}.report-toolbar button{font-size:13px!important;padding:8px!important}.a4-page{padding:18px}.report-col-left{border-right:0}.rp-info-bar{grid-template-columns:repeat(2,1fr)}}
+}
+@media print{.emr-sidebar,.emr-notes,.emr-reference-heading{display:none!important}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}

@@ -1,0 +1,103 @@
+<!-- ===================== 유소년스포츠 리포트 ===================== -->
+<div id="sports-report-view">
+<div class="report-scroll">
+  <div class="report-toolbar no-print">
+    <button onclick="sportsBackToForm()" class="flex items-center gap-1 font-semibold text-[15px] text-slate-800 active:opacity-50">
+      <i data-lucide="chevron-left" class="w-5 h-5"></i> 문진표로 돌아가기
+    </button>
+    <span id="sports-save-status" class="text-[12px] font-semibold text-[#8E8E93]"></span>
+    <div class="flex gap-2">
+      <button onclick="goHome()" class="text-slate-500 font-semibold text-[14px] px-4 py-2">홈으로 가기</button>
+      <button onclick="window.print()" class="bg-black text-white font-bold text-[14px] px-5 py-2.5 rounded-[10px] flex items-center gap-2">
+        <i data-lucide="printer" class="w-4 h-4"></i> 인쇄 / PDF 미리보기
+      </button>
+    </div>
+  </div>
+
+  <div class="report-columns"><div class="report-col report-col-left">
+  <!-- PAGE 1 : 기본정보 · 운동능력 -->
+  <div class="a4-page">
+    <div class="rp-header" style="border-bottom-color:#fc582b;">
+      <div class="rp-brand">
+        <i data-lucide="trophy" class="w-6 h-6 text-[#fc582b]"></i>
+        <div><div class="rp-title">해온한의원 유소년 스포츠 리포트</div><div class="rp-sub">선수 기본정보 · 기초 운동능력</div></div>
+      </div>
+      <div class="rp-page-badge" style="color:#c94622;background:#f8e1db;border-color:#f2aa9c;">1 / 2</div>
+    </div>
+
+    <div class="rp-info-bar">
+      <div class="rp-info-item"><div class="rp-info-label">이름</div><div class="rp-info-value" id="sports-rp-name">-</div></div>
+      <div class="rp-info-item"><div class="rp-info-label">성별/생년월일</div><div class="rp-info-value" id="sports-rp-dob" style="font-size:12px;">-</div></div>
+      <div class="rp-info-item"><div class="rp-info-label">소속/종목</div><div class="rp-info-value" id="sports-rp-sport" style="font-size:12px;">-</div></div>
+      <div class="rp-info-item"><div class="rp-info-label">최근 6개월 성장</div><div class="rp-info-value" id="sports-rp-growth" style="font-size:12px;">-</div></div>
+      <div class="rp-info-item"><div class="rp-info-label">측정일</div><div class="rp-info-value" id="sports-rp-date">-</div></div>
+    </div>
+
+    <div class="rp-card rp-soft">
+      <div class="rp-section-title"><i data-lucide="message-circle" class="w-4 h-4 text-[#fc582b]"></i>주소증(병원을 방문하게 된 가장 주된 불편한 이유, 증상)</div>
+      <p class="text-[13px] leading-[20px] text-[#3C3C43]" id="sports-rp-complaint">-</p>
+    </div>
+
+    <div class="rp-card mb-3">
+      <div class="rp-section-title"><i data-lucide="activity" class="w-4 h-4 text-[#fc582b]"></i>훈련량</div>
+      <div id="sports-rp-training" class="text-[12px] leading-[20px] text-[#3C3C43]"></div>
+    </div>
+
+    <div class="rp-card">
+      <div class="rp-section-title"><i data-lucide="gauge" class="w-4 h-4 text-[#fc582b]"></i>기초 운동 능력 자가 진단</div>
+      <div id="sports-rp-ability" class="grid grid-cols-2 gap-x-4"></div>
+    </div>
+
+    <div id="sports-rp-doctor-note-slot"></div>
+    <div class="rp-footer"><span>해온한의원 · 본 리포트는 진료 참고용이며 의학적 진단을 대체하지 않습니다.</span><span id="sports-rp-footer-1"></span></div>
+  </div>
+
+  </div><div class="report-col report-col-right">
+  <!-- PAGE 2 : 컨디션 · 상세증상 -->
+  <div class="a4-page">
+    <div class="rp-header" style="border-bottom-color:#fc582b;">
+      <div class="rp-brand">
+        <i data-lucide="clipboard-list" class="w-6 h-6 text-[#fc582b]"></i>
+        <div><div class="rp-title">컨디션 · 상세 증상 체크</div><div class="rp-sub">최근 1주일 기준</div></div>
+      </div>
+      <div class="rp-page-badge" style="color:#c94622;background:#f8e1db;border-color:#f2aa9c;">2 / 2</div>
+    </div>
+
+    <div class="rp-card mb-3">
+      <div class="rp-section-title"><i data-lucide="heart-pulse" class="w-4 h-4 text-[#fc582b]"></i>컨디션 & 생활습관</div>
+      <div id="sports-rp-condition" class="text-[12px] leading-[20px] text-[#3C3C43]"></div>
+    </div>
+
+    <div class="rp-card mb-3">
+      <div class="rp-section-title"><i data-lucide="ruler" class="w-4 h-4 text-[#fc582b]"></i>성장 발달</div>
+      <div id="sports-rp-growthdetail" class="text-[12px] leading-[20px] text-[#3C3C43]"></div>
+    </div>
+
+    <div class="rp-card mb-3">
+      <div class="rp-section-title"><i data-lucide="bone" class="w-4 h-4 text-[#fc582b]"></i>스포츠 손상</div>
+      <div id="sports-rp-injury" class="text-[12px] leading-[20px] text-[#3C3C43]"></div>
+    </div>
+
+    <div class="flex gap-4 mb-3">
+      <div class="rp-card flex-1">
+        <div class="rp-section-title"><i data-lucide="brain" class="w-4 h-4 text-[#fc582b]"></i>멘탈리티</div>
+        <div id="sports-rp-mental" class="text-[12px] leading-[20px] text-[#3C3C43]"></div>
+      </div>
+      <div class="rp-card flex-1">
+        <div class="rp-section-title"><i data-lucide="shield" class="w-4 h-4 text-[#fc582b]"></i>면역/알레르기</div>
+        <div id="sports-rp-immune" class="text-[12px] leading-[20px] text-[#3C3C43]"></div>
+      </div>
+    </div>
+
+    <div class="rp-card rp-soft">
+      <div class="rp-section-title"><i data-lucide="user-check" class="w-4 h-4 text-[#fc582b]"></i>보호자 확인</div>
+      <p class="text-[13px] text-[#3C3C43]" id="sports-rp-guardian">-</p>
+    </div>
+
+    <div id="sports-rp-private-note-slot"></div>
+    <div class="rp-footer"><span>해온한의원 · 본 리포트는 진료 참고용이며 의학적 진단을 대체하지 않습니다.</span><span id="sports-rp-footer-2"></span></div>
+  </div>
+  </div></div>
+</div>
+</div>
+

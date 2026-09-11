@@ -1,0 +1,79 @@
+
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css");
+:root{
+  --ios-bg:#F2F2F7; --ios-card:#FFFFFF; --ios-tint:#FFCC00; --ios-tint-deep:#C79000;
+  --ios-text:#000000; --ios-gray:#8E8E93; --ios-separator:#EDEEF1;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Pretendard',sans-serif;background:var(--ios-bg);color:var(--ios-text);-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;margin:0;}
+.animate-fade-in{animation:softFadeIn .38s cubic-bezier(.4,0,.2,1) forwards;}
+@keyframes softFadeIn{0%{opacity:0;transform:translateY(8px)}100%{opacity:1;transform:translateY(0)}}
+.step-content{display:none}.step-content.active{display:flex}
+.deep-step-content{display:none}.deep-step-content.active{display:flex}
+.diet-step-content{display:none}.diet-step-content.active{display:flex}
+.women-step-content{display:none}.women-step-content.active{display:flex}
+.pain-step-content{display:none}.pain-step-content.active{display:flex}
+.sports-step-content{display:none}.sports-step-content.active{display:flex}
+.postpartum-step-content{display:none}.postpartum-step-content.active{display:flex}
+#deep-report-view{display:none}
+#deep-report-view.active{display:block}
+#diet-report-view{display:none}
+#diet-report-view.active{display:block}
+#women-report-view{display:none}
+#women-report-view.active{display:block}
+#pain-report-view{display:none}
+#pain-report-view.active{display:block}
+#sports-report-view{display:none}
+#sports-report-view.active{display:block}
+#postpartum-report-view{display:none}
+#postpartum-report-view.active{display:block}
+input[type="number"]::-webkit-inner-spin-button,input[type="number"]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(0,0,0,.15);border-radius:10px}
+
+#report-view{display:none}
+#report-view.active{display:block}
+.report-scroll{width:100%;height:100%;overflow-y:auto;background:#E8E8ED;padding:24px 0 60px;scroll-snap-type:y proximity;}
+@media screen{
+  #report-view.active,#deep-report-view.active,#diet-report-view.active,#women-report-view.active,#pain-report-view.active,#sports-report-view.active,#postpartum-report-view.active{position:fixed;inset:0;z-index:40;}
+}
+.report-toolbar{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--ios-separator);padding:12px 20px;display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.a4-page{width:100%;aspect-ratio:210/297;overflow-y:auto;background:#fff;margin:0 0 16px 0;box-shadow:0 4px 16px rgba(0,0,0,.06);border-radius:8px;box-sizing:border-box;padding:28px 32px;display:flex;flex-direction:column;scroll-snap-align:start;scroll-margin-top:24px;}
+.report-columns{display:flex;gap:20px;max-width:1400px;margin:0 auto;align-items:flex-start;padding:0 20px;}
+.report-col{flex:1;min-width:0;display:flex;flex-direction:column;}
+.report-col-left::before{content:'1차 리포트';display:block;font-size:11px;font-weight:800;color:#8E8E93;letter-spacing:.05em;text-transform:uppercase;margin-bottom:8px;padding-left:4px;}
+.report-col-right::before{content:'메모 및 진료안내';display:block;font-size:11px;font-weight:800;color:#8E8E93;letter-spacing:.05em;text-transform:uppercase;margin-bottom:8px;padding-left:4px;}
+.a4-page:last-child{margin-bottom:0}
+.rp-header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid var(--ios-tint);padding-bottom:10px;margin-bottom:14px}
+.rp-brand{display:flex;align-items:center;gap:8px}
+.rp-title{font-size:20px;font-weight:800;color:#000;letter-spacing:-.3px}
+.rp-sub{font-size:11px;color:var(--ios-gray);margin-top:2px}
+.rp-page-badge{font-size:10px;font-weight:700;color:var(--ios-tint-deep);background:#FFF9E0;border:1px solid #FFE58F;border-radius:999px;padding:4px 10px}
+.rp-info-bar{display:grid;grid-template-columns:repeat(5,1fr);background:#FAFBFC;border:1px solid var(--ios-separator);border-radius:8px;padding:8px 0;margin-bottom:10px}
+.rp-info-item{text-align:center;border-right:1px solid var(--ios-separator)}
+.rp-info-item:last-child{border-right:none}
+.rp-info-label{font-size:9px;color:var(--ios-gray);font-weight:700}
+.rp-info-value{font-size:14px;font-weight:800;color:#000;margin-top:2px}
+.rp-section-title{font-size:13px;font-weight:800;color:#000;display:flex;align-items:center;gap:6px;margin-bottom:8px}
+.rp-card{background:#fff;border:1px solid var(--ios-separator);border-radius:10px;padding:12px 14px;margin-bottom:8px}
+.rp-soft{background:#FAFAFC}
+.rp-footer{margin-top:auto;padding-top:8px;border-top:1px solid var(--ios-separator);display:flex;justify-content:space-between;font-size:8px;color:var(--ios-gray)}
+.rp-chip{display:inline-block;font-size:10px;font-weight:700;background:#FFF9E0;color:var(--ios-tint-deep);border:1px solid #FFE58F;border-radius:999px;padding:3px 9px;margin:2px 3px 2px 0}
+.rp-chart-box{position:relative;width:100%;height:180px}
+.rp-organ-row{display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px dashed var(--ios-separator);font-size:11px}
+.rp-organ-row:last-child{border-bottom:none}
+.rp-status-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:5px}
+.rp-ring{width:118px;height:118px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.rp-ring-inner{width:86px;height:86px;background:#fff;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center}
+@page{size:A4;margin:0}
+@media print{
+  body *{visibility:hidden}
+  #report-view,#report-view *,#deep-report-view,#deep-report-view *,#diet-report-view,#diet-report-view *,#women-report-view,#women-report-view *,#pain-report-view,#pain-report-view *,#sports-report-view,#sports-report-view *,#postpartum-report-view,#postpartum-report-view *{visibility:visible}
+  #report-view,#deep-report-view,#diet-report-view,#women-report-view,#pain-report-view,#sports-report-view,#postpartum-report-view{position:absolute;top:0;left:0;width:100%}
+  .report-scroll{overflow:visible;background:#fff;padding:0}
+  .no-print{display:none!important}
+  .report-columns{display:block!important;max-width:none;margin:0;padding:0;}
+  .report-col{display:block!important;width:auto;}
+  .report-col-right{display:none!important;}
+  .report-col-left::before,.report-col-right::before{display:none!important;}
+  .a4-page{box-shadow:none;margin:0;border-radius:0;page-break-after:always;width:210mm;min-height:297mm;aspect-ratio:auto;overflow:visible;}
+  .a4-page:last-child{page-break-after:auto}
+}

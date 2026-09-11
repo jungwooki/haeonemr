@@ -1,0 +1,24 @@
+<div id="mental-report-view">
+  <div class="report-scroll">
+    <div class="report-toolbar no-print">
+      <button type="button" onclick="MentalEmr.close()">← 환자 기록으로</button>
+      <span>MPS 멘탈 · 저장된 문진 결과</span>
+      <div class="flex gap-2"><button type="button" onclick="MentalEmr.download()" class="px-4 py-2">결과 다운로드(JSON)</button><button type="button" onclick="window.print()" class="bg-black text-white px-4 py-2 rounded-lg">인쇄 / PDF</button></div>
+    </div>
+    <div class="report-columns">
+      <div class="report-col report-col-left">
+        <div class="a4-page">
+          <div class="rp-header"><div><div class="rp-title">AI MPS M-서베이</div><div class="rp-sub">결과 요약 (지도자/스탭용)</div></div></div>
+          <div id="mental-rp-info" class="rp-info-bar"></div>
+          <div style="height:320px;position:relative"><canvas id="mental-rp-chart"></canvas></div>
+          <div id="mental-rp-scores"></div>
+          <div id="mental-rp-doctor-note-slot"></div>
+        </div>
+      </div>
+      <div class="report-col report-col-right">
+        <div id="mental-rp-private-note-slot"></div>
+        <div class="rp-card"><div class="rp-section-title">문항별 응답</div><div id="mental-rp-answers"></div></div>
+      </div>
+    </div>
+  </div>
+</div>

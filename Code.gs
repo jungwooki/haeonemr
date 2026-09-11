@@ -1,6 +1,12 @@
 // Replace the existing bound Apps Script Code.gs with this entire file.
 function doPost(e){
+  if(!e||!e.postData||typeof e.postData.contents!=='string'){
+    var message='doPost는 편집기의 실행 버튼으로 테스트하지 않습니다. 저장 후 배포 → 배포 관리 → 수정 → 새 버전 → 배포를 진행하고, EMR 웹페이지에서 설문을 제출해 주세요.';
+    console.warn(message);
+    return ContentService.createTextOutput(JSON.stringify({ok:false,error:message})).setMimeType(ContentService.MimeType.JSON);
+  }
   var imagePayload=JSON.parse(e.postData.contents);
+  if(imagePayload.type==='mpsMental') return mentalPost_(imagePayload);
   if(imagePayload.type==='recordDelete') return recordDeletePost_(imagePayload);
   if(imagePayload.type==='haeonImages') return imagePost_(imagePayload);
   var sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('records')
@@ -18,11 +24,13 @@ function doPost(e){
   if(d.type === 'updateNote'){
     var rows = sh.getDataRange().getValues();
     var targetTime = new Date(d.ts).getTime();
-    var col = (d.field === 'privateNote') ? 10 : 9; // 9=주치의 안내, 10=프리노트
+    var noteColumns={doctorNote:9,privateNote:10,interpretationNote:11};
+    var col=noteColumns[d.field];
+    if(!col) return ContentService.createTextOutput(JSON.stringify({ok:false,error:'지원하지 않는 메모 항목입니다.'})).setMimeType(ContentService.MimeType.JSON);
     for(var i=0;i<rows.length;i++){
       var rowTs = rows[i][0];
       var rowTime = (rowTs instanceof Date) ? rowTs.getTime() : new Date(rowTs).getTime();
-      if(String(rows[i][2]).trim() === String(d.name).trim() && Math.abs(rowTime - targetTime) < 2000){
+      if(String(rows[i][2]).trim() === String(d.name).trim() && (d.category ? rowTime===targetTime && String(rows[i][1]||'소아')===d.category : Math.abs(rowTime-targetTime)<2000)){
         sh.getRange(i+1, col).setValue(d.value || '');
         break;
       }
@@ -34,11 +42,31 @@ function doPost(e){
   return ContentService.createTextOutput(JSON.stringify({ok:true})).setMimeType(ContentService.MimeType.JSON);
 }
 function doGet(e){
+  if(!e||!e.parameter){
+    var message='doGet는 배포된 웹 앱 URL로 호출하는 함수입니다. 편집기의 실행 버튼 대신 EMR 웹페이지에서 조회해 주세요.';
+    console.warn(message);
+    return ContentService.createTextOutput(JSON.stringify({ok:false,error:message})).setMimeType(ContentService.MimeType.JSON);
+  }
+  if(e.parameter.type==='noteCapabilities') return ContentService.createTextOutput(JSON.stringify({ok:true,protocol:'haeon-notes-v2'})).setMimeType(ContentService.MimeType.JSON);
+  if(e.parameter.type==='mpsMental') return mentalGet_(e.parameter);
   if(e.parameter.type==='recordDelete') return recordDeleteGet_(e.parameter);
   if(e.parameter.type==='haeonImages') return imageGet_(e.parameter);
   var sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('records');
   var q = (e.parameter.q || '').trim();
   var rows = sh ? sh.getDataRange().getValues() : [];
+  // Small save confirmation response; older clients keep the full search API.
+  if(e.parameter.type==='noteRead'){
+    var noteFields={doctorNote:8,privateNote:9,interpretationNote:10};
+    var field=e.parameter.field, matches=[];
+    if(!Object.prototype.hasOwnProperty.call(noteFields,field)) return ContentService.createTextOutput(JSON.stringify({ok:false,error:'Unsupported note field'})).setMimeType(ContentService.MimeType.JSON);
+    rows.forEach(function(row){
+      if(String(row[2])!==q||new Date(row[0]).getTime()!==new Date(e.parameter.ts).getTime()||String(row[1]||'소아')!==e.parameter.category) return;
+      var record={ts:row[0],category:row[1]||'소아'};
+      record[field]=row[noteFields[field]]||'';
+      matches.push(record);
+    });
+    return ContentService.createTextOutput(JSON.stringify({ok:true,patients:matches.length?[{name:q,records:matches}]:[]})).setMimeType(ContentService.MimeType.JSON);
+  }
   var patients = {}; // key: 이름||차트번호
   for (var i=0;i<rows.length;i++){
     var r = rows[i];
@@ -48,7 +76,7 @@ function doGet(e){
     if (q && name.toString().indexOf(q) === -1 && chart.toString().indexOf(q) === -1) continue;
     var key = name + '||' + chart;
     if (!patients[key]) patients[key] = { name: name, chartNumber: chart, records: [] };
-    patients[key].records.push({ ts:r[0], category:r[1], gender:r[4], birthDate:r[5], ageGroup:r[6], data:r[7], doctorNote:r[8]||'', privateNote:r[9]||'' });
+    patients[key].records.push({ ts:r[0], category:r[1], gender:r[4], birthDate:r[5], ageGroup:r[6], data:r[7], doctorNote:r[8]||'', privateNote:r[9]||'', interpretationNote:r[10]||'' });
   }
   var out = [];
   for (var k in patients){
@@ -113,7 +141,7 @@ function imageGet_(p){
       return imageJson_({ok:true,images:items.map(function(item){
         var thumbnail=null,mime=null;
         try{var thumb=DriveApp.getFileById(item.id).getThumbnail();if(thumb){thumbnail=Utilities.base64Encode(thumb.getBytes());mime=thumb.getContentType();}}catch(e){}
-        return {id:item.id,name:item.name,createdAt:item.createdAt,thumbnail:thumbnail,thumbnailMime:mime,ocr:item.ocr||null};
+        return {id:item.id,name:item.name,createdAt:item.createdAt,thumbnail:thumbnail,thumbnailMime:mime};
       })});
     }
     if(p.op==='read'){
@@ -156,16 +184,6 @@ function imagePost_(d){
         var file=folder.createFile(blob.copyBlob().setName(Utilities.getUuid()));created.push(file);
         items.push({id:file.getId(),name:blob.getName(),createdAt:new Date().toISOString()});
       });
-    }else if(d.operation==='ocr'||d.operation==='review'){
-      var exam=items.filter(function(item){return item.id===d.id;})[0];
-      if(!exam) throw new Error('이 문진 기록에 첨부된 이미지가 아닙니다.');
-      if(d.operation==='ocr'){
-        if(exam.ocr) throw new Error('이미 읽은 검사지입니다. 추출 결과 확인에서 수정해 주세요.');
-        exam.ocr=runImageOcr_(exam);
-      }else{
-        if(!exam.ocr) throw new Error('검사지를 먼저 읽어 주세요.');
-        exam.ocr.values=validateReviewedValues_(d.values);exam.ocr.reviewed=true;exam.ocr.reviewedAt=new Date().toISOString();
-      }
     }else if(d.operation==='delete'){
       var target=items.filter(function(item){return item.id===d.id;})[0];
       if(!target) throw new Error('삭제할 이미지가 없습니다.');
@@ -181,88 +199,6 @@ function imagePost_(d){
     if(receiptSheet&&receiptKey) receiptSheet.appendRow([receiptKey,JSON.stringify({state:committed?'complete':'failed',error:committed?'':error.message}),new Date()]);
     return imageJson_({ok:false,error:error.message});
   }finally{if(lock.hasLock()) lock.releaseLock();}
-}
-
-// Labels and units must remain explicit: never infer values from graph axes.
-var OCR_FIELDS = {
- examDate:['검사일시','text'],birthDate:['생년월일','text'],gender:['성별','text'],memberNumber:['검사지 회원번호','text'],
- height:['키','cm'],weight:['체중','kg'],skeletalMuscleMass:['골격근량','kg'],bodyFatMass:['체지방량','kg'],bodyFatPercent:['체지방률','%'],bmi:['BMI','kg/m²'],
- bodyWater:['체수분','L'],protein:['단백질','kg'],minerals:['무기질','kg'],growthScore:['성장점수','점'],phaseAngle:['전신 위상각','°']
-};
-function parseExamText_(text){
-  var values={},evidence={};
-  var patterns={height:/(?:신장|키|Height)\s*(?:\(cm\)|cm)?\s*[:：]?\s*(\d{2,3}(?:\.\d+)?)\s*(?:cm)?/ig,
-    weight:/(?:체\s*중|Weight)\s*(?:\(kg\)|kg)?\s*[:：]?\s*(\d{1,3}(?:\.\d+)?)/ig,
-    skeletalMuscleMass:/(?:골격근량|Skeletal Muscle Mass)\s*(?:\(kg\)|kg)?\s*[:：]?\s*(\d{1,3}(?:\.\d+)?)/ig,
-    bodyFatMass:/(?:체지방량|체지방(?!률)|Body Fat Mass)\s*(?:\(kg\)|kg)?\s*[:：]?\s*(\d{1,3}(?:\.\d+)?)/ig,
-    bodyFatPercent:/(?:체지방률|Percent Body Fat)\s*(?:\(%\)|%)?\s*[:：]?\s*(\d{1,3}(?:\.\d+)?)/ig,
-    bmi:/(?:B\s*M\s*I|Body Mass Index)\s*(?:\(kg\/m[²2]\)|kg\/m[²2])?\s*[:：]?\s*(\d{1,2}(?:\.\d+)?)/ig,
-    bodyWater:/체수분\s*(?:\(L\)|L)?\s*[:：]?\s*(\d{1,3}(?:\.\d+)?)/ig,
-    protein:/단백질\s*(?:\(kg\)|kg)?\s*[:：]?\s*(\d{1,3}(?:\.\d+)?)/ig,
-    minerals:/무기질\s*(?:\(kg\)|kg)?\s*[:：]?\s*(\d{1,2}(?:\.\d+)?)/ig,
-    growthScore:/(?:성장점수|Growth Score)\s*[:：]?\s*(\d{1,3}(?:\.\d+)?)\s*(?:\/\s*100)?/ig,
-    phaseAngle:/(?:전신\s*위상각|Whole Body Phase Angle)\s*[:：]?\s*(\d{1,2}(?:\.\d+)?)/ig};
-  var lines=String(text).split(/\r?\n/).map(function(line){return line.trim();}).filter(Boolean);
-  Object.keys(patterns).forEach(function(key){
-    var candidates=[];
-    lines.forEach(function(line,index){
-      // Only the label line, or a following line consisting solely of one measurement.
-      var next=lines[index+1]||'';
-      var sample=line+(/^\d+(?:\.\d+)?\s*(?:kg|cm|L|%|°|점)?$/.test(next)?'\n'+next:'');
-      var regex=patterns[key];regex.lastIndex=0;var match;
-      while((match=regex.exec(sample))!==null){
-        var trailing=sample.slice(match.index+match[0].length);
-        if(/^\s*\d/.test(trailing)||/^\s*[~–-]/.test(trailing)) continue;
-        candidates.push({value:Number(match[1]),source:sample});
-      }
-    });
-    var unique=candidates.filter(function(item,index,all){return all.findIndex(function(other){return other.value===item.value;})===index;});
-    if(unique.length===1){values[key]=unique[0].value;evidence[key]=unique[0].source;}
-  });
-  [['examDate',/(?:검사일시|검사일자|검사일)\s*[:：]?\s*(\d{4})[.\/-]\s*(\d{1,2})[.\/-]\s*(\d{1,2})\.?\s*(\d{1,2}:\d{2})?/],['birthDate',/생년월일\s*[:：]?\s*(\d{4})[.\/-]\s*(\d{1,2})[.\/-]\s*(\d{1,2})/]].forEach(function(pair){
-    var match=String(text).match(pair[1]);if(match){values[pair[0]]=match[1]+'-'+('0'+match[2]).slice(-2)+'-'+('0'+match[3]).slice(-2)+(match[4]?' '+match[4]:'');evidence[pair[0]]=match[0];}
-  });
-  var gender=String(text).match(/성별\s*[:：]?\s*(남성|여성|남|여)/);if(gender){values.gender=gender[1];evidence.gender=gender[0];}
-  var member=String(text).match(/회원번호\s*[:：]?\s*(\d+)/);if(member){values.memberNumber=member[1];evidence.memberNumber=member[0];}
-  return {values:values,evidence:evidence};
-}
-function runImageOcr_(item){
-  if(typeof Drive==='undefined') throw new Error('Apps Script의 서비스에서 Drive API(v3)를 추가한 뒤 다시 배포해 주세요.');
-  var original=DriveApp.getFileById(item.id).getBlob();
-  if(['image/jpeg','image/png','image/gif'].indexOf(original.getContentType())<0) throw new Error('자동 읽기는 JPG, PNG, GIF를 지원합니다. WEBP는 PNG 또는 JPG로 첨부해 주세요.');
-  var temp;
-  try{
-    temp=Drive.Files.create({name:'EMR OCR '+Utilities.getUuid(),mimeType:'application/vnd.google-apps.document',parents:[imageFolder_().getId()]},original,{ocrLanguage:'ko',fields:'id'});
-    var text=DocumentApp.openById(temp.id).getBody().getText();
-    if(!text.trim()) throw new Error('읽을 수 있는 글씨가 없습니다. 선명한 검사지를 첨부해 주세요.');
-    // Keep one sheet cell under its 50,000-character limit across three images.
-    var parsed=parseExamText_(text);Object.keys(parsed.evidence).forEach(function(key){parsed.evidence[key]=parsed.evidence[key].slice(0,200);});parsed.rawText=text.slice(0,7000);parsed.truncated=text.length>7000;parsed.readAt=new Date().toISOString();
-    parsed.reviewed=false;return parsed;
-  }finally{if(temp&&temp.id) DriveApp.getFileById(temp.id).setTrashed(true);}
-}
-function validateReviewedValues_(values){
-  if(!values||typeof values!=='object'||Array.isArray(values)) throw new Error('확인할 검사 수치가 없습니다.');
-  var cleaned={};
-  Object.keys(OCR_FIELDS).forEach(function(key){
-    var value=values[key];if(value===undefined||value===null||value==='') return;
-    if(OCR_FIELDS[key][1]==='text'){
-      if(typeof value!=='string'||value.length>80) throw new Error('검사 정보 입력값을 확인해 주세요.');
-      cleaned[key]=value.trim();
-    }else{
-      if(typeof value!=='number'||!isFinite(value)||value<0) throw new Error('수치는 0 이상의 숫자로 입력해 주세요.');
-      cleaned[key]=value;
-    }
-  });
-  if(!Object.keys(cleaned).length) throw new Error('확인한 검사 항목을 하나 이상 입력해 주세요.');
-  return cleaned;
-}
-
-function setupEmrOcr(){
-  setupEmrImages();
-  if(typeof Drive==='undefined') throw new Error('왼쪽 서비스 +에서 Drive API(v3)를 추가하세요.');
-  Drive.Files.list({pageSize:1,fields:'files(id)'});
-  var temp=DocumentApp.create('EMR OCR 권한 확인');
-  DriveApp.getFileById(temp.getId()).setTrashed(true);
 }
 
 // Archive a single exact record, then remove it from the active records sheet.
@@ -305,4 +241,49 @@ function recordDeletePost_(d){
     if(receipts) receipts.appendRow([d.requestId,JSON.stringify({state:removed?'complete':'failed',error:removed?'':error.message}),new Date()]);
     return recordDeleteJson_({ok:false,error:error.message});
   }finally{if(lock.hasLock()) lock.releaseLock();}
+}
+// M-survey receipts contain no patient data. Records use the existing records schema.
+function mentalJson_(value){
+  value.protocol='haeon-mental-v1';
+  return ContentService.createTextOutput(JSON.stringify(value)).setMimeType(ContentService.MimeType.JSON);
+}
+function mentalGet_(p){
+  if(p.op==='probe') return mentalJson_({ok:true});
+  if(p.op!=='status'||!/^[-a-f0-9]{36}$/.test(p.requestId||'')) return mentalJson_({ok:false,error:'올바르지 않은 저장 확인 요청입니다.'});
+  var sheet=SpreadsheetApp.getActiveSpreadsheet().getSheetByName('mental_requests');
+  var rows=sheet?sheet.getDataRange().getValues():[];
+  for(var i=rows.length-1;i>=0;i--) if(rows[i][0]===p.requestId) return mentalJson_({ok:true,state:'complete'});
+  return mentalJson_({ok:true,state:'pending'});
+}
+function mentalPost_(d){
+  var lock=LockService.getScriptLock();
+  try{
+    if(!/^[-a-f0-9]{36}$/.test(d.requestId||'')) throw new Error('저장 식별자가 올바르지 않습니다.');
+    var f=d.formData;
+    if(!f||!['student','soccer','baseball','basketball','volleyball','golf'].includes(f.sport)) throw new Error('종목을 확인해 주세요.');
+    if(typeof d.name!=='string'||!d.name.trim()||d.name.length>100||!['남','여'].includes(d.gender)||!/^\d{4}-\d{2}-\d{2}$/.test(d.birthDate||'')) throw new Error('기본 정보를 확인해 주세요.');
+    if(!f.answers||Object.keys(f.answers).length!==51) throw new Error('51문항에 모두 응답해 주세요.');
+    for(var no=1;no<=51;no++) if(!Number.isInteger(f.answers[no])||f.answers[no]<1||f.answers[no]>6) throw new Error('응답 값을 확인해 주세요.');
+    if(JSON.stringify(f).length>30000) throw new Error('저장 데이터가 너무 큽니다.');
+    lock.waitLock(30000);
+    var ss=SpreadsheetApp.getActiveSpreadsheet();
+    var receipts=ss.getSheetByName('mental_requests')||ss.insertSheet('mental_requests');
+    var receiptRows=receipts.getDataRange().getValues();
+    if(receiptRows.some(function(row){return row[0]===d.requestId;})) return mentalJson_({ok:true,state:'complete'});
+    var sheet=ss.getSheetByName('records')||ss.insertSheet('records');
+    var rows=sheet.getDataRange().getValues();
+    // A record may have committed before a receipt write failed. Never append it twice.
+    var exists=rows.some(function(row){
+      if(row[1]!=='MPS 멘탈') return false;
+      try{return JSON.parse(row[7]).submissionId===d.requestId;}catch(ignore){return false;}
+    });
+    if(!exists){
+      f.submissionId=d.requestId;f.name=d.name.trim();f.dob=d.birthDate;f.gender=d.gender;
+      sheet.appendRow([new Date(),'MPS 멘탈',d.name.trim(),'',d.gender,d.birthDate,'',JSON.stringify(f),'','']);
+      SpreadsheetApp.flush();
+    }
+    receipts.appendRow([d.requestId,new Date()]);
+    return mentalJson_({ok:true,state:'complete'});
+  }catch(error){return mentalJson_({ok:false,error:error.message});}
+  finally{if(lock.hasLock()) lock.releaseLock();}
 }

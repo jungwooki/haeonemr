@@ -1,0 +1,7 @@
+
+.clinic-split{display:flex;flex-direction:column;}
+.clinic-list-pane{width:100%;max-height:38vh;}
+@media(min-width:860px){
+  .clinic-split{flex-direction:row;}
+  .clinic-list-pane{width:320px;max-height:none;}
+}

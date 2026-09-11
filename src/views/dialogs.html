@@ -1,0 +1,24 @@
+<dialog id="emr-image-preview" aria-labelledby="emr-image-preview-title"><header><h3 id="emr-image-preview-title">이미지 미리보기</h3><button type="button" onclick="this.closest('dialog').close()">닫기</button></header><p class="emr-preview-status" role="status"></p><img alt=""></dialog>
+<!-- EMR entry password -->
+<dialog id="emr-password-dialog" aria-labelledby="emr-password-title" style="width:min(400px,calc(100% - 32px));padding:0;border:1px solid #E8E9F2;border-radius:20px;box-shadow:0 24px 80px #20233330;">
+  <form id="emr-password-form" style="padding:28px;background:linear-gradient(180deg,#F3EFFE,#FFFFFF 180px);">
+    <div class="emr-brand">HAEON EMR</div>
+    <h2 id="emr-password-title" style="margin:12px 0 8px;">비밀번호 입력</h2>
+    <p style="font-size:14px;color:#697386;margin:0 0 24px;">환자 조회 화면에 들어가려면 비밀번호를 입력해 주세요.</p>
+    <label for="emr-password" style="display:block;font-size:14px;font-weight:600;margin-bottom:8px;">비밀번호</label>
+    <input id="emr-password" type="password" inputmode="numeric" autocomplete="off" required autofocus aria-describedby="emr-password-error" style="box-sizing:border-box;width:100%;padding:12px 14px;border:1px solid #DDD5FA;border-radius:10px;font-size:18px;background:#FFF;">
+    <p id="emr-password-error" role="alert" style="min-height:22px;margin:8px 0 16px;color:#DC2626;font-size:13px;"></p>
+    <div style="display:flex;gap:10px;">
+      <button type="button" id="emr-password-cancel" style="flex:1;padding:12px;border:1px solid #E8E9F2;border-radius:10px;background:#FFF;color:#697386;font-weight:600;">취소</button>
+      <button type="submit" style="flex:1;padding:12px;border:0;border-radius:10px;background:#2563EB;color:#FFF;font-weight:700;">입장</button>
+    </div>
+  </form>
+</dialog>
+<style>{{ include src/styles/password.css }}</style>
+
+<dialog id="haeon-guide-dialog" aria-label="해온한의원 가이드" style="width:min(1200px,calc(100% - 16px));height:94dvh;max-height:94dvh;padding:0;border:1px solid #E2E8F0;border-radius:20px;overflow:hidden;">
+  <div style="display:flex;flex-direction:column;height:100%;background:white;">
+    <header style="display:flex;justify-content:space-between;align-items:center;padding:12px 20px;border-bottom:1px solid #E2E8F0;"><strong>해온한의원 가이드</strong><button id="haeon-guide-close" type="button" style="padding:10px 16px;background:#EFF6FF;color:#2563EB;border-radius:12px;">닫기</button></header>
+    <iframe title="해온한의원 안내 내용" style="width:100%;flex:1;min-height:0;border:0;"></iframe>
+  </div>
+</dialog>

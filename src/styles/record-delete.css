@@ -1,0 +1,5 @@
+
+.emr-record-list-row{display:flex;align-items:stretch;gap:8px;margin-bottom:10px}
+.emr-record-list-row>button:first-child{flex:1;min-width:0;margin-bottom:0}
+.emr-delete-record{flex-shrink:0;border:1px solid #F3DDE1;background:#FFF;color:#BE123C;border-radius:10px;padding:10px 14px;font-size:13px;font-weight:650;cursor:pointer}
+.emr-delete-record:hover{background:#FFF1F2}.emr-delete-record:disabled{opacity:.5;cursor:wait}

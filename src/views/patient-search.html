@@ -1,0 +1,40 @@
+<!-- ===================== 지난 문진 기록 검색 ===================== -->
+<div id="search-view" class="fixed inset-0 z-40 flex flex-col" style="display:none;background:#F5F6F8;">
+  <div class="h-14 flex items-center justify-between px-4 shrink-0 border-b border-[#EDEEF1]" style="background:linear-gradient(90deg, #F2EFFC 0%, #FFFFFF 60%);">
+    <div class="flex items-center gap-2">
+      <div class="w-6 h-6 rounded-[6px] bg-blue-100 flex items-center justify-center">
+        <i data-lucide="layout-dashboard" class="w-3.5 h-3.5 text-blue-600"></i>
+      </div>
+      <span class="font-bold text-[15px] text-slate-900">HAEON EMR</span>
+    </div>
+    <button onclick="closeSearchView()" class="flex items-center gap-1 font-semibold text-[14px] text-slate-500 active:opacity-50">
+      닫기 <i data-lucide="x" class="w-4 h-4"></i>
+    </button>
+  </div>
+
+  <div class="clinic-split flex-1 min-h-0">
+    <!-- 좌측: 검색 + 환자 리스트 -->
+    <div class="clinic-list-pane bg-white border-r border-[#EDEEF1] flex flex-col shrink-0">
+      <div class="p-3 border-b border-[#EDEEF1]">
+        <div class="flex gap-2">
+          <input id="search-input" type="text" placeholder="이름 또는 차트번호 검색" class="flex-1 bg-[#F5F6F8] border border-[#EDEEF1] rounded-[10px] px-3 py-2.5 text-[14px] outline-none focus:border-blue-300" onkeydown="if(event.key==='Enter') searchRecords(this.value)">
+          <button onclick="searchRecords(document.getElementById('search-input').value)" class="bg-blue-600 text-white font-bold px-4 rounded-[10px] text-[14px] active:bg-blue-700">검색</button>
+        </div>
+        <div id="search-status" class="text-[11px] text-[#8E8E93] mt-2"></div>
+      </div>
+      <div id="search-results" class="flex-1 overflow-y-auto"></div>
+    </div>
+
+    <!-- 우측: 선택 환자 상세 (일목요연 뷰) -->
+    <div id="patient-detail-panel" class="flex-1 overflow-y-auto min-w-0">
+      <div class="h-full flex flex-col items-center justify-center text-center px-8">
+        <div class="w-14 h-14 rounded-full bg-blue-50 flex items-center justify-center mb-3">
+          <i data-lucide="user-search" class="w-6 h-6 text-blue-300"></i>
+        </div>
+        <p class="text-[14px] text-slate-400 font-medium">왼쪽 목록에서 환자를 선택하면<br>기본정보와 문진 기록이 여기에 표시됩니다.</p>
+      </div>
+    </div>
+  </div>
+</div>
+<style>{{ include src/styles/patient-search.css }}</style>
+

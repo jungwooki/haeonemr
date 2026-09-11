@@ -1,0 +1,107 @@
+<!-- ===================== 산후 리포트 ===================== -->
+<div id="postpartum-report-view">
+<div class="report-scroll">
+  <div class="report-toolbar no-print">
+    <button onclick="postpartumBackToForm()" class="flex items-center gap-1 font-semibold text-[15px] text-slate-800 active:opacity-50">
+      <i data-lucide="chevron-left" class="w-5 h-5"></i> 문진표로 돌아가기
+    </button>
+    <span id="postpartum-save-status" class="text-[12px] font-semibold text-[#8E8E93]"></span>
+    <div class="flex gap-2">
+      <button onclick="goHome()" class="text-slate-500 font-semibold text-[14px] px-4 py-2">홈으로 가기</button>
+      <button onclick="window.print()" class="bg-black text-white font-bold text-[14px] px-5 py-2.5 rounded-[10px] flex items-center gap-2">
+        <i data-lucide="printer" class="w-4 h-4"></i> 인쇄 / PDF 미리보기
+      </button>
+    </div>
+  </div>
+
+  <div class="report-columns"><div class="report-col report-col-left">
+  <!-- PAGE 1 : 기혈수 변증 · H-SCALE -->
+  <div class="a4-page">
+    <div class="rp-header" style="border-bottom-color:#bca988;">
+      <div class="rp-brand">
+        <i data-lucide="flower" class="w-6 h-6 text-[#bca988]"></i>
+        <div><div class="rp-title">해온 산후조리 리포트</div><div class="rp-sub">기혈수(氣血水) 7변증 · 회복 상태</div></div>
+      </div>
+      <div class="rp-page-badge" style="color:#96876c;background:#f6f7f0;border-color:#e5dcca;">1 / 2</div>
+    </div>
+
+    <div class="rp-info-bar">
+      <div class="rp-info-item"><div class="rp-info-label">이름</div><div class="rp-info-value" id="postpartum-rp-name">-</div></div>
+      <div class="rp-info-item"><div class="rp-info-label">출산일/형태</div><div class="rp-info-value" id="postpartum-rp-delivery" style="font-size:11px;">-</div></div>
+      <div class="rp-info-item"><div class="rp-info-label">체중 변화</div><div class="rp-info-value" id="postpartum-rp-weight" style="font-size:11px;">-</div></div>
+      <div class="rp-info-item"><div class="rp-info-label">모유수유</div><div class="rp-info-value" id="postpartum-rp-feeding" style="font-size:11px;">-</div></div>
+      <div class="rp-info-item"><div class="rp-info-label">측정일</div><div class="rp-info-value" id="postpartum-rp-date">-</div></div>
+    </div>
+
+    <div class="rp-card flex items-center gap-5 mb-3">
+      <div class="rp-ring" id="postpartum-hscale-ring" style="width:96px;height:96px;">
+        <div class="rp-ring-inner" style="width:70px;height:70px;">
+          <div class="text-[19px] font-extrabold text-black" id="postpartum-hscale-score">-</div>
+          <div class="text-[8px] text-[#8E8E93] font-bold">H-SCALE</div>
+        </div>
+      </div>
+      <div class="flex-1">
+        <div class="text-[15px] font-extrabold text-black mb-0.5" id="postpartum-hscale-grade">종합 회복 스코어</div>
+        <p class="text-[11px] leading-[16px] text-[#3C3C43]">기혈수 변증 균형을 종합한 해온 자체 회복 지표입니다.</p>
+      </div>
+    </div>
+
+    <div class="rp-card rp-soft">
+      <div class="rp-section-title"><i data-lucide="message-circle" class="w-4 h-4 text-[#bca988]"></i>어딘가 불편한 부분</div>
+      <p class="text-[13px] leading-[20px] text-[#3C3C43]" id="postpartum-rp-complaint">-</p>
+    </div>
+
+    <div class="rp-card flex flex-col items-center">
+      <div class="rp-section-title self-start"><i data-lucide="droplets" class="w-4 h-4 text-[#bca988]"></i>기·혈·수 7변증 밸런스</div>
+      <div id="postpartum-rp-radar"></div>
+      <p class="text-[10px] text-[#8E8E93] mt-1 text-center">바깥쪽일수록 안정적, 중심에 가까울수록 <b>관리가 필요</b>합니다</p>
+      <div id="postpartum-rp-legend" class="w-full mt-2"></div>
+    </div>
+
+    <div id="postpartum-rp-doctor-note-slot"></div>
+    <div class="rp-footer"><span>해온한의원 · 본 리포트는 진료 참고용이며 의학적 진단을 대체하지 않습니다.</span><span id="postpartum-rp-footer-1"></span></div>
+  </div>
+
+  </div><div class="report-col report-col-right">
+  <!-- PAGE 2 : 조리환경 · 회복상태 · 과거력 -->
+  <div class="a4-page">
+    <div class="rp-header" style="border-bottom-color:#bca988;">
+      <div class="rp-brand">
+        <i data-lucide="clipboard-list" class="w-6 h-6 text-[#bca988]"></i>
+        <div><div class="rp-title">조리환경 · 회복상태 · 과거력</div><div class="rp-sub">진료 시 참고할 배경 정보</div></div>
+      </div>
+      <div class="rp-page-badge" style="color:#96876c;background:#f6f7f0;border-color:#e5dcca;">2 / 2</div>
+    </div>
+
+    <div class="rp-card mb-3">
+      <div class="rp-section-title"><i data-lucide="home" class="w-4 h-4 text-[#bca988]"></i>조리환경 · 정서/신체 상태</div>
+      <div id="postpartum-rp-care" class="text-[12px] leading-[20px] text-[#3C3C43]"></div>
+    </div>
+
+    <div class="rp-card mb-3">
+      <div class="rp-section-title"><i data-lucide="baby" class="w-4 h-4 text-[#bca988]"></i>수유 · 대사 상태</div>
+      <div id="postpartum-rp-metabolic" class="text-[12px] leading-[20px] text-[#3C3C43]"></div>
+    </div>
+
+    <div class="rp-card mb-3">
+      <div class="rp-section-title"><i data-lucide="heart" class="w-4 h-4 text-pink-500"></i>부인과 과거력 (임신 전)</div>
+      <div id="postpartum-rp-gyn" class="text-[12px] leading-[20px] text-[#3C3C43]"></div>
+    </div>
+
+    <div class="rp-card mb-3">
+      <div class="rp-section-title"><i data-lucide="history" class="w-4 h-4 text-[#bca988]"></i>전신 병력 · 생활습관</div>
+      <div id="postpartum-rp-history" class="text-[12px] leading-[20px] text-[#3C3C43]"></div>
+    </div>
+
+    <div class="rp-card">
+      <div class="rp-section-title"><i data-lucide="lightbulb" class="w-4 h-4 text-[#bca988]"></i>추가 문의 · 종합 소견</div>
+      <p class="text-[13px] leading-[20px] text-[#3C3C43]" id="postpartum-rp-overall">-</p>
+    </div>
+
+    <div id="postpartum-rp-private-note-slot"></div>
+    <div class="rp-footer"><span>해온한의원 · 본 리포트는 진료 참고용이며 의학적 진단을 대체하지 않습니다.</span><span id="postpartum-rp-footer-2"></span></div>
+  </div>
+  </div></div>
+</div>
+</div>
+

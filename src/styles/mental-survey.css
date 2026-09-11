@@ -1,0 +1,56 @@
+/* Scoped HAEON presentation; question wording and scoring live in their source modules. */
+#mental-survey-view{position:fixed;inset:0;z-index:45;overflow-y:auto;background:linear-gradient(180deg,#F0EBFF 0,#FAF8FF 260px,#FFF 600px);color:var(--ios-text);font-family:inherit;font-size:16px;line-height:1.55;overscroll-behavior:contain}
+#mental-survey-view[hidden]{display:none!important}
+#mental-survey-view .mental-header{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:64px;padding:12px 24px;border-bottom:1px solid var(--ios-separator);background:#ffffffed;backdrop-filter:blur(12px);font-size:15px;font-weight:700}
+#mental-survey-view .mental-back,#mental-survey-view .mental-change{color:#2563EB;font-weight:700;min-height:44px}
+#mental-survey-view .mental-header-tag,.mental-eyebrow{font-size:11px;font-weight:800;letter-spacing:.12em;color:#6555E7}
+#mental-survey-view .screen{display:none;min-height:calc(100dvh - 70px)}
+#mental-survey-view .screen.active{display:flex}
+#mental-survey-view .mental-intro{width:100%;max-width:640px;text-align:center;padding:48px 24px 28px}
+#mental-survey-view .mental-intro h1{margin:14px 0 12px;font-weight:800}
+#mental-survey-view .mental-intro p{font-size:16px;color:var(--ios-gray)}
+#mental-survey-view .mental-sport-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;width:100%;max-width:540px;padding:0 24px 48px}
+#mental-survey-view .sport-choice{min-height:116px;border:1px solid #E8E9F2;border-radius:16px;background:#FFF;box-shadow:0 3px 12px #5145CD08;font-size:19px;font-weight:700;color:#202333;gap:10px;padding:20px}
+#mental-survey-view .mental-sport-icon{display:grid;place-items:center;min-width:40px;height:40px;border-radius:12px;background:#F3EFFE;font-size:25px;color:#5145CD}
+#mental-survey-view .sport-choice:first-child .mental-sport-icon{font-size:13px;font-weight:800}
+#mental-survey-view .choice-btn{border:1px solid #E8E9F2;background:#FFF;min-height:52px;font-size:17px}
+#mental-survey-view .choice-btn.selected,#mental-survey-view .sport-choice.selected{border-color:#2563EB;background:#EEF3FF;color:#2563EB;box-shadow:0 0 0 1px #2563EB}
+#mental-survey-view input{background:#FFF;font-size:17px;border-width:1px;min-height:52px}
+#mental-survey-view label{font-size:16px;color:#202333}
+#mental-survey-view .word-keep{word-break:keep-all}
+#mental-survey-view .qcard{background:#FFF;border:1px solid #E8E9F2;border-radius:16px;padding:22px;margin-bottom:14px}
+#mental-survey-view .qcard.missing{border-color:#EF4444;box-shadow:0 0 0 3px #EF44441F}
+#mental-survey-view .qtext{font-size:17px;line-height:1.65;font-weight:700;color:#202333}
+#mental-survey-view .likert-row{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;margin-top:16px}
+#mental-survey-view .likert-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:78px;border:1px solid #E8E9F2;border-radius:10px;background:#FAF9FE;padding:10px 4px;cursor:pointer}
+#mental-survey-view .likert-btn .num{font-size:18px;font-weight:800;line-height:1.3;color:#202333}
+#mental-survey-view .likert-btn .lbl{font-size:12px;color:#697386;line-height:1.4;margin-top:4px;text-align:center;word-break:keep-all}
+#mental-survey-view .likert-btn.selected{background:#2563EB;border-color:#2563EB}
+#mental-survey-view .likert-btn.selected .num,#mental-survey-view .likert-btn.selected .lbl{color:#FFF}
+#mental-survey-view .progress-track{background:#E8E9F2;border-radius:999px;height:6px;overflow:hidden}
+#mental-survey-view .progress-fill{background:#2563EB;height:100%;transition:width .25s}
+#mental-survey-view .nav-btn{min-height:52px;font-size:17px}
+#mental-survey-view .nav-btn:disabled{opacity:.35;cursor:not-allowed}
+#mental-survey-view #btnStart,#mental-survey-view #btnNext{background:linear-gradient(110deg,#2563EB 0%,#6555E7 65%,#B849C5 100%);color:#FFF;box-shadow:0 6px 18px #5145CD20}
+#mental-survey-view #screenSurvey>div:last-child{position:sticky;bottom:0;z-index:2;padding-bottom:max(16px,env(safe-area-inset-bottom));border-color:#E8E9F2;background:#ffffffed;backdrop-filter:blur(12px)}
+#mental-survey-view #adminPanel{z-index:10;background:#FAF9FE}
+#mental-survey-view #adminInfo>div,#mental-survey-view #resultTable>div{background:#FFF;border:1px solid #E8E9F2;border-radius:12px}
+#mental-survey-view #adminLink{font-size:14px;color:#697386;min-height:44px}
+#mental-survey-view .mental-icon{display:inline-block;width:20px;height:20px;vertical-align:middle}
+#mental-survey-view #screenInfo h1{font-size:32px!important}
+@media(max-width:480px){#mental-survey-view .mental-header{padding:10px 16px}#mental-survey-view .mental-header-tag{display:none}#mental-survey-view .mental-intro{padding-top:32px}#mental-survey-view .qcard{padding:18px}#mental-survey-view .likert-row{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}#mental-survey-view .likert-btn{min-height:70px}#mental-survey-view #screenSurvey>div:first-child>div:first-child{flex-wrap:wrap;gap:6px}}
+@media print{
+ body:has(#mental-survey-view:not([hidden]))>*:not(#mental-survey-view){display:none!important}
+ #mental-survey-view:not([hidden]){position:static;overflow:visible;background:#FFF}
+ #mental-survey-view .mental-header,#mental-survey-view .screen,#mental-survey-view #adminPanel button{display:none!important}
+ #mental-survey-view #adminPanel:not(.hidden){position:static;overflow:visible;background:#FFF}
+ #mental-survey-view #resultTable>div{break-inside:avoid}
+}
+
+#mental-survey-view .mental-close{flex-shrink:0;min-width:52px;min-height:44px;padding:8px 12px;border-radius:10px;background:#EEF3FF;color:#2563EB;font-size:14px;font-weight:700}
+@media(max-width:480px){#mental-survey-view #adminPanel h2{font-size:23px!important}#mental-survey-view #adminPanel h2 .mental-icon{display:none}}
+#mental-report-view{display:none}
+#mental-report-view.active{display:block;position:fixed;inset:0;z-index:40}
+#mental-report-view .mental-answer{font-size:14px;line-height:1.8;padding:12px 0;border-bottom:1px solid #E8E9F2;overflow-wrap:anywhere}
+#mental-report-view .rp-info-value{overflow-wrap:anywhere}
+@media print{#mental-report-view.active{position:static}#mental-report-view .report-col-right{display:none!important}}
