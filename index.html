@@ -320,6 +320,11 @@ button.bg-black,button[class*="bg-[#FFCC00]"],button[class*="bg-[#fc582b]"],butt
       <div class="text-[19px] font-bold mb-1">HAEON EMR</div>
       <p class="text-[13px] text-white/85 leading-[19px]">환자별 문진 결과를 한 화면에서 확인하고, 진료 노트를 자유롭게 기록합니다.</p>
     </button>
+    <button onclick="openHaeonGuide()" class="w-full text-left bg-white rounded-[16px] border border-slate-200 p-5 mt-4 shadow-sm active:scale-[0.99] transition-all">
+      <div class="text-[11px] font-extrabold text-blue-600 mb-3">입구 4</div>
+      <div class="text-[19px] font-bold text-slate-900 mb-1">해온한의원 가이드</div>
+      <p class="text-[13px] text-slate-500">진료 과정 · 한약요법 · 치료방법 안내 →</p>
+    </button>
   </div>
 </div>
 
@@ -635,6 +640,12 @@ button.bg-black,button[class*="bg-[#FFCC00]"],button[class*="bg-[#fc582b]"],butt
 </dialog>
 <style>#emr-password-dialog::backdrop{background:rgba(32,35,51,.35);backdrop-filter:blur(4px)}</style>
 
+<dialog id="haeon-guide-dialog" aria-label="해온한의원 가이드" style="width:min(1200px,calc(100% - 16px));height:94dvh;max-height:94dvh;padding:0;border:1px solid #E2E8F0;border-radius:20px;overflow:hidden;">
+  <div style="display:flex;flex-direction:column;height:100%;background:white;">
+    <header style="display:flex;justify-content:space-between;align-items:center;padding:12px 20px;border-bottom:1px solid #E2E8F0;"><strong>해온한의원 가이드</strong><button id="haeon-guide-close" type="button" style="padding:10px 16px;background:#EFF6FF;color:#2563EB;border-radius:12px;">닫기</button></header>
+    <iframe title="해온한의원 안내 내용" style="width:100%;flex:1;min-height:0;border:0;"></iframe>
+  </div>
+</dialog>
 <!-- ===================== 지난 문진 기록 검색 ===================== -->
 <div id="search-view" class="fixed inset-0 z-40 flex flex-col" style="display:none;background:#F5F6F8;">
   <div class="h-14 flex items-center justify-between px-4 shrink-0 border-b border-[#EDEEF1]" style="background:linear-gradient(90deg, #F2EFFC 0%, #FFFFFF 60%);">
@@ -683,13 +694,18 @@ button.bg-black,button[class*="bg-[#FFCC00]"],button[class*="bg-[#fc582b]"],butt
 </style>
 
 <!-- ===================== 작성 완료 화면 (환자용 - 결과 비공개) ===================== -->
-<div id="completion-view" class="fixed inset-0 z-50 flex-col items-center justify-center bg-white px-8 text-center" style="display:none;">
-  <div class="w-20 h-20 rounded-full bg-emerald-50 flex items-center justify-center mb-6">
+<div id="completion-view" class="fixed inset-0 z-50 flex-col items-center bg-white px-6 py-8 overflow-y-auto text-center" style="display:none;">
+  <div class="w-20 h-20 shrink-0 mt-auto rounded-full bg-emerald-50 flex items-center justify-center mb-6">
     <i data-lucide="check" class="w-10 h-10 text-emerald-500"></i>
   </div>
   <h2 class="text-[26px] font-extrabold text-black mb-2">작성이 완료되었습니다</h2>
-  <p class="text-[15px] text-[#8E8E93] mb-10 max-w-xs">소중한 답변 감사합니다. 진료 준비를 위해 소중히 활용하겠습니다.</p>
-  <button onclick="returnToHubFromCompletion()" class="bg-black text-white font-bold text-[16px] px-10 py-4 rounded-[14px] active:scale-[0.98] transition-all">확인</button>
+  <p class="text-[15px] text-[#8E8E93] mb-6 max-w-xs">소중한 답변 감사합니다. 진료 준비를 위해 소중히 활용하겠습니다.</p>
+  <div class="w-full max-w-3xl grid grid-cols-1 md:grid-cols-3 gap-3 mb-6 text-left">
+    <button onclick="openHaeonGuide('process')" class="rounded-[16px] border border-slate-200 bg-slate-50 p-5 text-left text-[16px] font-bold text-slate-900">진료는 이런 과정을 거칩니다.<span class="block text-blue-600 text-[13px] mt-2">자세히 보기 →</span></button>
+    <button onclick="openHaeonGuide('prescription')" class="rounded-[16px] border border-slate-200 bg-slate-50 p-5 text-left text-[16px] font-bold text-slate-900">해온한의원 한약요법들<span class="block text-blue-600 text-[13px] mt-2">자세히 보기 →</span></button>
+    <button onclick="openHaeonGuide('treatment')" class="rounded-[16px] border border-slate-200 bg-slate-50 p-5 text-left text-[16px] font-bold text-slate-900">해온한의원 치료방법들<span class="block text-blue-600 text-[13px] mt-2">자세히 보기 →</span></button>
+  </div>
+  <button onclick="returnToHubFromCompletion()" class="mb-auto bg-blue-600 text-white font-bold text-[16px] px-10 py-4 rounded-[14px] active:scale-[0.98] transition-all">확인</button>
 </div>
 
 <!-- ===================== 심층진료 (H-Scale) 문진 ===================== -->
@@ -5282,6 +5298,15 @@ window.MentalEmr=(()=>{
   }
   return Object.freeze({open,close,download});
 })();
+/* Keep the completed survey mounted while the patient reads the guides. */
+window.openHaeonGuide=function(page='index'){
+  if(!['index','process','prescription','treatment'].includes(page)) return;
+  const dialog=document.getElementById('haeon-guide-dialog');
+  dialog.querySelector('iframe').src='guides/'+page+'.html';
+  if(!dialog.open)dialog.showModal();
+};
+document.getElementById('haeon-guide-close').addEventListener('click',()=>document.getElementById('haeon-guide-dialog').close());
+document.getElementById('haeon-guide-dialog').addEventListener('close',()=>document.querySelector('#haeon-guide-dialog iframe').src='about:blank');
 window.onload=()=>{ document.getElementById('gateway-view').style.display='flex'; };
 </script>
 </body>
