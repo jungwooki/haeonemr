@@ -1,6 +1,11 @@
 <!-- MPS mental survey: question data and analysis preserved from supplied HTML. -->
 <div id="mental-survey-view" hidden>
-  <header class="mental-header"><button type="button" onclick="MpsMental.exit()" class="mental-back">← 입구로</button><span>AI MPS M-서베이</span><span class="mental-header-tag">MENTAL</span></header>
+  <dialog id="mental-exit-dialog" class="survey-exit-dialog" aria-labelledby="mental-exit-title" aria-describedby="mental-exit-description">
+    <h2 id="mental-exit-title">설문 작성을 종료할까요?</h2>
+    <p id="mental-exit-description">아직 제출하지 않은 이름과 응답은 저장되지 않습니다. 계속 작성하면 입력한 내용을 유지할 수 있습니다.</p>
+    <div><button type="button" onclick="MpsMental.discardAndExit()">저장하지 않고 종료</button><button type="button" autofocus onclick="document.getElementById('mental-exit-dialog').close()">계속 작성하기</button></div>
+  </dialog>
+  <header class="mental-header"><button type="button" onclick="MpsMental.back()" class="mental-back">← 메인화면으로</button><span>AI MPS M-서베이</span><span class="mental-header-tag">MENTAL</span></header>
 <section id="mentalSportScreen" class="screen active w-full flex-col items-center">
   <div class="mental-intro"><span class="mental-eyebrow">MPS · MENTAL</span><h1>AI MPS M-서베이</h1><p>나에게 맞는 종목을 선택해 주세요.</p></div>
   <div id="sportChoices" class="mental-sport-grid"></div>
@@ -19,27 +24,28 @@
     <div class="space-y-5">
       <div>
         <label for="inputName" class="block text-sm font-bold text-slate-600 mb-2">이름</label>
-        <input id="inputName" type="text" placeholder="이름을 입력하세요"
+        <input id="inputName" type="text" autocomplete="name" enterkeyhint="next" required placeholder="이름을 입력하세요"
           class="w-full rounded-xl border-2 border-slate-200 p-3.5 text-base focus:border-blue-600 focus:outline-none">
       </div>
 
       <div>
         <label class="block text-sm font-bold text-slate-600 mb-2">성별</label>
         <div class="grid grid-cols-2 gap-3">
-          <button type="button" class="choice-btn gender-btn rounded-xl p-3.5 font-bold text-slate-500" data-val="남">남자</button>
-          <button type="button" class="choice-btn gender-btn rounded-xl p-3.5 font-bold text-slate-500" data-val="여">여자</button>
+          <button type="button" aria-pressed="false" class="choice-btn gender-btn rounded-xl p-3.5 font-bold text-slate-500" data-val="남">남자</button>
+          <button type="button" aria-pressed="false" class="choice-btn gender-btn rounded-xl p-3.5 font-bold text-slate-500" data-val="여">여자</button>
         </div>
       </div>
 
       <div>
         <label for="inputDob" class="block text-sm font-bold text-slate-600 mb-2">생년월일</label>
-        <input id="inputDob" type="date"
+        <input id="inputDob" type="date" autocomplete="bday" aria-describedby="mental-info-hint" required
           class="w-full rounded-xl border-2 border-slate-200 p-3.5 text-base focus:border-blue-600 focus:outline-none">
       </div>
 
-<button type="button" class="mental-change" onclick="MpsMental.chooseSport()">종목 다시 선택</button>
+
     </div>
 
+    <p id="mental-info-hint" role="status" aria-live="polite"></p>
     <button id="btnStart" disabled
       class="nav-btn w-full mt-8 bg-blue-600 text-white font-extrabold text-base py-4 rounded-xl disabled:bg-slate-300">
       서베이 시작하기
@@ -58,6 +64,7 @@
   </div>
 
   <p id="mental-save-status" class="px-4 max-w-2xl w-full mx-auto text-sm text-blue-700" role="status" aria-live="polite"></p>
+  <p id="mental-page-feedback" class="mental-page-feedback" role="status" aria-live="polite"></p>
   <div id="qList" class="flex-1 px-4 py-2 max-w-2xl w-full mx-auto space-y-2.5 overflow-y-auto"></div>
 
   <div class="px-4 py-3 max-w-2xl w-full mx-auto flex gap-3 border-t border-slate-100 bg-white">
@@ -77,7 +84,7 @@
       <i data-lucide="check" class="mental-icon"></i>
     </div>
     <h1 class="text-2xl font-extrabold text-slate-800">작성 완료</h1>
-    <p class="text-slate-500 mt-4">서버에 저장되었습니다. 진료실에서 확인하겠습니다.</p><button type="button" onclick="MpsMental.exit()" class="mt-8 px-6 py-3 rounded-xl bg-blue-600 text-white font-bold">입구로 돌아가기</button><button type="button" id="adminLink" hidden>관리자 확인</button>
+    <p class="text-slate-500 mt-4">서버에 저장되었습니다. 진료실에서 확인하겠습니다.</p><button type="button" onclick="MpsMental.exit()" class="mt-8 px-6 py-3 rounded-xl bg-blue-600 text-white font-bold">메인화면으로 돌아가기</button><button type="button" id="adminLink" hidden>관리자 확인</button>
   </div>
 </div>
 

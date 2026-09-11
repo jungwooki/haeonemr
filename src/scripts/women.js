@@ -35,21 +35,8 @@ const WomenUI = {
     <div class="bg-white rounded-[12px] p-5 shadow-sm border border-[#EDEEF1]">
       <textarea oninput="updateWomenData('${field}', this.value)" class="w-full h-24 outline-none resize-none text-[16px] font-medium text-black placeholder:text-gray-300 bg-transparent" placeholder="${placeholder}">${womenFormData[field]}</textarea>
     </div>`,
-  selectRow:(label,field,options)=>`
-    <div class="flex items-center justify-between p-3 px-4 border-b border-[#EDEEF1] last:border-0 bg-white gap-3">
-      <span class="text-[15px] font-semibold text-black shrink-0">${label}</span>
-      <select onchange="updateWomenData('${field}', this.value)" class="text-right text-[14px] text-[#8E8E93] font-medium outline-none bg-transparent flex-1">
-        <option value="">선택</option>
-        ${options.map(o=>`<option value="${o}" ${womenFormData[field]===o?'selected':''}>${o}</option>`).join('')}
-      </select>
-    </div>`,
-  radioList:(field,options)=>`<div>${options.map(opt=>`
-    <label class="flex items-center justify-between p-3 px-4 border-b border-[#EDEEF1] last:border-0 bg-white cursor-pointer active:bg-gray-50" onclick="setWomenRadio('${field}','${opt.replace(/'/g,"\\'")}')">
-      <span class="text-[15px] font-semibold text-black">${opt}</span>
-      <div class="w-5 h-5 rounded-full border-2 ${womenFormData[field]===opt?'border-[#a6a1fb] bg-[#a6a1fb]':'border-gray-300'} flex items-center justify-center shrink-0">
-        ${womenFormData[field]===opt?'<div class="w-2 h-2 bg-white rounded-full"></div>':''}
-      </div>
-    </label>`).join('')}</div>`,
+  selectRow:(label,field,options)=>SurveyUX.selectRow('women',label,field,options,womenFormData[field],'updateWomenData'),
+  radioList:(field,options)=>SurveyUX.radioList('women',field,options,womenFormData[field],'updateWomenData'),
   checkRow:(label,category,value)=>`
     <label class="flex items-center justify-between p-3 px-4 border-b border-[#EDEEF1] bg-white cursor-pointer active:bg-gray-50 transition-colors">
       <span class="text-[15px] font-semibold text-black">${label}</span>
@@ -136,9 +123,7 @@ const womenSections = {
 };
 
 function womenRenderProgress(){
-  const fill=document.getElementById('women-progress-fill');
-  const pct = womenCurrentStep<=1 ? 0 : ((womenCurrentStep-1)/womenTotalSteps)*100;
-  fill.style.width=pct+'%';
+  SurveyUX.sync('women-',womenCurrentStep,womenTotalSteps);
 }
 function refreshWomenStep(){
   if(womenCurrentStep===1) return;
@@ -166,7 +151,7 @@ window.womenUpdateUI = function(){
   womenRenderProgress(); if(window.lucide) lucide.createIcons();
   if(scrollContainer) scrollContainer.scrollTo(0,0);
 };
-window.womenNextStep = function(){ if(womenCurrentStep<womenTotalSteps){ womenCurrentStep++; womenUpdateUI(); } else { saveWomenRecordToSheet(); document.getElementById('women-app-shell').style.display='none'; showCompletion(); } };
+window.womenNextStep = function(){ if(!SurveyUX.canAdvance('women-',womenCurrentStep)) return; if(womenCurrentStep<womenTotalSteps){ womenCurrentStep++; womenUpdateUI(); } else { saveWomenRecordToSheet(); document.getElementById('women-app-shell').style.display='none'; showCompletion(); } };
 window.womenPrevStep = function(){ if(womenCurrentStep>1){ womenCurrentStep--; womenUpdateUI(); } else { document.getElementById('women-app-shell').style.display='none'; returnToHub(); } };
 window.enterWomenSurvey = function(){
   document.getElementById('hub-view').style.display='none';

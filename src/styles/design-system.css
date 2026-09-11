@@ -1,22 +1,16 @@
 
 /* Shared HAEON visual system: all survey flows and clinical results. */
-:root{--ios-bg:#FAF9FE;--ios-card:#FFFFFF;--ios-tint:#2563EB;--ios-tint-deep:#5145CD;--ios-text:#202333;--ios-gray:#697386;--ios-separator:#E8E9F2;--haeon-lavender:#F3EFFE;--haeon-blue:#2563EB}
+:root{--ios-bg:#FFFFFF;--ios-card:#FFFFFF;--ios-tint:#2563EB;--ios-tint-deep:#5145CD;--ios-text:#202333;--ios-gray:#697386;--ios-separator:#E8E9F2;--haeon-lavender:#F3EFFE;--haeon-blue:#2563EB}
 body{font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;color:var(--ios-text);font-size:16px;line-height:1.55}
 button,input,select,textarea{font-family:inherit}
 button{transition:background-color .18s,box-shadow .18s}
 button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #93B4FF!important;outline-offset:3px}
 input,select,textarea{accent-color:var(--haeon-blue)}
 #gateway-view>div:first-child,#hub-view,[id$="app-shell"]{background:linear-gradient(180deg,#F0EBFF 0,#FAF8FF 260px,#FFFFFF 600px)!important}
-h1,h2{color:#202333!important;letter-spacing:-.035em}
-h1{font-size:clamp(32px,3vw,40px)!important;line-height:1.3!important}
-h2{font-size:clamp(28px,2.5vw,32px)!important;line-height:1.35!important}
+ :is(#gateway-view,#hub-view,.haeon-survey,#mental-survey-view) :is(h1,h2){color:#202333!important;letter-spacing:-.035em}
+:is(#gateway-view,#hub-view,.haeon-survey,#mental-survey-view) h1{font-size:clamp(32px,3vw,40px)!important;line-height:1.3!important}
+:is(#gateway-view,#hub-view,.haeon-survey,#mental-survey-view) h2{font-size:clamp(28px,2.5vw,32px)!important;line-height:1.35!important}
 [id$="progress-fill"]{background:#2563EB!important}
-button[id$="next-btn"],button[onclick*="NextStep()"],button[onclick="nextStep()"]{background:linear-gradient(110deg,#2563EB 0%,#6555E7 65%,#B849C5 100%)!important;color:#FFF!important;box-shadow:0 6px 18px #5145CD20}
-[id$="app-shell"] [class*="bg-[#FFCC00]"],[id$="app-shell"] [class*="bg-[#fc582b]"],[id$="app-shell"] [class*="bg-[#799bf4]"],[id$="app-shell"] [class*="bg-[#a6a1fb]"]{background-color:#2563EB!important;color:#FFF}
-[id$="app-shell"] [class*="border-[#FFCC00]"],[id$="app-shell"] [class*="border-[#fc582b]"],[id$="app-shell"] [class*="border-[#799bf4]"],[id$="app-shell"] [class*="border-[#a6a1fb]"]{border-color:#2563EB!important}
-button.bg-black,button[class*="bg-[#FFCC00]"],button[class*="bg-[#fc582b]"],button[class*="bg-blue-600"]{background-color:#2563EB!important;color:white!important}
-[class*="text-[#C79000]"],[class*="text-[#fc582b]"]{color:#5145CD!important}
-[class*="bg-[#FFF9E0]"],[class*="bg-[#FFFBEA]"]{background-color:#F3EFFE!important}
 .rp-page-badge,.rp-chip{background:#F0EBFF!important;color:#5145CD!important;border-color:#DDD5FA!important}
 .rp-header{border-bottom-color:#DDD5FA!important}
 .clinic-list-pane input{min-width:0;width:100%}
@@ -68,3 +62,120 @@ button.bg-black,button[class*="bg-[#FFCC00]"],button[class*="bg-[#fc582b]"],butt
 }
 @media print{.emr-sidebar,.emr-notes,.emr-reference-heading{display:none!important}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+/* Shared interactive components. Keep clinical status and icon colors semantic. */
+:root {
+  --haeon-ink: #202333;
+  --haeon-muted: #697386;
+  --haeon-border: #E8E9F2;
+  --haeon-selected: #EEF3FF;
+  --haeon-cta: linear-gradient(110deg, #2563EB 0%, #6555E7 62%, #C43C91 100%);
+  --haeon-radius: 16px;
+}
+body { background: #FFF; }
+.haeon-entry-card {
+  display: block; width: 100%; min-height: 150px; margin-bottom: 16px;
+  padding: 24px; text-align: left; color: var(--haeon-ink); background: #FFF;
+  border: 1px solid var(--haeon-border); border-radius: var(--haeon-radius);
+  box-shadow: 0 4px 20px #5145CD08; cursor: pointer;
+}
+.haeon-entry-icon {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 40px; height: 40px; flex-shrink: 0; border-radius: 12px;
+  color: var(--haeon-blue); background: var(--haeon-lavender);
+}
+.haeon-entry-icon svg { width: 23px; height: 23px; }
+.haeon-entry-card--gradient .haeon-entry-icon {
+  color: #FFF; background: rgb(255 255 255 / 16%);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 20%);
+}
+.haeon-entry-card > div:first-child { color: var(--haeon-blue); }
+.haeon-entry-card p { font-size: 13px; line-height: 1.65; color: var(--haeon-muted); }
+.haeon-entry-card [data-lucide="arrow-right"] { color: var(--haeon-blue); }
+.haeon-entry-card:active { background: var(--haeon-selected); }
+/* The original EMR blue-to-pink treatment for the two primary destinations. */
+#gateway-view .haeon-entry-card--gradient {
+  background: linear-gradient(135deg, #2563EB 0%, #DB2777 100%);
+  border: 0;
+  color: #FFF;
+}
+#gateway-view .haeon-entry-card--gradient > div { color: #FFF; }
+#gateway-view .haeon-entry-card--gradient p,
+#gateway-view .haeon-entry-card--gradient [data-lucide="arrow-right"] { color: rgb(255 255 255 / 85%); }
+#gateway-view .haeon-entry-card--gradient:active { filter: brightness(.95); }
+#gateway-view h1 { font-size: clamp(30px, 5vw, 40px)!important; word-break: keep-all; }
+#hub-view h1 { font-size: clamp(28px, 5vw, 36px)!important; }
+.haeon-survey-link { min-height: 76px; padding: 18px 20px; }
+.haeon-survey-link > span:first-of-type { font-size: 16px; }
+.haeon-survey-link > span:last-of-type { font-size: 12px; color: var(--haeon-muted); }
+.haeon-survey :is(button,input,select,textarea) { font-family: inherit; }
+.haeon-survey :is(input:not([type="checkbox"]):not([type="radio"]),select,textarea) {
+  min-width: 0; max-width: 100%; font-size: 16px; color: var(--haeon-ink);
+}
+.haeon-survey input:not(.sr-only), .haeon-survey select { min-height: 44px; }
+.haeon-survey textarea { line-height: 1.65; }
+.haeon-survey :is(input,textarea)::placeholder { color: #7B8496; }
+.haeon-survey [class~="text-[#8E8E93]"] { color: var(--haeon-muted); }
+.haeon-survey :is([class~="rounded-[10px]"],[class~="rounded-[12px]"]).bg-white {
+  border-color: var(--haeon-border); border-radius: var(--haeon-radius);
+}
+.haeon-survey label:has(input:checked) { background: #F3F6FF; }
+.haeon-survey label:has(input:focus-visible) { outline: 3px solid #93B4FF; outline-offset: -3px; }
+.haeon-survey input.peer:checked + div { background: var(--haeon-blue)!important; }
+.haeon-survey input.peer + [data-lucide="check"] { color: var(--haeon-blue)!important; }
+.haeon-survey :is([class~="bg-[#FFCC00]"],[class~="bg-[#fc582b]"],[class~="bg-[#799bf4]"],[class~="bg-[#a6a1fb]"],[class~="bg-[#bca988]"]) {
+  background-color: var(--haeon-blue)!important; color: #FFF!important;
+}
+.haeon-survey :is([class~="border-[#FFCC00]"],[class~="border-[#fc582b]"],[class~="border-[#799bf4]"],[class~="border-[#a6a1fb]"],[class~="border-[#bca988]"]) { border-color: var(--haeon-blue)!important; }
+.haeon-survey button.bg-white[class*="shadow-[0_3px_8px"] {
+  background: var(--haeon-selected); color: var(--haeon-blue); box-shadow: 0 0 0 1px #2563EB;
+}
+.haeon-survey .haeon-cta,
+#mental-survey-view :is(#btnStart,#btnNext) {
+  min-height: 54px; padding: 15px 24px; border: 1px solid transparent;
+  border-radius: var(--haeon-radius); font-size: 16px; font-weight: 700;
+  background: var(--haeon-cta)!important; color: #FFF!important;
+  box-shadow: 0 6px 18px #5145CD20;
+}
+.haeon-survey > div:first-child > button,
+#hub-view button[onclick="backToGateway()"] { color: var(--haeon-blue); min-height: 44px; font-size: 14px; }
+.haeon-survey [id$="bottom-action"] { padding-bottom: max(20px, env(safe-area-inset-bottom)); border-color: var(--haeon-border); }
+:is(.haeon-survey,#mental-survey-view) button:disabled {
+  background: #E8E9F2!important; color: #697386!important; box-shadow: none!important;
+  opacity: .65; cursor: not-allowed;
+}
+@media (hover: hover) {
+  .haeon-entry-card:hover { border-color: #A9BEFA; box-shadow: 0 8px 24px #5145CD12; }
+  .haeon-survey-link:hover, #mental-survey-view .sport-choice:hover { background: #F8F6FF; }
+  .haeon-survey .haeon-cta:hover:not(:disabled) { filter: brightness(1.06); }
+}
+@media screen {
+  .home-float-button {
+    position:fixed; top:max(12px,env(safe-area-inset-top)); right:max(16px,env(safe-area-inset-right)); z-index:10000;
+    display:flex; align-items:center; justify-content:center; width:44px; height:44px; padding:0;
+    border:1px solid #E1E7F2; border-radius:50%; background:rgba(255,255,255,.96); color:#2563EB;
+    box-shadow:0 3px 12px #253C6A12; cursor:pointer; transition:background .15s,box-shadow .15s;
+  }
+  .home-float-button svg { width:21px; height:21px; pointer-events:none; }
+  .home-float-button:focus-visible { outline:3px solid #93B4FF; outline-offset:3px; }
+  .home-float-button:active { background:#EEF3FF; box-shadow:0 1px 4px #253C6A12; }
+}
+@media (hover:hover) {
+  .home-float-button:hover { background:#F2F5FF; box-shadow:0 5px 16px #253C6A1C; }
+}
+@media(max-width:480px) {
+  .haeon-entry-card { padding: 20px; min-height: 140px; }
+  .haeon-survey h2 { font-size: 28px!important; word-break: keep-all; }
+  .haeon-survey-link { padding: 16px; }
+}
+
+/* Keep clinic certification legible on both entry screens. */
+.mps-certification {
+  display:inline-flex; align-items:center; gap:10px; min-height:42px;
+  padding:9px 16px; border:1px solid #CBD8EF; border-radius:999px;
+  background:#FFFFFF; color:#334155; box-shadow:0 2px 8px #253C6A08;
+  font-size:15px; font-weight:700; line-height:1.4; white-space:nowrap;
+}
+.mps-certification strong { color:#1D4ED8; font-weight:800; }
+.mps-certification-symbol { width:24px; height:24px; object-fit:contain; flex-shrink:0; }
+.mps-certification-wordmark { height:16px; width:auto; object-fit:contain; flex-shrink:0; }

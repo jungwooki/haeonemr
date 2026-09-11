@@ -38,21 +38,8 @@ const PostpartumUI = {
     <div class="bg-white rounded-[12px] p-5 shadow-sm border border-[#EDEEF1]">
       <textarea oninput="updatePostpartumData('${field}', this.value)" class="w-full h-24 outline-none resize-none text-[16px] font-medium text-black placeholder:text-gray-300 bg-transparent" placeholder="${placeholder}">${postpartumFormData[field]}</textarea>
     </div>`,
-  selectRow:(label,field,options)=>`
-    <div class="flex items-center justify-between p-3 px-4 border-b border-[#EDEEF1] last:border-0 bg-white gap-3">
-      <span class="text-[15px] font-semibold text-black shrink-0">${label}</span>
-      <select onchange="updatePostpartumData('${field}', this.value)" class="text-right text-[14px] text-[#8E8E93] font-medium outline-none bg-transparent flex-1">
-        <option value="">선택</option>
-        ${options.map(o=>`<option value="${o}" ${postpartumFormData[field]===o?'selected':''}>${o}</option>`).join('')}
-      </select>
-    </div>`,
-  radioList:(field,options)=>`<div>${options.map(opt=>`
-    <label class="flex items-center justify-between p-3 px-4 border-b border-[#EDEEF1] last:border-0 bg-white cursor-pointer active:bg-gray-50" onclick="setPostpartumRadio('${field}','${opt.replace(/'/g,"\\'")}')">
-      <span class="text-[15px] font-semibold text-black">${opt}</span>
-      <div class="w-5 h-5 rounded-full border-2 ${postpartumFormData[field]===opt?'border-[#bca988] bg-[#bca988]':'border-gray-300'} flex items-center justify-center shrink-0">
-        ${postpartumFormData[field]===opt?'<div class="w-2 h-2 bg-white rounded-full"></div>':''}
-      </div>
-    </label>`).join('')}</div>`,
+  selectRow:(label,field,options)=>SurveyUX.selectRow('postpartum',label,field,options,postpartumFormData[field],'updatePostpartumData'),
+  radioList:(field,options)=>SurveyUX.radioList('postpartum',field,options,postpartumFormData[field],'updatePostpartumData'),
   checkRow:(label,category,value)=>`
     <label class="flex items-center justify-between p-3 px-4 border-b border-[#EDEEF1] bg-white cursor-pointer active:bg-gray-50 transition-colors">
       <span class="text-[15px] font-semibold text-black">${label}</span>
@@ -176,9 +163,7 @@ const postpartumSections = {
 };
 
 function postpartumRenderProgress(){
-  const fill=document.getElementById('postpartum-progress-fill');
-  const pct = postpartumCurrentStep<=1 ? 0 : ((postpartumCurrentStep-1)/postpartumTotalSteps)*100;
-  fill.style.width=pct+'%';
+  SurveyUX.sync('postpartum-',postpartumCurrentStep,postpartumTotalSteps);
 }
 function refreshPostpartumStep(){
   if(postpartumCurrentStep===1) return;
@@ -206,7 +191,7 @@ window.postpartumUpdateUI = function(){
   postpartumRenderProgress(); if(window.lucide) lucide.createIcons();
   if(scrollContainer) scrollContainer.scrollTo(0,0);
 };
-window.postpartumNextStep = function(){
+window.postpartumNextStep = function(){ if(!SurveyUX.canAdvance('postpartum-',postpartumCurrentStep)) return;
   if(postpartumCurrentStep<postpartumTotalSteps){ postpartumCurrentStep++; postpartumUpdateUI(); }
   else { savePostpartumRecordToSheet(); document.getElementById('postpartum-app-shell').style.display='none'; showCompletion(); }
 };

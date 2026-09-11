@@ -13,7 +13,11 @@
     root.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
     document.getElementById(id).classList.add('active');
     root.scrollTo(0,0);
+    const back=root.querySelector('.mental-back');
+    back.textContent=id==='mentalSportScreen'?'← 메인화면':id==='screenInfo'?'← 종목 선택':id==='screenComplete'?'메인화면':'작성 종료';
   }
+
+  SurveyUX.addClearButton(document.getElementById('inputName'));
 
   // ---------- Screen 1 ----------
   function renderSportChoices(){
@@ -30,8 +34,13 @@
   }
 
   function checkStartReady(){
-    const ready = state.name.trim() !== '' && state.gender !== '' && state.dob !== '' && state.sport !== '';
+    const ready = state.name.trim() !== '' && state.gender !== '' && SurveyUX.validBirth(state.dob) && state.sport !== '';
     document.getElementById('btnStart').disabled = !ready;
+    const dob=document.getElementById('inputDob');
+    dob.max=SurveyUX.today();
+    const invalid=Boolean(state.dob&&!SurveyUX.validBirth(state.dob));
+    dob.setAttribute('aria-invalid',String(invalid));
+    document.getElementById('mental-info-hint').textContent=invalid?'생년월일을 오늘 이전의 실제 날짜로 입력해 주세요.':ready?'기본 정보 입력이 완료되었습니다. 서베이를 시작해 주세요.':'이름·성별·생년월일을 모두 입력하면 시작할 수 있습니다.';
   }
 
   document.getElementById('inputName').addEventListener('input', e=>{
@@ -43,8 +52,8 @@
   root.addEventListener('click', e=>{
     const g = e.target.closest('.gender-btn');
     if(g){
-      root.querySelectorAll('.gender-btn').forEach(b=>b.classList.remove('selected'));
-      g.classList.add('selected');
+      root.querySelectorAll('.gender-btn').forEach(b=>{ b.classList.remove('selected'); b.setAttribute('aria-pressed','false'); });
+      g.classList.add('selected'); g.setAttribute('aria-pressed','true');
       state.gender = g.dataset.val; checkStartReady();
       return;
     }
@@ -60,6 +69,7 @@
   });
 
   document.getElementById('btnStart').addEventListener('click', ()=>{
+    if(document.getElementById('btnStart').disabled) return;
     buildItems();
     state.currentPage = 0;
     showScreen('screenSurvey');
@@ -97,22 +107,36 @@
       `).join('');
       return `
         <div class="qcard" id="qcard-${it.no}">
-          <p class="qtext word-keep">${it.no}. ${it.text}</p>
-          <div class="likert-row">${btns}</div>
+          <p class="qtext word-keep" id="qtext-${it.no}">${it.no}. ${it.text}</p>
+          <div class="likert-row" role="group" aria-labelledby="qtext-${it.no}">${btns}</div>
         </div>
       `;
     }).join('');
 
     const totalQ = state.items.length;
     const startNo = page[0].no, endNo = page[page.length-1].no;
-    document.getElementById('progressText').innerText = `${startNo}-${endNo} / ${totalQ}`;
-    document.getElementById('progressFill').style.width = `${Math.round((endNo/totalQ)*100)}%`;
+    document.getElementById('progressText').innerText = `${state.currentPage+1} / ${state.pages.length} 단계 · 문항 ${startNo}–${endNo}`;
 
     document.getElementById('btnPrev').disabled = state.currentPage === 0;
     const isLast = state.currentPage === state.pages.length - 1;
     document.getElementById('btnNext').innerHTML = isLast
       ? '제출하기 ✓'
-      : '다음 →';
+      : '다음 단계 →';
+    updateAnswerProgress();
+    qList.scrollTo(0,0);
+  }
+
+  function updateAnswerProgress(){
+    const page=state.pages[state.currentPage]||[];
+    const missing=page.filter(item=>!state.answers[item.no]).length;
+    const answered=Object.keys(state.answers).length;
+    const track=document.getElementById('progressFill').parentElement;
+    track.setAttribute('role','progressbar'); track.setAttribute('aria-label','답변 완료 문항');
+    track.setAttribute('aria-valuemin','0'); track.setAttribute('aria-valuemax',String(state.items.length));
+    track.setAttribute('aria-valuenow',String(answered));
+    document.getElementById('progressFill').style.width=`${answered/state.items.length*100}%`;
+    document.getElementById('mental-page-feedback').textContent=missing?`이 페이지 ${page.length-missing} / ${page.length} 응답 · ${missing}개 문항에 답하면 다음으로 이동할 수 있습니다.`:`이 페이지 응답 완료 · 전체 ${answered} / ${state.items.length} 응답`;
+    document.getElementById('btnNext').disabled=missing>0;
   }
 
   document.getElementById('qList').addEventListener('click', e=>{
@@ -127,6 +151,7 @@
       b.classList.toggle('selected', parseInt(b.dataset.val,10) === val);
       b.setAttribute('aria-pressed', String(parseInt(b.dataset.val,10) === val));
     });
+    updateAnswerProgress();
   });
 
   document.getElementById('btnPrev').addEventListener('click', ()=>{
@@ -268,7 +293,8 @@
     saved=false;submissionId='';document.getElementById('mental-save-status').textContent='';
     Object.assign(state,{name:'',gender:'',dob:'',sport:'',items:[],pages:[],currentPage:0,answers:{}});
     document.getElementById('inputName').value='';document.getElementById('inputDob').value='';
-    root.querySelectorAll('.selected').forEach(button=>button.classList.remove('selected'));
+    document.getElementById('inputName').dispatchEvent(new Event('input',{bubbles:true}));
+    root.querySelectorAll('.selected').forEach(button=>{button.classList.remove('selected');button.setAttribute('aria-pressed','false');});
     checkStartReady();closeAdmin();showScreen('mentalSportScreen');
     if(resultChart){resultChart.destroy();resultChart=null;}
   }
@@ -277,9 +303,20 @@
     if(window.lucide) lucide.createIcons();
     triggerFadeIn(root);
   }
+  function back(){
+    if(document.getElementById('screenInfo').classList.contains('active')) { chooseSport(); return; }
+    exit();
+  }
   function exit(){
     if(saving) return;
-    if(!saved&&Object.keys(state.answers).length && !confirm('서버에 저장하지 않은 응답이 있습니다. 입구로 돌아갈까요?')) return;
+    if(!saved&&(state.name.trim()||state.gender||state.dob||Object.keys(state.answers).length)) {
+      document.getElementById('mental-exit-dialog').showModal(); return;
+    }
+    discardAndExit();
+  }
+  function discardAndExit(){
+    if(saving) return;
+    document.getElementById('mental-exit-dialog').close();
     reset();root.hidden=true;backToGateway();
   }
   function recordResult(data){
@@ -290,5 +327,5 @@
       return {sportLabel:SPORTS[data.sport].label,scores:calcFactorScores(),items:state.items.map(item=>({...item,answer:state.answers[item.no]}))};
     }finally{Object.assign(state,previous);}
   }
-  window.MpsMental=Object.freeze({isSaving:()=>saving,open,exit,chooseSport,closeAdmin,downloadJSON,recordResult});
+  window.MpsMental=Object.freeze({isSaving:()=>saving,open,exit,back,discardAndExit,chooseSport,closeAdmin,downloadJSON,recordResult});
 })();

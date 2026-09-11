@@ -18,6 +18,7 @@ window.setDeepSegmented = function(field,val,btnEl){
   const parent=btnEl.parentElement;
   parent.querySelectorAll('button').forEach(b=>{ b.className="flex-1 py-2 text-[14px] font-medium rounded-[7px] text-[#8E8E93] transition-all duration-200"; });
   btnEl.className="flex-1 py-2 text-[14px] font-bold rounded-[7px] bg-white shadow-[0_3px_8px_rgba(0,0,0,0.12)] text-[#c94622] transition-all duration-200";
+  deepRenderProgress();
 };
 window.setDeepRadio = function(field,val){ deepFormData[field]=val; refreshDeepStep(); };
 
@@ -46,21 +47,8 @@ const DeepUI = {
     <div class="flex bg-[#F2F2F7] rounded-[9px] p-[3px] w-full">
       ${options.map(opt=>`<button onclick="setDeepSegmented('${field}', '${opt}', this)" class="flex-1 py-2 text-[14px] rounded-[7px] transition-all duration-200 ${deepFormData[field]===opt?'font-bold bg-white shadow-[0_3px_8px_rgba(0,0,0,0.12)] text-[#c94622]':'font-medium text-[#8E8E93]'}">${opt}</button>`).join('')}
     </div>`,
-  radioList:(field,options)=>`<div>${options.map(opt=>`
-    <label class="flex items-center justify-between p-3 px-4 border-b border-[#EDEEF1] last:border-0 bg-white cursor-pointer active:bg-gray-50" onclick="setDeepRadio('${field}','${opt.replace(/'/g,"\\'")}')">
-      <span class="text-[15px] font-semibold text-black">${opt}</span>
-      <div class="w-5 h-5 rounded-full border-2 ${deepFormData[field]===opt?'border-[#fc582b] bg-[#fc582b]':'border-gray-300'} flex items-center justify-center shrink-0">
-        ${deepFormData[field]===opt?'<div class="w-2 h-2 bg-white rounded-full"></div>':''}
-      </div>
-    </label>`).join('')}</div>`,
-  selectRow:(label,field,options)=>`
-    <div class="flex items-center justify-between p-3 px-4 border-b border-[#EDEEF1] last:border-0 bg-white gap-3">
-      <span class="text-[15px] font-semibold text-black shrink-0">${label}</span>
-      <select onchange="updateDeepData('${field}', this.value)" class="text-right text-[14px] text-[#8E8E93] font-medium outline-none bg-transparent flex-1">
-        <option value="">선택</option>
-        ${options.map(o=>`<option value="${o}" ${deepFormData[field]===o?'selected':''}>${o}</option>`).join('')}
-      </select>
-    </div>`,
+  radioList:(field,options)=>SurveyUX.radioList('deep',field,options,deepFormData[field],'updateDeepData'),
+  selectRow:(label,field,options)=>SurveyUX.selectRow('deep',label,field,options,deepFormData[field],'updateDeepData'),
   checkRow:(label,category,value)=>`
     <label class="flex items-center justify-between p-3 px-4 border-b border-[#EDEEF1] bg-white cursor-pointer active:bg-gray-50 transition-colors">
       <span class="text-[15px] font-semibold text-black">${label}</span>
@@ -147,10 +135,7 @@ const deepSections = {
 };
 
 function deepRenderProgress(){
-  const fill=document.getElementById('deep-progress-fill');
-  const total=deepGetTotalSteps();
-  const pct = deepCurrentStep<=1 ? 0 : ((deepCurrentStep-1)/total)*100;
-  fill.style.width=pct+'%';
+  SurveyUX.sync('deep-',deepCurrentStep,deepGetTotalSteps());
 }
 function refreshDeepStep(){
   if(deepCurrentStep===1) return;
@@ -178,7 +163,7 @@ window.deepUpdateUI = function(){
   deepRenderProgress(); if(window.lucide) lucide.createIcons();
   if(scrollContainer) scrollContainer.scrollTo(0,0);
 };
-window.deepNextStep = function(){ if(deepCurrentStep<deepGetTotalSteps()){ deepCurrentStep++; deepUpdateUI(); } else { saveDeepRecordToSheet(); document.getElementById('deep-app-shell').style.display='none'; showCompletion(); } };
+window.deepNextStep = function(){ if(!SurveyUX.canAdvance('deep-',deepCurrentStep)) return; if(deepCurrentStep<deepGetTotalSteps()){ deepCurrentStep++; deepUpdateUI(); } else { saveDeepRecordToSheet(); document.getElementById('deep-app-shell').style.display='none'; showCompletion(); } };
 window.deepPrevStep = function(){ if(deepCurrentStep>1){ deepCurrentStep--; deepUpdateUI(); } else { document.getElementById('deep-app-shell').style.display='none'; returnToHub(); } };
 window.enterDeepSurvey = function(){
   document.getElementById('hub-view').style.display='none';

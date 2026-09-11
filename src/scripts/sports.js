@@ -21,6 +21,7 @@ window.setSportsSegmented = function(field,val,btnEl){
   const parent=btnEl.parentElement;
   parent.querySelectorAll('button').forEach(b=>{ b.className="flex-1 py-2 text-[14px] font-medium rounded-[7px] text-[#8E8E93] transition-all duration-200"; });
   btnEl.className="flex-1 py-2 text-[14px] font-bold rounded-[7px] bg-white shadow-[0_3px_8px_rgba(0,0,0,0.12)] text-[#c94622] transition-all duration-200";
+  sportsRenderProgress();
 };
 window.setAbility = function(field,val,btnEl){
   sportsFormData[field]=val;
@@ -48,21 +49,8 @@ const SportsUI = {
     <div class="flex bg-[#F2F2F7] rounded-[9px] p-[3px] w-full">
       ${options.map(opt=>`<button onclick="setSportsSegmented('${field}', '${opt}', this)" class="flex-1 py-2 text-[14px] rounded-[7px] transition-all duration-200 ${sportsFormData[field]===opt?'font-bold bg-white shadow-[0_3px_8px_rgba(0,0,0,0.12)] text-[#c94622]':'font-medium text-[#8E8E93]'}">${opt}</button>`).join('')}
     </div>`,
-  radioList:(field,options)=>`<div>${options.map(opt=>`
-    <label class="flex items-center justify-between p-3 px-4 border-b border-[#EDEEF1] last:border-0 bg-white cursor-pointer active:bg-gray-50" onclick="setSportsRadio('${field}','${opt.replace(/'/g,"\\'")}')">
-      <span class="text-[15px] font-semibold text-black">${opt}</span>
-      <div class="w-5 h-5 rounded-full border-2 ${sportsFormData[field]===opt?'border-[#fc582b] bg-[#fc582b]':'border-gray-300'} flex items-center justify-center shrink-0">
-        ${sportsFormData[field]===opt?'<div class="w-2 h-2 bg-white rounded-full"></div>':''}
-      </div>
-    </label>`).join('')}</div>`,
-  selectRow:(label,field,options)=>`
-    <div class="flex items-center justify-between p-3 px-4 border-b border-[#EDEEF1] last:border-0 bg-white gap-3">
-      <span class="text-[15px] font-semibold text-black shrink-0">${label}</span>
-      <select onchange="updateSportsData('${field}', this.value)" class="text-right text-[14px] text-[#8E8E93] font-medium outline-none bg-transparent flex-1">
-        <option value="">선택</option>
-        ${options.map(o=>`<option value="${o}" ${sportsFormData[field]===o?'selected':''}>${o}</option>`).join('')}
-      </select>
-    </div>`,
+  radioList:(field,options)=>SurveyUX.radioList('sports',field,options,sportsFormData[field],'updateSportsData'),
+  selectRow:(label,field,options)=>SurveyUX.selectRow('sports',label,field,options,sportsFormData[field],'updateSportsData'),
   checkRow:(label,category,value)=>`
     <label class="flex items-center justify-between p-3 px-4 border-b border-[#EDEEF1] bg-white cursor-pointer active:bg-gray-50 transition-colors">
       <span class="text-[15px] font-semibold text-black">${label}</span>
@@ -159,9 +147,7 @@ const sportsSections = {
 };
 
 function sportsRenderProgress(){
-  const fill=document.getElementById('sports-progress-fill');
-  const pct = sportsCurrentStep<=1 ? 0 : ((sportsCurrentStep-1)/sportsTotalSteps)*100;
-  fill.style.width=pct+'%';
+  SurveyUX.sync('sports-',sportsCurrentStep,sportsTotalSteps);
 }
 function refreshSportsStep(){
   if(sportsCurrentStep===1) return;
@@ -189,7 +175,7 @@ window.sportsUpdateUI = function(){
   sportsRenderProgress(); if(window.lucide) lucide.createIcons();
   if(scrollContainer) scrollContainer.scrollTo(0,0);
 };
-window.sportsNextStep = function(){
+window.sportsNextStep = function(){ if(!SurveyUX.canAdvance('sports-',sportsCurrentStep)) return;
   if(sportsCurrentStep<sportsTotalSteps){ sportsCurrentStep++; sportsUpdateUI(); }
   else { saveSportsRecordToSheet(); document.getElementById('sports-app-shell').style.display='none'; showCompletion(); }
 };

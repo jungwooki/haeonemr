@@ -1,5 +1,5 @@
 <!-- ===================== 통증 문진 ===================== -->
-<div id="pain-app-shell" class="flex-col w-screen h-screen bg-[var(--ios-bg)] relative overflow-hidden" style="display:none;">
+<div id="pain-app-shell" class="haeon-survey flex-col w-screen h-screen bg-[var(--ios-bg)] relative overflow-hidden" style="display:none;">
   <div class="h-16 bg-white/90 backdrop-blur-md border-b border-[#EDEEF1] flex items-center justify-between px-4 shrink-0 z-30 relative">
     <button onclick="painPrevStep()" class="text-slate-800 flex items-center gap-1 font-semibold text-[16px] active:opacity-50 transition-opacity w-20">
       <i data-lucide="chevron-left" class="w-6 h-6 -ml-2"></i> <span id="pain-btn-back-label">메인으로</span>
@@ -10,7 +10,7 @@
       </div>
       <span id="pain-nav-title" class="font-bold text-[17px] text-black">소개</span>
     </div>
-    <div class="w-20"></div>
+    <div class="survey-step-count" aria-live="polite"></div>
   </div>
   <div class="h-[3px] w-full bg-[#EDEEF1] shrink-0">
     <div id="pain-progress-fill" class="h-full bg-[#fc582b] transition-all duration-300" style="width:0%"></div>
@@ -27,7 +27,7 @@
         <p class="text-[17px] text-[#3C3C43] leading-[26px] mb-12 max-w-md px-4">
           3대를 이어가는 한의원, 해온한의원을 찾아주셔서 감사합니다.<br>통증 너머의 편안한 일상을 되찾으실 수 있도록, 불편하신 부위와 통증의 특징을 꼼꼼히 여쭙는 문진입니다.
         </p>
-        <button onclick="painNextStep()" class="w-full max-w-xs bg-[#fc582b] text-white font-bold text-[18px] py-4 rounded-[16px] shadow-sm hover:bg-[#fc582b] active:scale-[0.98] transition-all">
+        <button onclick="painNextStep()" class="haeon-cta w-full max-w-xs bg-[#fc582b] text-white font-bold text-[18px] py-4 rounded-[16px] shadow-sm hover:bg-[#fc582b] active:scale-[0.98] transition-all">
           문진표 작성 시작하기
         </button>
       </div>
@@ -36,8 +36,9 @@
     </div>
   </div>
 
-  <div id="pain-bottom-action" class="shrink-0 bg-white border-t border-gray-200 p-4 pb-6 flex justify-center hidden z-40">
-    <button onclick="painNextStep()" id="pain-next-btn" class="w-full max-w-2xl bg-[#fc582b] text-white font-bold text-[18px] py-4 rounded-[16px] shadow-sm hover:bg-[#fc582b] active:scale-[0.98] transition-all">다음 단계</button>
+  <div id="pain-bottom-action" class="survey-actions shrink-0 bg-white border-t border-gray-200 p-4 pb-6 flex justify-center hidden z-40">
+    <p class="survey-action-hint" aria-live="polite"></p>
+    <button onclick="painNextStep()" id="pain-next-btn" class="haeon-cta w-full max-w-2xl bg-[#fc582b] text-white font-bold text-[18px] py-4 rounded-[16px] shadow-sm hover:bg-[#fc582b] active:scale-[0.98] transition-all">다음 단계</button>
   </div>
 </div>
 

@@ -1,0 +1,148 @@
+/* Survey-only tablet/mobile usability, loaded after the visual theme. */
+@media screen {
+  body:has(.haeon-survey[style*="flex"],#mental-survey-view:not([hidden])) .main-screen-bar { display:none; }
+  body > .haeon-survey {
+    position:fixed; inset:var(--survey-viewport-top,0px) 0 auto;
+    width:100%; height:var(--survey-viewport-height,100dvh); padding-top:0!important;
+  }
+  body > #mental-survey-view {
+    top:var(--survey-viewport-top,0px); bottom:auto; height:var(--survey-viewport-height,100dvh);
+    padding-top:0!important; overflow:hidden; display:flex; flex-direction:column;
+  }
+}
+.haeon-survey > div:first-child {
+  display:grid; grid-template-columns:100px minmax(0,1fr) 100px;
+  gap:8px; height:auto; min-height:64px; padding:8px 20px;
+}
+.haeon-survey > div:first-child > div:has([id$="nav-title"]) {
+  position:static; transform:none; justify-content:center; min-width:0;
+}
+.haeon-survey > div:first-child > button { width:auto; white-space:nowrap; }
+.haeon-survey [id$="nav-title"] { font-size:16px; overflow-wrap:anywhere; }
+.survey-step-count { font-size:13px; color:#697386; text-align:right; white-space:nowrap; }
+.haeon-survey [id$="scroll-container"] { min-height:0; padding:24px 24px 36px; scroll-padding:24px; overscroll-behavior:contain; }
+.haeon-survey [id$="scroll-container"] > div { max-width:760px; }
+.haeon-survey [id$="step-1"] { margin-top:20px; padding-bottom:20px; }
+.haeon-survey [id$="step-1"] > p { text-align:left; font-size:17px; line-height:1.7; max-width:520px; padding:0; margin-bottom:32px; }
+.haeon-survey [id$="step-1"] > div:first-child { width:80px; height:80px; margin-bottom:24px; }
+.haeon-survey [id$="step-1"] > div:first-child svg { width:40px; height:40px; }
+.haeon-survey h2 { font-size:28px!important; line-height:1.4!important; }
+.haeon-survey :is(p,label,fieldset) { line-height:1.6; }
+.haeon-survey label:has(input) { min-height:56px; gap:16px; }
+.haeon-survey label > span { font-size:16px; font-weight:500; }
+.haeon-survey label > div { flex-shrink:0; }
+.haeon-survey [class*="md:divide-x"] { display:block; }
+.haeon-survey [class*="md:divide-x"] > * { border-left:0!important; border-right:0!important; }
+.haeon-survey .survey-field-row {
+  display:grid; grid-template-columns:minmax(120px, .8fr) minmax(0,1fr);
+  align-items:center; gap:8px 20px; padding:16px 20px;
+}
+.haeon-survey .survey-field-row > div { min-width:0; }
+.haeon-survey .survey-field-row :is(input,select) {
+  width:100%; text-align:left; background:#F8F9FD; border:1px solid #D8DEEB;
+  border-radius:10px; padding:10px 12px; min-height:48px;
+}
+.haeon-survey textarea { padding:12px; background:#F8F9FD; border:1px solid #D8DEEB; border-radius:10px; min-height:110px; resize:vertical; }
+.haeon-survey .survey-required::after { content:'필수'; margin-left:6px; font-size:12px; font-weight:500; color:#6555E7; }
+.survey-field-error { grid-column:1/-1; color:#B42318; font-size:13px; line-height:1.5; }
+.haeon-survey [aria-invalid="true"] { border-color:#B42318!important; }
+.haeon-survey input.peer:has(+ [data-lucide="check"]) {
+  appearance:none; position:static; clip:auto; clip-path:none; overflow:visible;
+  width:24px; height:24px; min-height:24px; margin:0; padding:0;
+  border:2px solid #8994A8; border-radius:6px; background:#FFF; flex-shrink:0;
+}
+.haeon-survey input.peer:has(+ [data-lucide="check"]):checked {
+  border-color:#2563EB; background:#2563EB url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m5 12 4 4 10-10' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/20px no-repeat;
+}
+.haeon-survey input.peer + [data-lucide="check"] { display:none; }
+.survey-radio-list { width:100%; }
+.haeon-survey .survey-radio-row { display:flex; justify-content:space-between; align-items:center; padding:14px 20px; border-bottom:1px solid #EEF0F5; cursor:pointer; }
+.haeon-survey .survey-radio-row:last-child { border-bottom:0; }
+.haeon-survey .survey-radio-row input { width:24px; height:24px; min-height:24px; margin:0; flex-shrink:0; accent-color:#2563EB; }
+.haeon-survey .survey-options { padding:16px 0 0; margin:0; border:0; border-bottom:1px solid #E8E9F2; }
+.haeon-survey .survey-options legend { padding:0 20px; font-size:16px; font-weight:700; }
+.survey-options small { font-size:12px; font-weight:400; color:#697386; margin-left:8px; }
+.haeon-survey .survey-choice-button { min-height:48px; min-width:44px; font-size:15px; line-height:1.4; padding:10px 8px; }
+.haeon-survey .survey-choice-button[aria-pressed="true"] { outline:2px solid #2563EB; outline-offset:-2px; }
+.haeon-survey .survey-choice-button[aria-pressed="true"]::after { content:' ✓'; }
+.haeon-survey .survey-actions { flex-direction:column; align-items:center; gap:8px; padding:12px 24px max(16px,env(safe-area-inset-bottom)); box-shadow:0 -5px 20px #20233306; }
+.survey-action-hint { margin:0; font-size:13px; color:#697386; line-height:1.5; }
+.haeon-survey .survey-actions button { width:100%; max-width:760px; }
+.haeon-survey button:disabled,#mental-survey-view button:disabled { opacity:1!important; background:#E8E9F2!important; color:#697386!important; box-shadow:none!important; }
+.haeon-survey .pain-scale { display:grid; grid-template-columns:repeat(11,minmax(44px,1fr)); gap:8px; }
+.haeon-survey .pain-scale button { width:auto; height:48px; border-radius:10px; }
+.haeon-survey .pain-marker { position:absolute; width:44px; height:44px; margin:-22px 0 0 -22px; border:0; background:transparent; pointer-events:auto; cursor:pointer; }
+.haeon-survey .pain-marker::before { content:''; display:block; width:18px; height:18px; margin:13px; background:#F43F5EBF; border:2px solid #BE123C; border-radius:50%; }
+.haeon-survey .pain-map-tools { display:flex; align-items:center; justify-content:space-between; gap:12px; margin:12px 0; font-size:14px; }
+.haeon-survey .pain-map-tools button { min-height:44px; padding:8px 12px; color:#2563EB; border-radius:8px; }
+#mental-survey-view .mental-header { position:relative; flex-shrink:0; }
+#mental-survey-view .screen { min-height:0; flex:1; overflow-y:auto; scroll-padding:24px; }
+#mental-survey-view #screenSurvey { overflow:hidden; }
+#mental-survey-view #qList { min-height:0; flex:1; overflow-y:auto; padding-bottom:24px; scroll-padding:24px; overscroll-behavior:contain; }
+#mental-survey-view #screenSurvey > div:last-child { position:static; flex-shrink:0; }
+#mental-survey-view #screenInfo { flex-direction:column; align-items:center; justify-content:flex-start; padding-top:32px; padding-bottom:max(32px,env(safe-area-inset-bottom)); }
+#mental-survey-view #screenInfo > div { flex-shrink:0; width:100%; max-width:448px; margin-inline:auto; }
+#mental-survey-view .mental-header-tag { font-size:12px; }
+#mental-survey-view .mental-intro p { line-height:1.6; }
+#mental-survey-view .likert-btn.selected { outline:2px solid #2563EB; outline-offset:2px; }
+#mental-survey-view .likert-btn.selected .num::after { content:' ✓'; font-size:13px; }
+#mental-survey-view .mental-page-feedback { font-size:13px; color:#697386; padding:4px 16px 8px; margin:0 auto; width:100%; max-width:672px; }
+#mental-survey-view #mental-save-status:empty { display:none; }
+#mental-survey-view #mental-save-status { flex-shrink:0; padding-top:8px; padding-bottom:8px; }
+#mental-survey-view .gender-btn[aria-pressed="true"]::after { content:' ✓'; }
+#mental-survey-view #mental-info-hint { font-size:13px; color:#697386; line-height:1.6; margin-top:16px; }
+#mental-survey-view #progressFill { transition:width .2s; }
+@media (min-width:768px) {
+  #mental-survey-view #qList,#mental-survey-view #screenSurvey > div { max-width:800px; }
+  #mental-survey-view .qcard { padding:24px; }
+  #mental-survey-view .likert-btn { min-height:80px; }
+  .haeon-survey [id$="scroll-container"] { padding-top:32px; }
+}
+@media (max-width:600px) {
+  .haeon-survey > div:first-child { grid-template-columns:84px minmax(0,1fr) 72px; padding:8px 12px; }
+  .haeon-survey > div:first-child > div:has([id$="nav-title"]) > div { display:none; }
+  .haeon-survey [id$="nav-title"] { font-size:14px; }
+  .survey-step-count { font-size:12px; }
+  .haeon-survey [id$="scroll-container"] { padding:20px 16px 28px; }
+  .haeon-survey .survey-field-row { grid-template-columns:minmax(0,1fr); gap:8px; padding:16px; }
+  .haeon-survey .survey-field-row > div { width:100%; }
+  .haeon-survey h2 { font-size:25px!important; }
+  .haeon-survey .survey-actions { padding-left:16px; padding-right:16px; }
+  .haeon-survey .pain-scale { grid-template-columns:repeat(6,minmax(0,1fr)); }
+  .haeon-survey .survey-radio-row { padding:14px 16px; }
+  #mental-survey-view .mental-header { gap:8px; padding:8px 16px; font-size:14px; }
+  #mental-survey-view #qList { padding-left:16px; padding-right:16px; }
+}
+@media (prefers-reduced-motion:reduce) { #mental-survey-view #progressFill { transition:none; } }
+#mental-survey-view .survey-exit-dialog { border:0; border-radius:20px; padding:28px; width:calc(100% - 32px); max-width:480px; margin:auto; color:#202333; box-shadow:0 24px 80px #20233333; }
+#mental-survey-view .survey-exit-dialog::backdrop { background:#20233366; }
+#mental-survey-view .survey-exit-dialog h2 { font-size:23px!important; }
+#mental-survey-view .survey-exit-dialog p { margin:16px 0 24px; line-height:1.65; }
+#mental-survey-view .survey-exit-dialog > div { display:flex; gap:12px; justify-content:flex-end; }
+#mental-survey-view .survey-exit-dialog button { min-height:48px; padding:10px; font-size:14px; color:#697386; }
+#mental-survey-view .survey-exit-dialog button:last-child { color:#2563EB; font-weight:700; }
+@media(max-width:600px) { #mental-survey-view .survey-exit-dialog { margin:auto auto 0; border-radius:20px 20px 0 0; width:100%; max-width:none; padding-bottom:max(24px,env(safe-area-inset-bottom)); } }
+@media screen {
+  body:has(#hub-view[style*="flex"]) .main-screen-bar { display:none; }
+  body > #hub-view { padding-top:0; }
+}
+@media(max-width:379px) { .haeon-survey .pain-scale { grid-template-columns:repeat(5,minmax(0,1fr)); } }
+.survey-option-label { padding:12px 20px 0; margin:0; font-size:14px; font-weight:700; color:#697386; }
+:is(.haeon-survey,#mental-survey-view) .survey-input-wrap { position:relative; display:flex; flex:1; width:100%; min-width:0; align-items:center; }
+:is(.haeon-survey,#mental-survey-view) .survey-input-wrap input { padding-right:48px; min-width:0; width:100%; }
+:is(.haeon-survey,#mental-survey-view) .survey-clear { position:absolute; right:2px; top:50%; transform:translateY(-50%); width:44px; height:44px; padding:0; border:0; border-radius:8px; color:#697386; background:transparent; font-size:24px; font-weight:400; }
+:is(.haeon-survey,#mental-survey-view) .survey-clear[hidden] { display:none; }
+@media(min-width:768px) { .haeon-survey .survey-options .survey-radio-list { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@media(max-width:600px) { .haeon-survey .grid-cols-4:has(>button[onclick^="setAbility"]) { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+/* Pair left/right choices by body area; each remains an independent checkbox. */
+#pain-app-shell .pain-side-help { margin:0 4px 12px; color:#697386; font-size:14px; line-height:1.6; }
+#pain-app-shell .pain-side-row { display:grid; grid-template-columns:minmax(0,1fr) 76px 76px; align-items:center; gap:12px; padding:12px 20px; border-bottom:1px solid #EEF0F5; }
+#pain-app-shell .pain-side-row:last-child { border-bottom:0; }
+#pain-app-shell .pain-side-name { font-size:16px; font-weight:600; overflow-wrap:anywhere; }
+#pain-app-shell .pain-side-choice { position:relative; display:flex; align-items:center; justify-content:center; min-height:48px; margin:0; padding:0; border:1px solid #CAD2E1; border-radius:12px; background:#F8F9FD; color:#596579; cursor:pointer; }
+#pain-app-shell .pain-side-choice span { display:flex; align-items:center; gap:5px; font-size:16px; font-weight:600; }
+#pain-app-shell .pain-side-choice span::before { content:''; width:12px; }
+#pain-app-shell .pain-side-choice:has(input:checked) { background:#EEF3FF; border-color:#2563EB; color:#2563EB; box-shadow:inset 0 0 0 1px #2563EB; }
+#pain-app-shell .pain-side-choice:has(input:checked) span::before { content:'✓'; font-size:13px; }
+#pain-app-shell .pain-side-choice:has(input:focus-visible) { outline:3px solid #93B4FF; outline-offset:2px; }
+@media(max-width:600px) { #pain-app-shell .pain-side-row { grid-template-columns:minmax(0,1fr) 58px 58px; padding:12px; gap:8px; } #pain-app-shell .pain-side-name { font-size:15px; } }

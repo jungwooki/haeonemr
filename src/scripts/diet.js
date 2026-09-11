@@ -20,6 +20,7 @@ window.setDietSegmented = function(field,val,btnEl){
   const parent=btnEl.parentElement;
   parent.querySelectorAll('button').forEach(b=>{ b.className="flex-1 py-2 text-[14px] font-medium rounded-[7px] text-[#8E8E93] transition-all duration-200"; });
   btnEl.className="flex-1 py-2 text-[14px] font-bold rounded-[7px] bg-white shadow-[0_3px_8px_rgba(0,0,0,0.12)] text-[#799bf4] transition-all duration-200";
+  dietRenderProgress();
 };
 window.setDietRadio = function(field,val){ dietFormData[field]=val; refreshDietStep(); };
 
@@ -48,13 +49,7 @@ const DietUI = {
     <div class="flex bg-[#F2F2F7] rounded-[9px] p-[3px] w-full">
       ${options.map(opt=>`<button onclick="setDietSegmented('${field}', '${opt}', this)" class="flex-1 py-2 text-[14px] rounded-[7px] transition-all duration-200 ${dietFormData[field]===opt?'font-bold bg-white shadow-[0_3px_8px_rgba(0,0,0,0.12)] text-[#799bf4]':'font-medium text-[#8E8E93]'}">${opt}</button>`).join('')}
     </div>`,
-  radioList:(field,options)=>`<div>${options.map(opt=>`
-    <label class="flex items-center justify-between p-3 px-4 border-b border-[#EDEEF1] last:border-0 bg-white cursor-pointer active:bg-gray-50" onclick="setDietRadio('${field}','${opt.replace(/'/g,"\\'")}')">
-      <span class="text-[15px] font-semibold text-black">${opt}</span>
-      <div class="w-5 h-5 rounded-full border-2 ${dietFormData[field]===opt?'border-[#799bf4] bg-[#799bf4]':'border-gray-300'} flex items-center justify-center shrink-0">
-        ${dietFormData[field]===opt?'<div class="w-2 h-2 bg-white rounded-full"></div>':''}
-      </div>
-    </label>`).join('')}</div>`,
+  radioList:(field,options)=>SurveyUX.radioList('diet',field,options,dietFormData[field],'updateDietData'),
   checkRow:(label,category,value)=>`
     <label class="flex items-center justify-between p-3 px-4 border-b border-[#EDEEF1] bg-white cursor-pointer active:bg-gray-50 transition-colors">
       <span class="text-[15px] font-semibold text-black">${label}</span>
@@ -140,10 +135,7 @@ const dietSections = {
 };
 
 function dietRenderProgress(){
-  const fill=document.getElementById('diet-progress-fill');
-  const total=dietGetTotalSteps();
-  const pct = dietCurrentStep<=1 ? 0 : ((dietCurrentStep-1)/total)*100;
-  fill.style.width=pct+'%';
+  SurveyUX.sync('diet-',dietCurrentStep,dietGetTotalSteps());
 }
 function refreshDietStep(){
   if(dietCurrentStep===1) return;
@@ -171,7 +163,7 @@ window.dietUpdateUI = function(){
   dietRenderProgress(); if(window.lucide) lucide.createIcons();
   if(scrollContainer) scrollContainer.scrollTo(0,0);
 };
-window.dietNextStep = function(){ if(dietCurrentStep<dietGetTotalSteps()){ dietCurrentStep++; dietUpdateUI(); } else { saveDietRecordToSheet(); document.getElementById('diet-app-shell').style.display='none'; showCompletion(); } };
+window.dietNextStep = function(){ if(!SurveyUX.canAdvance('diet-',dietCurrentStep)) return; if(dietCurrentStep<dietGetTotalSteps()){ dietCurrentStep++; dietUpdateUI(); } else { saveDietRecordToSheet(); document.getElementById('diet-app-shell').style.display='none'; showCompletion(); } };
 window.dietPrevStep = function(){ if(dietCurrentStep>1){ dietCurrentStep--; dietUpdateUI(); } else { document.getElementById('diet-app-shell').style.display='none'; returnToHub(); } };
 window.enterDietSurvey = function(){
   document.getElementById('hub-view').style.display='none';

@@ -1,9 +1,6 @@
 /* ===================== 6. 진행 · 네비게이션 ===================== */
 function renderProgress(){
-  const fill=document.getElementById('progress-fill');
-  const total=getTotalSteps();
-  const pct = currentStep<=1 ? 0 : ((currentStep-1)/total)*100;
-  fill.style.width=pct+'%';
+  SurveyUX.sync('',currentStep,getTotalSteps());
 }
 function refreshStep(){
   if(currentStep===1) return;
@@ -31,7 +28,7 @@ window.updateUI = function(){
   renderProgress(); if(window.lucide) lucide.createIcons();
   if(scrollContainer) scrollContainer.scrollTo(0,0);
 };
-window.nextStep=function(){ if(currentStep<getTotalSteps()){ currentStep++; updateUI(); } else { saveRecordToSheet(); document.getElementById('app-shell').style.display='none'; showCompletion(); } };
+window.nextStep=function(){ if(!SurveyUX.canAdvance('',currentStep)) return; if(currentStep<getTotalSteps()){ currentStep++; updateUI(); } else { saveRecordToSheet(); document.getElementById('app-shell').style.display='none'; showCompletion(); } };
 window.prevStep=function(){ if(currentStep>1){ currentStep--; updateUI(); } else { returnToHub(); } };
 window.backToForm=function(){
   document.title='해온 AI EMR';

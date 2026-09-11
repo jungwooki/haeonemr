@@ -40,10 +40,15 @@ function renderPainBodyMarkers(){
     if(!layer) return;
     const indexed = painFormData.bodyMarkers.map((m,i)=>({...m,_i:i})).filter(m=>(m.view||'front')===view);
     layer.innerHTML = indexed.map(m=>`
-      <div onclick="removePainMarker(event,${m._i})" style="position:absolute;left:${m.x}%;top:${m.y}%;width:20px;height:20px;margin:-10px 0 0 -10px;background:rgba(244,63,94,0.75);border:2px solid #fc582b;border-radius:50%;pointer-events:auto;cursor:pointer;"></div>
+      <button type="button" class="pain-marker" aria-label="${view==='front'?'앞면':'뒷면'} 통증 표시 ${m._i+1} 지우기" onclick="removePainMarker(event,${m._i})" style="left:${m.x}%;top:${m.y}%;"></button>
     `).join('');
   });
+  const count=document.getElementById('pain-marker-count');
+  if(count) count.textContent=`표시한 부위 ${painFormData.bodyMarkers.length}개`;
+  const undo=document.getElementById('pain-marker-undo');
+  if(undo) undo.disabled=painFormData.bodyMarkers.length===0;
 }
+window.undoPainMarker=function(){ painFormData.bodyMarkers.pop(); renderPainBodyMarkers(); };
 
 function bodyMapSvgMarkup(view, layerId){
   const back = view==='back';
@@ -75,7 +80,7 @@ function bodyMapSvgMarkup(view, layerId){
   <div id="${lid}" style="position:absolute;inset:0;pointer-events:none;"></div>`;
 }
 function scaleButtons(field){
-  let html='<div class="flex flex-wrap gap-2">';
+  let html=`<div class="pain-scale" role="group" aria-label="${field==='currentPainScale'?'현재 통증 점수':'가장 심할 때 통증 점수'}">`;
   for(let i=0;i<=10;i++){
     const active = painFormData[field]===String(i);
     html += `<button type="button" onclick="setPainScale('${field}','${i}',this)" class="w-9 h-9 rounded-full font-bold text-[13px] ${active?'bg-[#fc582b] text-white':'bg-[#F2F2F7] text-[#8E8E93]'}">${i}</button>`;
@@ -99,7 +104,7 @@ const PainUI = {
       <span class="text-[16px] font-semibold text-black">${label}</span>
       <input type="date" onchange="updatePainData('${field}', this.value)" value="${painFormData[field]}" class="text-right text-[16px] text-[#8E8E93] font-medium outline-none bg-transparent">
     </div>`,
-  selectInline:(field,options)=>`<select onchange="updatePainData('${field}', this.value)" class="text-[15px] font-semibold text-black outline-none bg-[#F2F2F7] rounded-[8px] px-3 py-2">${options.map(o=>`<option value="${o}" ${painFormData[field]===o?'selected':''}>${o} 전</option>`).join('')}</select>`,
+  selectInline:(field,options)=>`<select aria-label="통증 발생 후 기간 단위" onchange="updatePainData('${field}', this.value)" class="text-[15px] font-semibold text-black outline-none bg-[#F2F2F7] rounded-[8px] px-3 py-2">${options.map(o=>`<option value="${o}" ${painFormData[field]===o?'selected':''}>${o} 전</option>`).join('')}</select>`,
   textarea:(field,placeholder)=>`
     <div class="bg-white rounded-[12px] p-5 shadow-sm border border-[#EDEEF1]">
       <textarea oninput="updatePainData('${field}', this.value)" class="w-full h-20 outline-none resize-none text-[16px] font-medium text-black placeholder:text-gray-300 bg-transparent" placeholder="${placeholder}">${painFormData[field]}</textarea>
@@ -118,6 +123,22 @@ const PainUI = {
 };
 
 const PAIN_OPT_SIDE = ['어깨(좌)','어깨(우)','팔/팔꿈치(좌)','팔/팔꿈치(우)','손/손목(좌)','손/손목(우)','골반/엉덩이(좌)','골반/엉덩이(우)','허벅지(좌)','허벅지(우)','무릎(좌)','무릎(우)','종아리(좌)','종아리(우)','발/발목/발바닥(좌)','발/발목/발바닥(우)'];
+function painSidePicker(){
+  return `<div class="pain-side-picker">${PAIN_OPT_SIDE.filter((_,index)=>index%2===0).map(left=>{
+    const area=left.slice(0,-3);
+    return `<div class="pain-side-row" role="group" aria-label="${area}">
+      <span class="pain-side-name">${area}</span>
+      ${['좌','우'].map(side=>{
+        const value=area+'('+side+')';
+        return `<label class="pain-side-choice">
+          <input type="checkbox" class="sr-only" aria-label="${area} ${side==='좌'?'왼쪽':'오른쪽'}" onchange="updatePainCheck('painAreaSide','${value}',this.checked)" ${painFormData.painAreaSide.includes(value)?'checked':''}>
+          <span>${side==='좌'?'좌':'우'}</span>
+        </label>`;
+      }).join('')}
+    </div>`;
+  }).join('')}</div>`;
+}
+
 const PAIN_OPT_FEEL = ['쑤신다(뻐근함)','욱신거린다(맥박뛰듯)','찌른다(칼로베는듯)','저리다(전기오듯)','시리다(차가운느낌)','화끈거린다(뜨거운느낌)','무겁다(돌을얹은듯)','힘이 빠지는느낌'];
 const PAIN_OPT_WORSE = ['가만히 있을 때','움직일 때','아침에 일어났을 때','밤에 잘 때','날씨가 흐리거나 추울 때','스트레스를 받을 때'];
 const PAIN_OPT_BETTER = ['휴식을 취할 때','따뜻한 찜질을 할 때','차가운 찜질을 할 때','가볍게 움직여줄 때'];
@@ -130,7 +151,8 @@ const painSections = {
   2:{ navTitle:'통증 부위', html:()=>`
     ${PainUI.header('불편한 부위를 알려주세요')}
     ${PainUI.group(PainUI.inputRow('성함','name','이름 입력')+PainUI.dateRow('생년월일','birthDate'))}
-    <p class="text-[14px] text-[#3C3C43] px-2 mb-2">아래 그림에서 <b class="text-[#fc582b]">아픈 부위를 터치</b>해 표시해 주세요. 앞면·뒷면을 각각 확인해 주시고, 잘못 눌렀다면 표시를 다시 누르면 지워집니다.</p>
+    <p class="text-[14px] text-[#3C3C43] px-2 mb-2">아래 그림에서 <b class="text-[#fc582b]">아픈 부위를 터치</b>해 표시해 주세요. 앞면·뒷면을 각각 확인해 주시고, 잘못 눌렀다면 표시를 다시 누르거나 마지막 표시를 취소할 수 있습니다. 그림 대신 아래 부위 목록에서 선택해도 됩니다.</p>
+    <div class="pain-map-tools"><span id="pain-marker-count" role="status" aria-live="polite">표시한 부위 0개</span><button id="pain-marker-undo" type="button" onclick="undoPainMarker()" disabled>마지막 표시 취소</button></div>
     <div class="bg-white rounded-[12px] p-2 shadow-sm border border-[#EDEEF1]">
       <p class="text-center text-[14px] font-bold text-[#3C3C43] mb-2">좌우는 본인 몸 기준입니다</p>
       <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;max-width:440px;margin:0 auto;">
@@ -140,8 +162,9 @@ const painSections = {
     </div>
     ${PainUI.subhead('척추 및 중앙 부위 (추가 선택)')}
     ${PainUI.group(PainUI.checkGrid(['목','등','허리'],'painAreaCenter'))}
-    ${PainUI.subhead('좌/우 부위 (추가 선택)')}
-    ${PainUI.group(PainUI.checkGrid(PAIN_OPT_SIDE,'painAreaSide'))}
+    ${PainUI.subhead('좌우 통증 부위 선택')}
+    <p class="pain-side-help">본인 몸 기준으로 좌·우를 눌러 주세요. 양쪽과 여러 부위를 함께 선택할 수 있고, 다시 누르면 해제됩니다.</p>
+    ${PainUI.group(painSidePicker())}
     ${PainUI.group(PainUI.textarea('painAreaDetail','기타 부위나 방사통(뻗치는 통증)이 있다면 적어주세요'))}
   `},
   3:{ navTitle:'통증 상세', html:()=>`
@@ -150,7 +173,7 @@ const painSections = {
     ${PainUI.group(PainUI.checkGrid(['넘어지거나 다친 적이 있다','평소에 많이 사용한다','특별한 계기를 잘 모르겠다'],'painCause'))}
     ${PainUI.subhead('발생 시기')}
     ${PainUI.group(`<div class="flex items-center gap-3 p-3 px-4 bg-white">
-      <input type="number" oninput="updatePainData('painDurationNum', this.value)" value="${painFormData.painDurationNum}" placeholder="숫자" class="w-24 p-3 text-center rounded-[8px] bg-[#F2F2F7] text-[16px] font-bold outline-none">
+      <input type="number" aria-label="통증 발생 후 기간" oninput="updatePainData('painDurationNum', this.value)" value="${painFormData.painDurationNum}" placeholder="숫자" class="w-24 p-3 text-center rounded-[8px] bg-[#F2F2F7] text-[16px] font-bold outline-none">
       ${PainUI.selectInline('painDurationUnit',['일','주','개월','년'])}
     </div>`)}
     ${PainUI.header('통증의 강도')}
@@ -182,9 +205,7 @@ const painSections = {
 };
 
 function painRenderProgress(){
-  const fill=document.getElementById('pain-progress-fill');
-  const pct = painCurrentStep<=1 ? 0 : ((painCurrentStep-1)/painTotalSteps)*100;
-  fill.style.width=pct+'%';
+  SurveyUX.sync('pain-',painCurrentStep,painTotalSteps);
 }
 function refreshPainStep(){
   if(painCurrentStep===1) return;
@@ -214,7 +235,7 @@ window.painUpdateUI = function(){
   painRenderProgress(); if(window.lucide) lucide.createIcons();
   if(scrollContainer) scrollContainer.scrollTo(0,0);
 };
-window.painNextStep = function(){
+window.painNextStep = function(){ if(!SurveyUX.canAdvance('pain-',painCurrentStep)) return;
   if(painCurrentStep<painTotalSteps){ painCurrentStep++; painUpdateUI(); }
   else { savePainRecordToSheet(); document.getElementById('pain-app-shell').style.display='none'; showCompletion(); }
 };

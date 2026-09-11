@@ -5,6 +5,7 @@
     "src/scripts/notes.js",
     "src/scripts/state.js",
     "src/scripts/age.js",
+    "src/scripts/survey-ux.js",
     "src/scripts/ui.js",
     "src/scripts/options.js",
     "src/scripts/pediatric-sections.js",

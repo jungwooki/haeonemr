@@ -29,7 +29,7 @@ function mountEmrWorkspace(prefix){
     sidebar=document.createElement('aside');
     sidebar.className='emr-sidebar no-print';
     sidebar.setAttribute('aria-label','환자 및 문진 기록');
-    sidebar.innerHTML='<div class="emr-sidebar-head"><div class="emr-brand">HAEON EMR</div><p>환자 목록 · 문진 기록</p><input type="search" aria-label="결과 화면 환자 검색" placeholder="이름 또는 차트번호 검색"></div><div class="emr-patients"></div><div class="emr-records"></div>';
+    sidebar.innerHTML='<div class="emr-sidebar-head"><div class="emr-brand">환자 목록</div><p>환자 목록 · 문진 기록</p><input type="search" aria-label="결과 화면 환자 검색" placeholder="이름 또는 차트번호 검색"></div><div class="emr-patients"></div><div class="emr-records"></div>';
     columns.prepend(sidebar);
     sidebar.querySelector('input').addEventListener('input',event=>renderEmrPatients(sidebar,event.target.value));
     const notes=document.createElement('section');

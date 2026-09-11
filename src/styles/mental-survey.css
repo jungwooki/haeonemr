@@ -31,7 +31,7 @@
 #mental-survey-view .progress-fill{background:#2563EB;height:100%;transition:width .25s}
 #mental-survey-view .nav-btn{min-height:52px;font-size:17px}
 #mental-survey-view .nav-btn:disabled{opacity:.35;cursor:not-allowed}
-#mental-survey-view #btnStart,#mental-survey-view #btnNext{background:linear-gradient(110deg,#2563EB 0%,#6555E7 65%,#B849C5 100%);color:#FFF;box-shadow:0 6px 18px #5145CD20}
+#mental-survey-view #btnStart,#mental-survey-view #btnNext{background:var(--haeon-cta);color:#FFF;box-shadow:0 6px 18px #5145CD20}
 #mental-survey-view #screenSurvey>div:last-child{position:sticky;bottom:0;z-index:2;padding-bottom:max(16px,env(safe-area-inset-bottom));border-color:#E8E9F2;background:#ffffffed;backdrop-filter:blur(12px)}
 #mental-survey-view #adminPanel{z-index:10;background:#FAF9FE}
 #mental-survey-view #adminInfo>div,#mental-survey-view #resultTable>div{background:#FFF;border:1px solid #E8E9F2;border-radius:12px}

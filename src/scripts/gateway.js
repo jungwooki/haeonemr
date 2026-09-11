@@ -1,4 +1,4 @@
-/* ===================== 허브(입구) 내비게이션 ===================== */
+/* ===================== 메인 화면 내비게이션 ===================== */
 window.enterChildSurvey = function(){
   document.getElementById('hub-view').style.display='none';
   const shell=document.getElementById('app-shell'); shell.style.display='flex'; triggerFadeIn(shell);
