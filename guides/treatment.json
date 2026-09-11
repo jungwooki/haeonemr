@@ -19,7 +19,7 @@
         "phase_remodel": 60,
         "phase_maint": 40
       },
-      "icon": "Activity",
+      "icon": "🪡",
       "tags": [
         "근육통",
         "담결림"
@@ -44,7 +44,7 @@
         "phase_remodel": 80,
         "phase_maint": 90
       },
-      "icon": "Sparkles",
+      "icon": "☯️",
       "tags": [
         "오장육부",
         "화병",
@@ -70,7 +70,7 @@
         "phase_remodel": 60,
         "phase_maint": 30
       },
-      "icon": "Zap",
+      "icon": "⚡",
       "tags": [
         "디스크",
         "신경마비"
@@ -95,7 +95,7 @@
         "phase_remodel": 80,
         "phase_maint": 90
       },
-      "icon": "Zap",
+      "icon": "⚡",
       "tags": [
         "다이어트",
         "지방분해",
@@ -121,7 +121,7 @@
         "phase_remodel": 50,
         "phase_maint": 80
       },
-      "icon": "Smile",
+      "icon": "🧸",
       "tags": [
         "아프지 않음",
         "소아전용",
@@ -148,7 +148,7 @@
         "phase_remodel": 90,
         "phase_maint": 90
       },
-      "icon": "Flame",
+      "icon": "🌡️",
       "tags": [
         "따뜻함",
         "혈액순환"
@@ -173,7 +173,7 @@
         "phase_remodel": 70,
         "phase_maint": 80
       },
-      "icon": "Flame",
+      "icon": "🔥",
       "tags": [
         "쑥냄새",
         "전통방식"
@@ -198,7 +198,7 @@
         "phase_remodel": 20,
         "phase_maint": 10
       },
-      "icon": "Droplets",
+      "icon": "🩸",
       "tags": [
         "어혈제거",
         "혈류순환"
@@ -223,7 +223,7 @@
         "phase_remodel": 50,
         "phase_maint": 50
       },
-      "icon": "Wind",
+      "icon": "🫧",
       "tags": [
         "근육이완",
         "마사지효과"
@@ -248,7 +248,7 @@
         "phase_remodel": 70,
         "phase_maint": 80
       },
-      "icon": "Waves",
+      "icon": "🫧",
       "tags": [
         "임산부가능",
         "소아부항",
@@ -274,7 +274,7 @@
         "phase_remodel": 40,
         "phase_maint": 20
       },
-      "icon": "ShieldCheck",
+      "icon": "🐝",
       "tags": [
         "천연진통제",
         "면역치료"
@@ -299,7 +299,7 @@
         "phase_remodel": 80,
         "phase_maint": 60
       },
-      "icon": "HeartPulse",
+      "icon": "💉",
       "tags": [
         "피로회복",
         "재생치료"
@@ -324,7 +324,7 @@
         "phase_remodel": 30,
         "phase_maint": 10
       },
-      "icon": "Snowflake",
+      "icon": "🌿",
       "tags": [
         "급성염좌",
         "교통사고"
@@ -349,7 +349,7 @@
         "phase_remodel": 80,
         "phase_maint": 100
       },
-      "icon": "Sparkles",
+      "icon": "🌱",
       "tags": [
         "기력회복",
         "보약주사",
@@ -375,7 +375,7 @@
         "phase_remodel": 60,
         "phase_maint": 100
       },
-      "icon": "Sparkles",
+      "icon": "🌿",
       "tags": [
         "기력충전",
         "지방분해"
@@ -400,7 +400,7 @@
         "phase_remodel": 50,
         "phase_maint": 50
       },
-      "icon": "CheckCircle2",
+      "icon": "💧",
       "tags": [
         "빠른재생",
         "스포츠회복"
@@ -425,7 +425,7 @@
         "phase_remodel": 80,
         "phase_maint": 70
       },
-      "icon": "MonitorSmartphone",
+      "icon": "🔎",
       "tags": [
         "초음파",
         "정밀치료",
@@ -451,7 +451,7 @@
         "phase_remodel": 70,
         "phase_maint": 60
       },
-      "icon": "Bone",
+      "icon": "🤲",
       "tags": [
         "근막이완",
         "에너지강화"
@@ -476,7 +476,7 @@
         "phase_remodel": 100,
         "phase_maint": 80
       },
-      "icon": "Anchor",
+      "icon": "🦴",
       "tags": [
         "골반교정",
         "척추교정"
@@ -501,7 +501,7 @@
         "phase_remodel": 80,
         "phase_maint": 100
       },
-      "icon": "Smile",
+      "icon": "🧒",
       "tags": [
         "소아성장",
         "야제증",
@@ -528,7 +528,7 @@
         "phase_remodel": 60,
         "phase_maint": 90
       },
-      "icon": "Activity",
+      "icon": "🩹",
       "tags": [
         "키네시오",
         "부상방지"
@@ -553,7 +553,7 @@
         "phase_remodel": 90,
         "phase_maint": 100
       },
-      "icon": "MonitorSmartphone",
+      "icon": "⚖️",
       "tags": [
         "재활운동",
         "코어강화",
@@ -580,7 +580,7 @@
         "phase_remodel": 40,
         "phase_maint": 70
       },
-      "icon": "Wind",
+      "icon": "🫁",
       "tags": [
         "비염관리",
         "네블라이저",
@@ -606,7 +606,7 @@
         "phase_remodel": 50,
         "phase_maint": 100
       },
-      "icon": "Flower2",
+      "icon": "🌸",
       "tags": [
         "심신안정",
         "스트레스",
@@ -632,7 +632,7 @@
         "phase_remodel": 80,
         "phase_maint": 70
       },
-      "icon": "Zap",
+      "icon": "🧲",
       "tags": [
         "자기장",
         "Tesla-3000",
@@ -658,7 +658,7 @@
         "phase_remodel": 10,
         "phase_maint": 10
       },
-      "icon": "Snowflake",
+      "icon": "❄️",
       "tags": [
         "급성기, 아급성기",
         "붓기제거"
@@ -683,7 +683,7 @@
         "phase_remodel": 40,
         "phase_maint": 40
       },
-      "icon": "Waves",
+      "icon": "⚡",
       "tags": [
         "기본물리치료",
         "시원함"
@@ -708,7 +708,7 @@
         "phase_remodel": 70,
         "phase_maint": 60
       },
-      "icon": "Flame",
+      "icon": "♨️",
       "tags": [
         "심부열",
         "근막관절이완"

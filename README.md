@@ -116,7 +116,7 @@ python3 -m http.server 8000 --bind 127.0.0.1 --directory emr
 AI 스마트서베이 7종의 공통 완료 화면과 메인 화면의 입구 4에서 안내를 엽니다. 안내창을 닫으면 이전 화면이 유지됩니다.
 
 - `guides/process.html`: 진료는 이런 과정을 거칩니다.
-- `guides/prescription.html`: 해온한의원 한약요법들 (76개)
+- `guides/prescription.html`: 해온한의원 기초한약들 (76개)
 - `guides/treatment.html`: 해온한의원 치료방법들 (28개)
 - `guides/index.html`: 세 안내 페이지의 목록
 

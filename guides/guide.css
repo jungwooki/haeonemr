@@ -3,3 +3,7 @@
 .process .guide-hero h1{font-size:32px;font-weight:800;line-height:1.35;margin:12px 0}.process .guide-nav a{color:#2563EB}.process .fade-in{animation:none;opacity:1}@media(max-width:520px){.process .guide-hero h1{font-size:26px}}
 
 .guide-nav .guide-home{font-size:12px;font-weight:700;padding:5px 12px;border:1px solid #CBD5E1;border-radius:6px;background:#F8FAFC;color:#334155;white-space:nowrap}
+
+.prescription-notice{margin:10px 0 16px;padding:12px;background:#EFF6FF;border-radius:10px;color:#334155;font-size:13px;line-height:1.7;font-weight:400}
+
+.treatment-icon{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;margin-right:9px;border-radius:11px;background:#EFF6FF;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif;font-size:23px;line-height:1;vertical-align:middle;flex-shrink:0}

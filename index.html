@@ -333,7 +333,7 @@ button.bg-black,button[class*="bg-[#FFCC00]"],button[class*="bg-[#fc582b]"],butt
     <button onclick="openHaeonGuide()" class="w-full text-left bg-white rounded-[16px] border border-slate-200 p-5 mt-4 shadow-sm active:scale-[0.99] transition-all">
       <div class="text-[11px] font-extrabold text-blue-600 mb-3">입구 4</div>
       <div class="text-[19px] font-bold text-slate-900 mb-1">해온한의원 가이드</div>
-      <p class="text-[13px] text-slate-500">진료 과정 · 한약요법 · 치료방법 안내 →</p>
+      <p class="text-[13px] text-slate-500">진료 과정 · 기초한약 · 치료방법 · 진단검사 안내 →</p>
     </button>
   </div>
 </div>
@@ -720,10 +720,11 @@ button.bg-black,button[class*="bg-[#FFCC00]"],button[class*="bg-[#fc582b]"],butt
   </div>
   <h2 class="text-[26px] font-extrabold text-black mb-2">작성이 완료되었습니다</h2>
   <p class="text-[15px] text-[#8E8E93] mb-6 max-w-xs">소중한 답변 감사합니다. 진료 준비를 위해 소중히 활용하겠습니다.</p>
-  <div class="w-full max-w-3xl grid grid-cols-1 md:grid-cols-3 gap-3 mb-6 text-left">
+  <div class="w-full max-w-3xl grid grid-cols-1 md:grid-cols-2 gap-3 mb-6 text-left">
     <button onclick="openHaeonGuide('process')" class="rounded-[16px] border border-slate-200 bg-slate-50 p-5 text-left text-[16px] font-bold text-slate-900">진료는 이런 과정을 거칩니다.<span class="block text-blue-600 text-[13px] mt-2">자세히 보기 →</span></button>
-    <button onclick="openHaeonGuide('prescription')" class="rounded-[16px] border border-slate-200 bg-slate-50 p-5 text-left text-[16px] font-bold text-slate-900">해온한의원 한약요법들<span class="block text-blue-600 text-[13px] mt-2">자세히 보기 →</span></button>
+    <button onclick="openHaeonGuide('prescription')" class="rounded-[16px] border border-slate-200 bg-slate-50 p-5 text-left text-[16px] font-bold text-slate-900">해온한의원 기초한약들<span class="block text-blue-600 text-[13px] mt-2">자세히 보기 →</span></button>
     <button onclick="openHaeonGuide('treatment')" class="rounded-[16px] border border-slate-200 bg-slate-50 p-5 text-left text-[16px] font-bold text-slate-900">해온한의원 치료방법들<span class="block text-blue-600 text-[13px] mt-2">자세히 보기 →</span></button>
+    <button onclick="openHaeonGuide('diagnostic')" class="rounded-[16px] border border-slate-200 bg-slate-50 p-5 text-left text-[16px] font-bold text-slate-900">해온한의원 진단검사 항목들<span class="block text-blue-600 text-[13px] mt-2">자세히 보기 →</span></button>
   </div>
   <button onclick="returnToHubFromCompletion()" class="mb-auto bg-blue-600 text-white font-bold text-[16px] px-10 py-4 rounded-[14px] active:scale-[0.98] transition-all">확인</button>
 </div>
@@ -5333,7 +5334,7 @@ window.MentalEmr=(()=>{
 })();
 /* Keep the completed survey mounted while the patient reads the guides. */
 window.openHaeonGuide=function(page='index'){
-  if(!['index','process','prescription','treatment'].includes(page)) return;
+  if(!['index','process','prescription','treatment','diagnostic'].includes(page)) return;
   const dialog=document.getElementById('haeon-guide-dialog');
   dialog.querySelector('iframe').src='guides/'+page+'.html';
   if(!dialog.open)dialog.showModal();

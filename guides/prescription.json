@@ -371,7 +371,7 @@
       "code": "GMSYS",
       "category": "보험약",
       "type": "flow",
-      "indication": "화병·갱년기 장애 🔥",
+      "indication": "스트레스, 화병, 불안초조",
       "symptoms": [
         "가슴 답답",
         "안면홍조",
@@ -1475,7 +1475,7 @@
       "code": "가미소요산(K)",
       "category": "크라시에",
       "type": "flow",
-      "indication": "여성 문제 (짜증/화병) 🔥",
+      "indication": "스트레스, 화병, 불안초조",
       "symptoms": [
         "갱년기 장애",
         "상열감",

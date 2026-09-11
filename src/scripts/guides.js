@@ -1,6 +1,6 @@
 /* Keep the completed survey mounted while the patient reads the guides. */
 window.openHaeonGuide=function(page='index'){
-  if(!['index','process','prescription','treatment'].includes(page)) return;
+  if(!['index','process','prescription','treatment','diagnostic'].includes(page)) return;
   const dialog=document.getElementById('haeon-guide-dialog');
   dialog.querySelector('iframe').src='guides/'+page+'.html';
   if(!dialog.open)dialog.showModal();
