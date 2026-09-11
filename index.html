@@ -1780,6 +1780,27 @@ window.goHome = function(){
   const gw=document.getElementById('gateway-view'); gw.style.display='flex'; triggerFadeIn(gw);
 };
 
+/* Memory only: bounded, short-lived reads; no patient data in browser storage. */
+const emrReadCache=new Map();
+function clearEmrReadCache(){emrReadCache.clear();}
+function invalidateEmrReadCache(prefix){
+  for(const key of emrReadCache.keys()) if(key.startsWith(prefix)) emrReadCache.delete(key);
+}
+function cachedEmrRead(key,read,{ttl=60000,force=false}={}){
+  if(force) emrReadCache.delete(key);
+  const previous=emrReadCache.get(key);
+  if(previous&&(previous.pending||previous.expires>Date.now())) return previous.promise;
+  const entry={pending:true,expires:0};
+  entry.promise=Promise.resolve().then(read).then(value=>{
+    entry.pending=false;entry.expires=Date.now()+ttl;return value;
+  },error=>{
+    if(emrReadCache.get(key)===entry) emrReadCache.delete(key);
+    throw error;
+  });
+  emrReadCache.delete(key);emrReadCache.set(key,entry);
+  while(emrReadCache.size>24) emrReadCache.delete(emrReadCache.keys().next().value);
+  return entry.promise;
+}
 /* ===================== 주치의 안내 / 프리노트 (공통) ===================== */
 function doctorNoteBoxHtml(prefix){
   return `<div class="rp-card rp-soft" style="border:1px dashed #fc582b66;">
@@ -1850,20 +1871,23 @@ window.saveNote = async function(prefix, field){
   if(field==='interpretationNote'){
     try{
       const params=new URLSearchParams({type:'noteCapabilities',q:'__emr_note_probe__'});
-      const response=await fetch(CONFIG.SHEET_URL+'?'+params,{signal:AbortSignal.timeout(15000)});
-      const json=await response.json();
+      const json=await cachedEmrRead('noteCapabilities',async()=>{
+        const response=await fetch(CONFIG.SHEET_URL+'?'+params,{signal:AbortSignal.timeout(15000)});
+        const result=await response.json();
+        if(result.protocol!=='haeon-notes-v2') throw new Error('Unsupported note server');
+        return result;
+      },{ttl:300000});
       if(json.protocol!=='haeon-notes-v2') throw new Error('판독 메모 저장을 위해 최신 Code.gs를 배포해 주세요.');
     }catch(error){showNoteToast(prefix,field,false,'판독 메모 저장을 위해 최신 Code.gs를 배포해 주세요.');return;}
   }
   showNoteToast(prefix, field, true, '저장 중...');
   // no-cors 응답은 실제 성공 여부를 알려주지 않으므로, 저장 후 다시 조회해서
   // 값이 실제로 반영됐는지 확인한 뒤에만 "저장완료"로 표시한다.
-  fetch(CONFIG.SHEET_URL, {
+  return fetch(CONFIG.SHEET_URL, {
     method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain;charset=utf-8'},
     body: JSON.stringify({ type:'updateNote', ts, name, category, field, value })
   })
-  .then(()=> new Promise(resolve=>setTimeout(resolve, 700))) // 시트 반영 대기
-  .then(()=> fetch(`${CONFIG.SHEET_URL}?q=${encodeURIComponent(name)}`))
+  .then(()=> fetch(CONFIG.SHEET_URL+'?'+new URLSearchParams({type:'noteRead',q:name,ts,category,field}),{signal:AbortSignal.timeout(15000)}))
   .then(r=>r.json())
   .then(json=>{
     let verified = false;
@@ -2365,6 +2389,7 @@ document.getElementById('emr-password-form').addEventListener('submit',event=>{
     input.value=''; input.focus();
     return;
   }
+  clearEmrReadCache();
   emrImagePassword=input.value;
   document.getElementById('emr-password-dialog').close();
   enterEmrAfterPassword();
@@ -2384,6 +2409,8 @@ function enterEmrAfterPassword(){
   searchRecords('');
 };
 window.closeSearchView = function(){
+  clearEmrReadCache();
+  emrImagePassword='';
   document.getElementById('search-view').style.display='none';
   const gw=document.getElementById('gateway-view'); gw.style.display='flex'; triggerFadeIn(gw);
 };
@@ -4781,7 +4808,7 @@ async function emrImageRequest(key,op,extra={}){
   if(!result.ok) throw new Error(result.error||'이미지 서버 요청에 실패했습니다.');
   return result;
 }
-async function readEmrImages(key){return (await emrImageRequest(key,'list')).images;}
+function readEmrImages(key){return cachedEmrRead('images:'+key,async()=>(await emrImageRequest(key,'list')).images);}
 async function changeEmrImages(key,operation,images=[],id='',values=null){
   // An older deployment must never receive an unknown POST and create a blank record.
   const existing=await readEmrImages(key);
@@ -4792,10 +4819,11 @@ async function changeEmrImages(key,operation,images=[],id='',values=null){
     reader.onload=()=>resolve({name:item.name,mimeType:item.blob.type,data:reader.result.split(',')[1]});
     reader.readAsDataURL(item.blob);
   })));
+  invalidateEmrReadCache('images:'+key);
   await fetch(CONFIG.SHEET_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({type:'haeonImages',operation,key,password:emrImagePassword,requestId,files,id,values}),signal:AbortSignal.timeout(60000)});
   for(let attempt=0;attempt<12;attempt++){
     const result=await emrImageRequest(key,'status',{requestId});
-    if(result.state==='complete') return result;
+    if(result.state==='complete'){invalidateEmrReadCache('images:'+key);return result;}
     if(result.state==='failed') throw new Error(result.error||'이미지 저장에 실패했습니다.');
     await new Promise(resolve=>setTimeout(resolve,1500));
   }
@@ -4814,10 +4842,12 @@ async function previewEmrImage(item,key){
   }catch(error){if(dialog.dataset.request===token) message.textContent=error.message;}
 }
 async function refreshEmrImageWidgets(key){
+  const pending=[];
   for(const widget of [...emrImageWidgets]){
     if(!widget.element.isConnected){widget.urls.forEach(URL.revokeObjectURL);emrImageWidgets.delete(widget);}
-    else if(widget.key===key) await widget.refresh();
+    else if(widget.key===key) pending.push(widget.refresh());
   }
+  await Promise.all(pending);
 }
 function mountEmrImages(host,patient,record){
   if(!host||!patient) return;
@@ -4875,7 +4905,7 @@ function mountEmrImages(host,patient,record){
       for(let i=items.length;i<3;i++){const empty=document.createElement('div');empty.className='emr-image-empty';empty.textContent='자료 '+(i+1);grid.append(empty);}
     }catch(error){status.textContent=error.message||'이미지 서버에 연결하지 못했습니다.';input.disabled=true;}
   }};
-  section.querySelector('.emr-image-reload').onclick=()=>widget.refresh();
+  section.querySelector('.emr-image-reload').onclick=()=>{invalidateEmrReadCache('images:'+key);return widget.refresh();};
   emrImageWidgets.add(widget);widget.refresh();
   input.addEventListener('change',async()=>{
     const files=[...input.files];input.value='';if(!files.length) return;
@@ -5182,7 +5212,6 @@ window.deletePatientRecord=async function(patientIndex,recordIndex){
     status.textContent='서버에 저장하는 중입니다…';
     try{
       if(!isSheetConfigured()) throw new Error('서버 저장소가 설정되지 않았습니다.');
-      await mentalReceipt('probe');
       if((await mentalReceipt('status')).state!=='complete'){
         await fetch(CONFIG.SHEET_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},signal:AbortSignal.timeout(60000),body:JSON.stringify({
           type:'mpsMental',requestId:submissionId,name:state.name.trim(),gender:state.gender,birthDate:state.dob,
