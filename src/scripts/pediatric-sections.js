@@ -1,3 +1,9 @@
+function guardianSignatureMarkup(){
+  return `${UI.header('작성자 서명 (보호자 이름)')}
+    <p class="text-[14px] text-[#3C3C43] px-2 mb-2">설문을 작성한 보호자님의 이름을 입력해 주세요.</p>
+    ${UI.group(UI.inputRow('작성자 서명','guardianName','보호자 이름'))}`;
+}
+
 /* ===================== 5. 단계별 컨텐츠 ===================== */
 const sections = {
   2:{ navTitle:'기본 정보', html:()=>{
@@ -163,8 +169,7 @@ const sections = {
     ${UI.subhead('신(腎) 기능 계통')}
     ${UI.group(UI.checkGrid(OPT_KIDNEY,'sysKidney'))}
 
-    ${UI.header('마무리')}
-    ${UI.group(UI.inputRow('보호자 성함','guardianName','이름 입력'))}
+    ${getTotalSteps()===5 ? guardianSignatureMarkup() : ''}
     <p class="text-[13px] font-medium text-[#8E8E93] text-center mt-6">입력하신 정보는 안전하게 보호되며 진료 목적으로만 사용됩니다.</p>`;
   }},
   6:{ navTitle:'정서 · 불안 체크', html:()=>`
@@ -174,7 +179,8 @@ const sections = {
     </p>
     ${UI.subhead('아래 항목 중 나에게 맞는 것을 모두 골라주세요')}
     ${UI.group(UI.checkGrid(OPT_ANXIETY,'anxietyChecklist'))}
-    <p class="text-[12px] font-medium text-[#8E8E93] text-center mt-6">이 체크리스트는 정식 심리검사가 아닌 예비 선별용입니다.</p>`
+    <p class="text-[12px] font-medium text-[#8E8E93] text-center mt-6">이 체크리스트는 정식 심리검사가 아닌 예비 선별용입니다.</p>
+    ${guardianSignatureMarkup()}`
   }
 };
 

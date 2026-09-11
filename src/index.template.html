@@ -12,6 +12,7 @@
 <style>{{ include src/styles/images.css }}</style>
 <style>{{ include src/styles/record-delete.css }}</style><style>{{ include src/styles/mental-survey.css }}</style><style>{{ include src/styles/primary-report.css }}</style></head>
 <body class="p-0 text-[17px] m-0 overflow-hidden">
+<nav class="main-screen-bar no-print" aria-label="공통 메뉴"><button type="button" onclick="goToMainScreen()">메인화면</button></nav>
 
 {{ include src/views/gateway.html }}{{ include src/views/hub.html }}{{ include src/views/pediatric-survey.html }}{{ include src/views/pediatric-report.html }}{{ include src/views/dialogs.html }}{{ include src/views/patient-search.html }}{{ include src/views/completion.html }}{{ include src/views/deep-survey.html }}{{ include src/views/deep-report.html }}{{ include src/views/diet-survey.html }}{{ include src/views/diet-report.html }}{{ include src/views/women-survey.html }}{{ include src/views/women-report.html }}{{ include src/views/pain-survey.html }}{{ include src/views/pain-report.html }}{{ include src/views/sports-survey.html }}{{ include src/views/sports-report.html }}{{ include src/views/postpartum-survey.html }}{{ include src/views/postpartum-report.html }}{{ include src/views/mental-survey.html }}{{ include src/views/mental-report.html }}<script>{{ scripts }}</script>
 </body>

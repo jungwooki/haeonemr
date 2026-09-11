@@ -290,5 +290,5 @@
       return {sportLabel:SPORTS[data.sport].label,scores:calcFactorScores(),items:state.items.map(item=>({...item,answer:state.answers[item.no]}))};
     }finally{Object.assign(state,previous);}
   }
-  window.MpsMental=Object.freeze({open,exit,chooseSport,closeAdmin,downloadJSON,recordResult});
+  window.MpsMental=Object.freeze({isSaving:()=>saving,open,exit,chooseSport,closeAdmin,downloadJSON,recordResult});
 })();

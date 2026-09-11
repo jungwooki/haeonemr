@@ -20,3 +20,17 @@ window.returnToHub = function(){
   const hub=document.getElementById('hub-view'); hub.style.display='flex'; triggerFadeIn(hub);
 };
 
+
+// Returning home discards in-memory drafts only after explicit confirmation.
+window.goToMainScreen = function(){
+  const dialog=document.getElementById('main-screen-confirm');
+  document.getElementById('main-screen-confirm-status').textContent='';
+  if(!dialog.open) dialog.showModal();
+};
+window.confirmMainScreen = function(){
+  if(window.MpsMental && MpsMental.isSaving()){
+    document.getElementById('main-screen-confirm-status').textContent='저장 중입니다. 저장이 끝난 후 다시 이동해 주세요.';
+    return;
+  }
+  window.location.reload();
+};

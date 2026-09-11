@@ -151,8 +151,9 @@ const sportsSections = {
     ${SportsUI.header('면역 / 알레르기')}
     ${SportsUI.group(SportsUI.checkGrid(SPORTS_OPT_IMM_RESP,'immRespiratory'))}
 
-    ${SportsUI.header('보호자 확인')}
-    ${SportsUI.group(SportsUI.inputRow('보호자 성함','guardianName','이름 입력'))}
+    ${SportsUI.header('작성자 서명 (보호자 이름)')}
+    <p class="text-[14px] text-[#3C3C43] px-2 mb-2">설문을 작성한 보호자님의 이름을 입력해 주세요.</p>
+    ${SportsUI.group(SportsUI.inputRow('작성자 서명','guardianName','보호자 이름'))}
     <p class="text-[13px] font-medium text-[#8E8E93] text-center mt-6">입력하신 정보는 안전하게 보호되며 진료 목적으로만 사용됩니다.</p>
   `}
 };

@@ -18,7 +18,17 @@
 
 <dialog id="haeon-guide-dialog" aria-label="해온한의원 가이드" style="width:min(1200px,calc(100% - 16px));height:94dvh;max-height:94dvh;padding:0;border:1px solid #E2E8F0;border-radius:20px;overflow:hidden;">
   <div style="display:flex;flex-direction:column;height:100%;background:white;">
-    <header style="display:flex;justify-content:space-between;align-items:center;padding:12px 20px;border-bottom:1px solid #E2E8F0;"><strong>해온한의원 가이드</strong><button id="haeon-guide-close" type="button" style="padding:10px 16px;background:#EFF6FF;color:#2563EB;border-radius:12px;">닫기</button></header>
+    <header style="display:flex;justify-content:space-between;align-items:center;padding:12px 20px;border-bottom:1px solid #E2E8F0;"><strong>해온한의원 가이드</strong><button type="button" onclick="goToMainScreen()" style="margin-left:auto;margin-right:12px;font-size:12px;">메인화면</button><button id="haeon-guide-close" type="button" style="padding:10px 16px;background:#EFF6FF;color:#2563EB;border-radius:12px;">닫기</button></header>
     <iframe title="해온한의원 안내 내용" style="width:100%;flex:1;min-height:0;border:0;"></iframe>
   </div>
 </dialog>
+
+<dialog id="main-screen-confirm" aria-labelledby="main-screen-confirm-title" aria-describedby="main-screen-confirm-status" style="width:min(380px,calc(100% - 32px));padding:24px;border:0;border-radius:16px;box-shadow:0 20px 60px #0003;">
+  <p id="main-screen-confirm-title" style="margin:0;font-size:17px;font-weight:700;line-height:1.6;">첫화면으로 가시겠습니다. 저장하지 않은 정보는 사라집니다</p>
+  <p id="main-screen-confirm-status" role="status" style="font-size:13px;color:#B45309;"></p>
+  <div style="display:flex;gap:10px;margin-top:20px;">
+    <button type="button" autofocus onclick="this.closest('dialog').close()" style="flex:1;padding:12px;border:1px solid #CBD5E1;border-radius:10px;background:#F8FAFC;font-weight:700;">취소</button>
+    <button type="button" onclick="confirmMainScreen()" style="flex:1;padding:12px;border:0;border-radius:10px;background:#2563EB;color:white;font-weight:700;">이동하기</button>
+  </div>
+</dialog>
+<style>#main-screen-confirm::backdrop{background:rgba(15,23,42,.45)}</style>

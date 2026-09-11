@@ -21,24 +21,12 @@ window.setPainScale = function(field,val,btnEl){
 };
 
 /* ----- 신체지도 (앞면/뒷면 터치로 통증 부위 표시) ----- */
-let painActiveBodyView = 'front';
-window.setPainBodyView = function(view){
-  painActiveBodyView = view;
-  const wrap = document.getElementById('pain-bodymap-wrap');
-  if(wrap) wrap.innerHTML = bodyMapSvgMarkup(view);
-  renderPainBodyMarkers();
-  const tabs = document.querySelectorAll('.pain-bodyview-tab');
-  tabs.forEach(t=>{
-    const isActive = t.dataset.view===view;
-    t.className = `pain-bodyview-tab flex-1 py-2 text-[13px] rounded-[7px] transition-all duration-200 ${isActive?'font-bold bg-white shadow-[0_3px_8px_rgba(0,0,0,0.12)] text-[#fc582b]':'font-medium text-[#8E8E93]'}`;
-  });
-};
-window.handlePainBodyMapClick = function(evt){
-  const svg = document.getElementById('pain-bodymap-svg');
-  const rect = svg.getBoundingClientRect();
+window.handlePainBodyMapClick = function(evt, view){
+  const rect = evt.currentTarget.getBoundingClientRect();
   const x = ((evt.clientX - rect.left) / rect.width) * 100;
   const y = ((evt.clientY - rect.top) / rect.height) * 100;
-  painFormData.bodyMarkers.push({ view: painActiveBodyView, x:x.toFixed(1), y:y.toFixed(1) });
+  if(y > 86) return;
+  painFormData.bodyMarkers.push({ view, x:x.toFixed(1), y:y.toFixed(1) });
   renderPainBodyMarkers();
 };
 window.removePainMarker = function(evt, idx){
@@ -47,35 +35,42 @@ window.removePainMarker = function(evt, idx){
   renderPainBodyMarkers();
 };
 function renderPainBodyMarkers(){
-  const layer = document.getElementById('pain-markers-layer');
-  if(!layer) return;
-  const indexed = painFormData.bodyMarkers.map((m,i)=>({...m,_i:i})).filter(m=>m.view===painActiveBodyView);
-  layer.innerHTML = indexed.map(m=>`
-    <div onclick="removePainMarker(event,${m._i})" style="position:absolute;left:${m.x}%;top:${m.y}%;width:20px;height:20px;margin:-10px 0 0 -10px;background:rgba(244,63,94,0.75);border:2px solid #fc582b;border-radius:50%;pointer-events:auto;cursor:pointer;"></div>
-  `).join('');
+  ['front','back'].forEach(view=>{
+    const layer = document.getElementById(`pain-markers-layer-${view}`);
+    if(!layer) return;
+    const indexed = painFormData.bodyMarkers.map((m,i)=>({...m,_i:i})).filter(m=>(m.view||'front')===view);
+    layer.innerHTML = indexed.map(m=>`
+      <div onclick="removePainMarker(event,${m._i})" style="position:absolute;left:${m.x}%;top:${m.y}%;width:20px;height:20px;margin:-10px 0 0 -10px;background:rgba(244,63,94,0.75);border:2px solid #fc582b;border-radius:50%;pointer-events:auto;cursor:pointer;"></div>
+    `).join('');
+  });
 }
+
 function bodyMapSvgMarkup(view, layerId){
   const back = view==='back';
-  const lid = layerId || 'pain-markers-layer';
+  const lid = layerId || `pain-markers-layer-${view}`;
   return `
-  <svg id="pain-bodymap-svg" viewBox="0 0 200 400" style="width:100%;touch-action:none;cursor:crosshair;display:block;" onclick="handlePainBodyMapClick(event)">
-    <circle cx="100" cy="28" r="22" fill="#F2F2F7" stroke="#C7C7CC" stroke-width="2"/>
-    ${back ? '<line x1="100" y1="10" x2="100" y2="46" stroke="#C7C7CC" stroke-width="1.5"/>' : ''}
-    <rect x="68" y="52" width="64" height="92" rx="18" fill="#F2F2F7" stroke="#C7C7CC" stroke-width="2"/>
-    ${back ? '<line x1="100" y1="55" x2="100" y2="140" stroke="#C7C7CC" stroke-width="1.5"/>' : ''}
-    <rect x="38" y="58" width="24" height="88" rx="11" fill="#F2F2F7" stroke="#C7C7CC" stroke-width="2"/>
-    <rect x="138" y="58" width="24" height="88" rx="11" fill="#F2F2F7" stroke="#C7C7CC" stroke-width="2"/>
-    <rect x="34" y="140" width="22" height="60" rx="10" fill="#F2F2F7" stroke="#C7C7CC" stroke-width="2"/>
-    <rect x="144" y="140" width="22" height="60" rx="10" fill="#F2F2F7" stroke="#C7C7CC" stroke-width="2"/>
-    <rect x="74" y="144" width="24" height="100" rx="11" fill="#F2F2F7" stroke="#C7C7CC" stroke-width="2"/>
-    <rect x="102" y="144" width="24" height="100" rx="11" fill="#F2F2F7" stroke="#C7C7CC" stroke-width="2"/>
-    <rect x="72" y="244" width="26" height="80" rx="9" fill="#F2F2F7" stroke="#C7C7CC" stroke-width="2"/>
-    <rect x="102" y="244" width="26" height="80" rx="9" fill="#F2F2F7" stroke="#C7C7CC" stroke-width="2"/>
-    <ellipse cx="85" cy="332" rx="15" ry="8" fill="#F2F2F7" stroke="#C7C7CC" stroke-width="2"/>
-    <ellipse cx="115" cy="332" rx="15" ry="8" fill="#F2F2F7" stroke="#C7C7CC" stroke-width="2"/>
-    <text x="60" y="145" font-size="9" fill="#8E8E93">${back?'좌':'우'}</text>
-    <text x="132" y="145" font-size="9" fill="#8E8E93">${back?'우':'좌'}</text>
-    <text x="86" y="24" font-size="10" font-weight="700" fill="#B0B0B5">${back?'뒷면':'앞면'}</text>
+  <svg id="${lid}-svg" viewBox="0 0 200 400" aria-label="신체 ${back?'뒷면':'앞면'}" style="width:100%;display:block;${layerId?'':'cursor:crosshair;'}" ${layerId?'':`onclick="handlePainBodyMapClick(event, '${view}')"`}>
+    <g fill="#E8EEF4" stroke="#475569" stroke-width="2" stroke-linejoin="round">
+      <path d="M100 6 C86 6 79 15 79 28 C79 40 86 49 92 50 L92 55 L77 58 C62 57 48 59 43 71 L37 116 L34 149 L30 177 Q28 192 35 199 L40 193 L43 201 Q49 203 52 193 L56 175 L57 146 L63 109 L68 83 L70 120 L67 145 Q65 162 71 183 L74 226 L72 249 Q69 277 75 309 L75 320 Q66 326 69 335 Q79 342 96 336 L98 326 L96 310 L98 268 L97 245 L100 181 L103 245 L102 268 L104 310 L102 326 L104 336 Q121 342 131 335 Q134 326 125 320 L125 309 Q131 277 128 249 L126 226 L129 183 Q135 162 133 145 L130 120 L132 83 L137 109 L143 146 L144 175 L148 193 Q151 203 157 201 L160 193 L165 199 Q172 192 170 177 L166 149 L163 116 L157 71 C152 59 138 57 123 58 L108 55 L108 50 C114 49 121 40 121 28 C121 15 114 6 100 6 Z"/>
+    </g>
+    <g fill="none" stroke="#64748B" stroke-width="1.5" stroke-linecap="round">
+      ${back ? `
+        <path d="M100 60 V143 M77 74 Q88 78 91 99 M123 74 Q112 78 109 99 M72 149 Q84 164 100 155 Q116 164 128 149 M100 155 V180 M77 243 Q85 248 94 243 M106 243 Q115 248 123 243"/>
+      ` : `
+        <path d="M87 25 H91 M109 25 H113 M96 38 Q100 41 104 38 M78 68 L96 74 M122 68 L104 74 M76 92 Q87 96 96 92 M104 92 Q113 96 124 92 M100 111 V115 M73 146 L97 164 M127 146 L103 164"/>
+        <ellipse cx="85" cy="242" rx="8" ry="10"/><ellipse cx="115" cy="242" rx="8" ry="10"/>
+      `}
+      <path d="M38 139 L54 141 M146 141 L162 139 M76 317 L94 317 M106 317 L124 317"/>
+    </g>
+    <g font-size="20" font-weight="800" fill="#1C1C1E" text-anchor="middle" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" pointer-events="none" aria-label="환자 본인 기준 좌우">
+      <text x="32" y="224">${back?'왼쪽':'오른쪽'}</text>
+      <text x="168" y="224">${back?'오른쪽':'왼쪽'}</text>
+    </g>
+    <g pointer-events="none" text-anchor="middle">
+      <rect x="55" y="350" width="90" height="34" rx="8" fill="#1C1C1E"/>
+      <text x="100" y="375" font-size="24" font-weight="800" fill="#FFFFFF">${back?'뒷면':'앞면'}</text>
+      <text x="100" y="398" font-size="12" font-weight="700" fill="#3C3C43">좌우는 본인 몸 기준입니다</text>
+    </g>
   </svg>
   <div id="${lid}" style="position:absolute;inset:0;pointer-events:none;"></div>`;
 }
@@ -122,7 +117,7 @@ const PainUI = {
   subhead:(t)=>`<div class="text-[13px] font-bold text-[#8E8E93] uppercase tracking-wider mb-1.5 mt-4 px-4">${t}</div>`
 };
 
-const PAIN_OPT_SIDE = ['어깨(좌)','어깨(우)','팔/팔꿈치(좌)','팔/팔꿈치(우)','손/손목(좌)','손/손목(우)','골반/엉덩이(좌)','골반/엉덩이(우)','허벅지(좌)','허벅지(우)','무릎(좌)','무릎(우)','종아리(좌)','종아리(우)','발/발목(좌)','발/발목(우)'];
+const PAIN_OPT_SIDE = ['어깨(좌)','어깨(우)','팔/팔꿈치(좌)','팔/팔꿈치(우)','손/손목(좌)','손/손목(우)','골반/엉덩이(좌)','골반/엉덩이(우)','허벅지(좌)','허벅지(우)','무릎(좌)','무릎(우)','종아리(좌)','종아리(우)','발/발목/발바닥(좌)','발/발목/발바닥(우)'];
 const PAIN_OPT_FEEL = ['쑤신다(뻐근함)','욱신거린다(맥박뛰듯)','찌른다(칼로베는듯)','저리다(전기오듯)','시리다(차가운느낌)','화끈거린다(뜨거운느낌)','무겁다(돌을얹은듯)','힘이 빠지는느낌'];
 const PAIN_OPT_WORSE = ['가만히 있을 때','움직일 때','아침에 일어났을 때','밤에 잘 때','날씨가 흐리거나 추울 때','스트레스를 받을 때'];
 const PAIN_OPT_BETTER = ['휴식을 취할 때','따뜻한 찜질을 할 때','차가운 찜질을 할 때','가볍게 움직여줄 때'];
@@ -136,13 +131,11 @@ const painSections = {
     ${PainUI.header('불편한 부위를 알려주세요')}
     ${PainUI.group(PainUI.inputRow('성함','name','이름 입력')+PainUI.dateRow('생년월일','birthDate'))}
     <p class="text-[14px] text-[#3C3C43] px-2 mb-2">아래 그림에서 <b class="text-[#fc582b]">아픈 부위를 터치</b>해 표시해 주세요. 앞면·뒷면을 각각 확인해 주시고, 잘못 눌렀다면 표시를 다시 누르면 지워집니다.</p>
-    <div class="bg-white rounded-[12px] p-5 shadow-sm border border-[#EDEEF1]">
-      <div class="flex bg-[#F2F2F7] rounded-[9px] p-[3px] w-full mb-4">
-        <button type="button" data-view="front" onclick="setPainBodyView('front')" class="pain-bodyview-tab flex-1 py-2 text-[13px] rounded-[7px] font-bold bg-white shadow-[0_3px_8px_rgba(0,0,0,0.12)] text-[#fc582b]">앞면</button>
-        <button type="button" data-view="back" onclick="setPainBodyView('back')" class="pain-bodyview-tab flex-1 py-2 text-[13px] rounded-[7px] font-medium text-[#8E8E93]">뒷면</button>
-      </div>
-      <div class="flex justify-center">
-        <div id="pain-bodymap-wrap" style="position:relative;width:200px;">${bodyMapSvgMarkup('front')}</div>
+    <div class="bg-white rounded-[12px] p-2 shadow-sm border border-[#EDEEF1]">
+      <p class="text-center text-[14px] font-bold text-[#3C3C43] mb-2">좌우는 본인 몸 기준입니다</p>
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;max-width:440px;margin:0 auto;">
+        <div id="pain-bodymap-front" style="position:relative;min-width:0;">${bodyMapSvgMarkup('front')}</div>
+        <div id="pain-bodymap-back" style="position:relative;min-width:0;border-left:1px solid #E2E8F0;">${bodyMapSvgMarkup('back')}</div>
       </div>
     </div>
     ${PainUI.subhead('척추 및 중앙 부위 (추가 선택)')}
@@ -198,7 +191,7 @@ function refreshPainStep(){
   const container=document.getElementById('pain-dynamic-container');
   container.innerHTML = painSections[painCurrentStep].html();
   if(window.lucide) lucide.createIcons();
-  if(painCurrentStep===2) setPainBodyView(painActiveBodyView);
+  if(painCurrentStep===2) renderPainBodyMarkers();
   painRenderProgress();
 }
 window.painUpdateUI = function(){
@@ -216,7 +209,7 @@ window.painUpdateUI = function(){
     container.innerHTML=config.html(); container.classList.add('active');
     bottomAction.classList.remove('hidden'); backLabel.innerText='이전'; navTitle.innerText=config.navTitle;
     nextBtn.innerText = (painCurrentStep===painTotalSteps) ? '작성 완료하기' : '다음 단계';
-    if(painCurrentStep===2) setPainBodyView(painActiveBodyView);
+    if(painCurrentStep===2) renderPainBodyMarkers();
   }
   painRenderProgress(); if(window.lucide) lucide.createIcons();
   if(scrollContainer) scrollContainer.scrollTo(0,0);
@@ -302,4 +295,3 @@ function savePainRecordToSheet(){
     .then(()=>{ if(statusEl) statusEl.innerText='저장 요청 완료 ✓'; })
     .catch((err)=>{ console.error('저장 실패:',err); if(statusEl) statusEl.innerText='저장 실패 - 설정을 확인해 주세요'; });
 }
-

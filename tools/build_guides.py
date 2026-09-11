@@ -6,7 +6,9 @@ ROOT = Path(__file__).resolve().parents[1]
 GUIDES = ROOT / 'guides'
 TITLES = [('process', '진료는 이런 과정을 거칩니다.'), ('prescription', '해온한의원 한약요법들'), ('treatment', '해온한의원 치료방법들')]
 css = (GUIDES / 'guide.css').read_text()
-nav = '<nav class="guide-nav" aria-label="안내 페이지 이동"><a href="index.html">← 해온한의원 가이드</a><a href="../index.html" target="_top">처음 화면</a></nav>'
+nav = '<nav class="guide-nav" aria-label="안내 페이지 이동"><a href="index.html">← 해온한의원 가이드</a><a href="../index.html" target="_top" class="guide-home" onclick="event.preventDefault();if(window.parent!==window &amp;&amp; typeof window.parent.goToMainScreen===&quot;function&quot;){window.parent.goToMainScreen();}else{document.getElementById(&quot;guide-home-confirm&quot;).showModal();}">메인화면</a></nav>'
+
+nav += """<dialog id="guide-home-confirm" style="width:min(380px,calc(100% - 32px));padding:24px;border:0;border-radius:16px;"><p style="font-size:17px;font-weight:700;line-height:1.6;">첫화면으로 가시겠습니다. 저장하지 않은 정보는 사라집니다</p><div style="display:flex;gap:10px;margin-top:20px;"><button type="button" autofocus onclick="this.closest('dialog').close()" style="flex:1;padding:12px;border:1px solid #CBD5E1;border-radius:10px;">취소</button><button type="button" onclick="window.location.href='../index.html'" style="flex:1;padding:12px;border:0;border-radius:10px;background:#2563EB;color:white;">이동하기</button></div></dialog>"""
 def page(title, body, script=''):
     return '<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+title+' · 해온 AI EMR</title><style>'+css+'</style></head><body>'+nav+body+script+'</body></html>'
 for key,title in TITLES[1:]:
