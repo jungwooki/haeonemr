@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>해온한의원 소아(청소년)과 문진표</title>
+<title>해온 AI EMR</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/lucide@latest"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -183,32 +183,6 @@ button.bg-black,button[class*="bg-[#FFCC00]"],button[class*="bg-[#fc582b]"],butt
 #emr-image-preview img{display:block;max-width:100%;max-height:75dvh;object-fit:contain;margin:auto}
 @media(max-width:480px){.emr-image-card{padding:16px}.emr-image-grid{gap:8px}.emr-image-thumb,.emr-image-empty{height:90px}}
 @media print{#emr-image-preview{display:none!important}}
-</style>
-<style>
-.emr-ocr-button{display:block;width:100%;border:0;border-radius:6px;background:#EEF3FF;color:#2563EB;padding:7px;font-size:12px;font-weight:700;margin:6px 0;cursor:pointer}
-.emr-ocr-button:disabled{opacity:.5;cursor:wait}
-.emr-exam-summary{grid-column:1/-1;background:#F8F6FE;border:1px solid #E8E2FA;border-radius:9px;padding:12px;font-size:13px}
-.emr-exam-summary p{line-height:1.8;margin:8px 0 0}
-#emr-ocr-dialog{width:min(1200px,96vw);max-height:94dvh;overflow:auto;border:0;border-radius:16px;padding:24px}
-#emr-ocr-dialog::backdrop{background:#151827B8}
-#emr-ocr-dialog header{display:flex;justify-content:space-between;align-items:center;gap:16px}
-#emr-ocr-dialog header button{flex-shrink:0;white-space:nowrap}
-#emr-ocr-dialog h3{font-size:20px;font-weight:750;margin:0;overflow-wrap:anywhere}
-#emr-ocr-dialog button{background:#2563EB;color:#FFF;border:0;border-radius:8px;padding:10px 16px}
-#emr-ocr-dialog button:disabled{opacity:.5}
-.emr-ocr-layout{display:grid;grid-template-columns:1.1fr 1fr;gap:24px;align-items:start}
-.emr-ocr-original{overflow:auto;max-height:74dvh;background:#F7F7FA}
-.emr-ocr-original img{width:100%;height:auto}
-.emr-ocr-fields{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.emr-ocr-fields label{font-size:13px;color:#697386;min-width:0}
-.emr-ocr-fields input{display:block;box-sizing:border-box;width:100%;min-width:0;border:1px solid #DDD5FA;border-radius:8px;background:#FCFBFF;padding:10px;color:#202333;margin-top:5px}
-.emr-ocr-fields small{display:block;font-size:11px;overflow-wrap:anywhere}
-.emr-ocr-warning{font-size:14px;color:#697386;margin:14px 0}.emr-ocr-mismatch{color:#BE123C;font-size:14px;margin:12px 0}
-.emr-ocr-check{display:block;font-size:14px;margin:16px 0}.emr-ocr-check input{margin-right:6px}
-#emr-ocr-dialog details{margin-top:16px;font-size:13px}#emr-ocr-dialog pre{white-space:pre-wrap;overflow-wrap:anywhere;max-height:240px;overflow:auto}
-.emr-ocr-status{font-size:14px;color:#5145CD;margin-top:10px}
-@media(max-width:760px){.emr-ocr-layout{grid-template-columns:1fr}.emr-ocr-original{max-height:40dvh}#emr-ocr-dialog{padding:16px}}
-@media print{#emr-ocr-dialog{display:none!important}}
 </style>
 <style>
 .emr-record-list-row{display:flex;align-items:stretch;gap:8px;margin-bottom:10px}
@@ -643,15 +617,6 @@ button.bg-black,button[class*="bg-[#FFCC00]"],button[class*="bg-[#fc582b]"],butt
 </div>
 </div>
 
-<dialog id="emr-ocr-dialog" aria-labelledby="emr-ocr-title">
-<header><h3 class="emr-ocr-title" id="emr-ocr-title">검사지 확인</h3><button type="button" onclick="this.closest('dialog').close()">닫기</button></header>
-<p class="emr-ocr-warning"></p><p class="emr-ocr-mismatch" role="alert"></p>
-<div class="emr-ocr-layout"><div class="emr-ocr-original"><img alt="검사지 원본"></div>
-<form id="emr-ocr-form"><div class="emr-ocr-fields"></div>
-<details><summary>인식된 원문 보기</summary><pre></pre></details>
-<label class="emr-ocr-check"><input type="checkbox" class="emr-ocr-confirm" required> 원본과 환자 정보, 검사일, 수치를 확인했습니다.</label>
-<button type="submit">확인 후 이 문진 기록에 반영</button><p class="emr-ocr-status" role="status"></p></form></div>
-</dialog>
 <dialog id="emr-image-preview" aria-labelledby="emr-image-preview-title"><header><h3 id="emr-image-preview-title">이미지 미리보기</h3><button type="button" onclick="this.closest('dialog').close()">닫기</button></header><p class="emr-preview-status" role="status"></p><img alt=""></dialog>
 <!-- EMR entry password -->
 <dialog id="emr-password-dialog" aria-labelledby="emr-password-title" style="width:min(400px,calc(100% - 32px));padding:0;border:1px solid #E8E9F2;border-radius:20px;box-shadow:0 24px 80px #20233330;">
@@ -2304,7 +2269,7 @@ window.updateUI = function(){
 window.nextStep=function(){ if(currentStep<getTotalSteps()){ currentStep++; updateUI(); } else { saveRecordToSheet(); document.getElementById('app-shell').style.display='none'; showCompletion(); } };
 window.prevStep=function(){ if(currentStep>1){ currentStep--; updateUI(); } else { returnToHub(); } };
 window.backToForm=function(){
-  document.title='해온한의원 소아(청소년)과 문진표';
+  document.title='해온 AI EMR';
   document.getElementById('report-view').classList.remove('active');
   if(cameFromSearch){
     cameFromSearch=false;
@@ -4809,7 +4774,7 @@ async function emrImageRequest(key,op,extra={}){
   return result;
 }
 function readEmrImages(key){return cachedEmrRead('images:'+key,async()=>(await emrImageRequest(key,'list')).images);}
-async function changeEmrImages(key,operation,images=[],id='',values=null){
+async function changeEmrImages(key,operation,images=[],id=''){
   // An older deployment must never receive an unknown POST and create a blank record.
   const existing=await readEmrImages(key);
   if(operation==='upload' && existing.length+images.length>3) throw new Error('문진 기록별 이미지 자료는 최대 3개까지 첨부할 수 있습니다.');
@@ -4820,7 +4785,7 @@ async function changeEmrImages(key,operation,images=[],id='',values=null){
     reader.readAsDataURL(item.blob);
   })));
   invalidateEmrReadCache('images:'+key);
-  await fetch(CONFIG.SHEET_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({type:'haeonImages',operation,key,password:emrImagePassword,requestId,files,id,values}),signal:AbortSignal.timeout(60000)});
+  await fetch(CONFIG.SHEET_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({type:'haeonImages',operation,key,password:emrImagePassword,requestId,files,id}),signal:AbortSignal.timeout(60000)});
   for(let attempt=0;attempt<12;attempt++){
     const result=await emrImageRequest(key,'status',{requestId});
     if(result.state==='complete'){invalidateEmrReadCache('images:'+key);return result;}
@@ -4883,24 +4848,7 @@ function mountEmrImages(host,patient,record){
           try{await changeEmrImages(key,'delete',[],item.id);await refreshEmrImageWidgets(key);status.textContent='이미지 자료를 삭제했습니다.';}
           catch(error){status.textContent=error.message;remove.disabled=false;}
         };
-        const read=document.createElement('button');read.type='button';read.className='emr-ocr-button';
-        read.textContent=item.ocr?(item.ocr.reviewed?'반영된 수치 보기':'추출 결과 확인'):'검사지 읽기';
-        read.onclick=async()=>{
-          if(item.ocr){openEmrOcrReview(item,key,record);return;}
-          read.disabled=true;remove.disabled=true;status.textContent='검사지 글씨와 수치를 읽는 중입니다…';
-          try{
-            await changeEmrImages(key,'ocr',[],item.id);
-            const updated=(await readEmrImages(key)).find(image=>image.id===item.id);
-            await refreshEmrImageWidgets(key);
-            if(updated?.ocr&&section.isConnected&&section.closest('[id$="report-view"]')?.classList.contains('active')) openEmrOcrReview(updated,key,record);
-          }catch(error){status.textContent=error.message;read.disabled=false;remove.disabled=false;}
-        };
-        tile.append(open,name,read,remove);grid.append(tile);
-        if(item.ocr?.reviewed){
-          const summary=document.createElement('div');summary.className='emr-exam-summary';
-          const title=document.createElement('strong');title.textContent='확인된 검사 수치 · '+item.name;summary.append(title);
-          const details=document.createElement('p');details.textContent=Object.entries(item.ocr.values).filter(([field])=>EMR_OCR_FIELDS[field]).map(([field,value])=>EMR_OCR_FIELDS[field][0]+': '+value+(EMR_OCR_FIELDS[field][1]==='text'?'':' '+EMR_OCR_FIELDS[field][1])).join(' · ');summary.append(details);grid.append(summary);
-        }
+        tile.append(open,name,remove);grid.append(tile);
       });
       for(let i=items.length;i<3;i++){const empty=document.createElement('div');empty.className='emr-image-empty';empty.textContent='자료 '+(i+1);grid.append(empty);}
     }catch(error){status.textContent=error.message||'이미지 서버에 연결하지 못했습니다.';input.disabled=true;}
@@ -4931,58 +4879,6 @@ document.getElementById('emr-image-preview').addEventListener('close',()=>{
   if(img.dataset.url) URL.revokeObjectURL(img.dataset.url);
   img.removeAttribute('src');delete img.dataset.url;
 });
-const EMR_OCR_FIELDS={examDate:['검사일시','text'],birthDate:['생년월일','text'],gender:['성별','text'],memberNumber:['검사지 회원번호','text'],height:['키','cm'],weight:['체중','kg'],skeletalMuscleMass:['골격근량','kg'],bodyFatMass:['체지방량','kg'],bodyFatPercent:['체지방률','%'],bmi:['BMI','kg/m²'],bodyWater:['체수분','L'],protein:['단백질','kg'],minerals:['무기질','kg'],growthScore:['성장점수','점'],phaseAngle:['전신 위상각','°']};
-let emrOcrReviewContext=null;
-async function openEmrOcrReview(item,key,record){
-  const dialog=document.getElementById('emr-ocr-dialog');
-  emrOcrReviewContext={item,key,record,token:crypto.randomUUID()};const context=emrOcrReviewContext;
-  const image=dialog.querySelector('img');image.removeAttribute('src');image.alt=item.name;
-  dialog.querySelector('.emr-ocr-title').textContent='검사지 확인 · '+item.name;
-  dialog.querySelector('.emr-ocr-status').textContent='원본을 불러오는 중입니다…';
-  dialog.querySelector('button[type="submit"]').disabled=true;
-  dialog.querySelector('.emr-ocr-confirm').checked=false;
-  const fields=dialog.querySelector('.emr-ocr-fields');fields.replaceChildren();
-  Object.entries(EMR_OCR_FIELDS).forEach(([key,[label,unit]])=>{
-    const wrapper=document.createElement('label');wrapper.textContent=label+(unit==='text'?'':' ('+unit+')');
-    const input=document.createElement('input');input.name=key;input.type=unit==='text'?'text':'number';
-    if(unit!=='text'){input.min='0';input.step='any';}input.value=item.ocr.values[key]??'';
-    input.placeholder='미인식 · 직접 입력 가능';input.maxLength=80;wrapper.append(input);
-    if(item.ocr.evidence?.[key]){const evidence=document.createElement('small');evidence.textContent='인식 근거: '+item.ocr.evidence[key];wrapper.append(evidence);}
-    fields.append(wrapper);
-  });
-  dialog.querySelector('pre').textContent=(item.ocr.rawText||'')+(item.ocr.truncated?'\n\n[원문이 길어 일부만 표시됩니다. 원본 이미지를 확인해 주세요.]':'');
-  dialog.querySelector('.emr-ocr-warning').textContent='이미지에서 추출한 초안입니다. 숫자·단위·검사일을 원본과 확인한 뒤 반영해 주세요.';
-  function checkBirth(){
-    const extracted=fields.querySelector('[name="birthDate"]').value.trim().replace(/[.\/]/g,'-');
-    const known=record.birthDate||'';
-    dialog.querySelector('.emr-ocr-mismatch').textContent=extracted&&known&&extracted!==known?'생년월일이 선택한 문진 기록과 다릅니다. 다른 환자의 검사지인지 확인해 주세요.':'';
-  }
-  fields.querySelector('[name="birthDate"]').oninput=checkBirth;checkBirth();
-  if(!dialog.open) dialog.showModal();
-  try{
-    const original=await emrImageRequest(key,'read',{id:item.id});
-    if(emrOcrReviewContext!==context||!dialog.open) return;
-    image.src='data:'+original.mimeType+';base64,'+original.data;
-    await image.decode();
-    dialog.querySelector('.emr-ocr-status').textContent=item.ocr.reviewed?'이 문진 기록에 반영된 검사 자료입니다. 수정 후 다시 저장할 수 있습니다.':'';
-    dialog.querySelector('button[type="submit"]').disabled=false;
-  }catch(error){if(emrOcrReviewContext===context) dialog.querySelector('.emr-ocr-status').textContent=error.message;}
-}
-document.getElementById('emr-ocr-form').addEventListener('submit',async event=>{
-  event.preventDefault();const context=emrOcrReviewContext;if(!context) return;
-  const form=event.target,dialog=document.getElementById('emr-ocr-dialog'),status=dialog.querySelector('.emr-ocr-status');
-  if(!form.querySelector('.emr-ocr-confirm').checked){status.textContent='원본 확인 항목에 체크해 주세요.';return;}
-  const values={};new FormData(form).forEach((value,key)=>{if(EMR_OCR_FIELDS[key]&&String(value).trim()!=='') values[key]=EMR_OCR_FIELDS[key][1]==='text'?String(value).trim():Number(value);});
-  if(!Object.keys(values).length){status.textContent='확인한 검사 항목을 하나 이상 입력해 주세요.';return;}
-  const button=form.querySelector('[type="submit"]');button.disabled=true;status.textContent='확인한 수치를 문진 기록에 저장하는 중입니다…';
-  try{
-    await changeEmrImages(context.key,'review',[],context.item.id,values);
-    await refreshEmrImageWidgets(context.key);
-    if(emrOcrReviewContext===context){status.textContent='이 문진 기록의 검사 자료에 반영했습니다.';button.disabled=false;}
-  }catch(error){if(emrOcrReviewContext===context){status.textContent=error.message;button.disabled=false;}}
-});
-document.getElementById('emr-ocr-dialog').addEventListener('close',()=>{emrOcrReviewContext=null;document.querySelector('#emr-ocr-dialog img').removeAttribute('src');});
-
 let emrDeletingRecord=false;
 async function emrDeleteRequest(op,extra={}){
   if(!emrImagePassword) throw new Error('EMR에 다시 로그인한 뒤 삭제해 주세요.');
@@ -5332,7 +5228,7 @@ window.deletePatientRecord=async function(patientIndex,recordIndex){
   }
   window.MpsMental=Object.freeze({open,exit,chooseSport,closeAdmin,downloadJSON,recordResult});
 })();
-/* Stored M-survey results share the existing EMR notes, record images and OCR. */
+/* Stored M-survey results share the existing EMR notes and record images. */
 window.MentalEmr=(()=>{
   let chart=null, current=null;
   function open(data,record){
