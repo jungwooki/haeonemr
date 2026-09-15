@@ -35,5 +35,6 @@
     "server/images.gs",
     "server/record-delete.gs",
     "server/mental.gs"
-  ]
+  ],
+  "mental_catalog": "src/data/mental/catalog.json"
 }

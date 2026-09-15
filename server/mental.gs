@@ -16,7 +16,7 @@ function mentalPost_(d){
   try{
     if(!/^[-a-f0-9]{36}$/.test(d.requestId||'')) throw new Error('저장 식별자가 올바르지 않습니다.');
     var f=d.formData;
-    if(!f||!['student','soccer','baseball','basketball','volleyball','golf'].includes(f.sport)) throw new Error('종목을 확인해 주세요.');
+    if(!f||!MENTAL_SPORT_KEYS.includes(f.sport)) throw new Error('종목을 확인해 주세요.');
     if(typeof d.name!=='string'||!d.name.trim()||d.name.length>100||!['남','여'].includes(d.gender)||!/^\d{4}-\d{2}-\d{2}$/.test(d.birthDate||'')) throw new Error('기본 정보를 확인해 주세요.');
     if(!f.answers||Object.keys(f.answers).length!==51) throw new Error('51문항에 모두 응답해 주세요.');
     for(var no=1;no<=51;no++) if(!Number.isInteger(f.answers[no])||f.answers[no]<1||f.answers[no]>6) throw new Error('응답 값을 확인해 주세요.');

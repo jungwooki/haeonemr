@@ -1,0 +1,106 @@
+[
+  {
+    "key": "student",
+    "file": "student.json",
+    "emoji": "일반",
+    "subtitle": "",
+    "audience": "일반 학생",
+    "note": ""
+  },
+  {
+    "key": "soccer",
+    "file": "soccer.json",
+    "emoji": "⚽",
+    "subtitle": "",
+    "audience": "10~15세 유소년 선수",
+    "note": ""
+  },
+  {
+    "key": "adult_soccer",
+    "file": "adult_soccer.json",
+    "emoji": "⚽",
+    "subtitle": "성인 선수",
+    "audience": "성인 축구선수",
+    "note": "PCDEQ2의 심리·행동 개념을 참고해 기존 M-서베이 51문항·5요인 구조로 작성한 자체 성인축구용 문항입니다. 공식 PCDEQ2 또는 검증된 번역본이 아니며, PCDEQ2 규준으로 해석하지 않습니다."
+  },
+  {
+    "key": "baseball",
+    "file": "baseball.json",
+    "emoji": "⚾",
+    "subtitle": "",
+    "audience": "10~15세 유소년 선수",
+    "note": ""
+  },
+  {
+    "key": "basketball",
+    "file": "basketball.json",
+    "emoji": "🏀",
+    "subtitle": "",
+    "audience": "10~15세 유소년 선수",
+    "note": ""
+  },
+  {
+    "key": "volleyball",
+    "file": "volleyball.json",
+    "emoji": "🏐",
+    "subtitle": "",
+    "audience": "10~15세 유소년 선수",
+    "note": ""
+  },
+  {
+    "key": "golf",
+    "file": "golf.json",
+    "emoji": "⛳",
+    "subtitle": "",
+    "audience": "10~15세 유소년 선수",
+    "note": ""
+  },
+  {
+    "key": "ballet",
+    "file": "ballet.json",
+    "emoji": "🩰",
+    "subtitle": "",
+    "audience": "10~15세 유소년 선수",
+    "note": ""
+  },
+  {
+    "key": "gymnastics",
+    "file": "gymnastics.json",
+    "emoji": "🤸",
+    "subtitle": "",
+    "audience": "10~15세 유소년 선수",
+    "note": ""
+  },
+  {
+    "key": "ice_skating",
+    "file": "ice_skating.json",
+    "emoji": "⛸️",
+    "subtitle": "피겨 · 쇼트트랙",
+    "audience": "10~15세 유소년 선수",
+    "note": ""
+  },
+  {
+    "key": "ice_hockey",
+    "file": "ice_hockey.json",
+    "emoji": "🏒",
+    "subtitle": "",
+    "audience": "10~15세 유소년 선수",
+    "note": ""
+  },
+  {
+    "key": "taekwondo",
+    "file": "taekwondo.json",
+    "emoji": "🥋",
+    "subtitle": "",
+    "audience": "10~15세 유소년 선수",
+    "note": ""
+  },
+  {
+    "key": "squash",
+    "file": "squash.json",
+    "emoji": "🎾",
+    "subtitle": "",
+    "audience": "10~15세 유소년 선수",
+    "note": ""
+  }
+]

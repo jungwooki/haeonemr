@@ -14,6 +14,9 @@ window.MentalEmr=(()=>{
       const title=document.createElement('div');title.className='rp-info-label';title.textContent=label;
       const content=document.createElement('div');content.className='rp-info-value';content.textContent=value||'-';cell.append(title,content);info.append(cell);
     }
+    let note=document.getElementById('mental-rp-questionnaire-note');
+    if(!note){note=document.createElement('p');note.id='mental-rp-questionnaire-note';note.className='text-[13px] text-slate-600 mb-4';info.after(note);}
+    note.textContent=result.note||'';note.hidden=!result.note;
     const scores=document.getElementById('mental-rp-scores');scores.replaceChildren();
     result.scores.forEach(factor=>{
       const card=document.createElement('div');card.className='rp-card';

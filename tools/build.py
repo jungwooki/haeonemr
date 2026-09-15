@@ -5,8 +5,10 @@ import json
 import re
 from pathlib import Path
 
+from mental_catalog import load_catalog, review_documents
+
 ROOT = Path(__file__).resolve().parents[1]
-TOKEN = re.compile(r"\{\{\s*(scripts|include\s+[^{}]+?)\s*\}\}")
+TOKEN = re.compile(r"\{\{\s*(scripts|mental_sports|mental_catalog|include\s+[^{}]+?)\s*\}\}")
 
 
 def read_source(name):
@@ -21,6 +23,7 @@ def render_outputs():
     for group in ("scripts", "server"):
         if not manifest[group] or len(set(manifest[group])) != len(manifest[group]):
             raise ValueError(f"Empty or duplicate modules in {group}")
+    mental = load_catalog(ROOT, manifest['mental_catalog']) if manifest.get('mental_catalog') else None
     scripts = "".join(read_source(name) for name in manifest["scripts"])
     if re.search(r"</script\b", scripts, re.I):
         raise ValueError("JavaScript contains a closing HTML script tag")
@@ -28,6 +31,11 @@ def render_outputs():
     def expand(text, stack=()):
         def replace(match):
             directive = match.group(1)
+            if directive in ('mental_sports', 'mental_catalog'):
+                if not mental:
+                    raise ValueError('Mental catalog is not configured')
+                value = mental[1] if directive == 'mental_sports' else mental[0]
+                return json.dumps(value, ensure_ascii=False).replace('<', '\\u003c')
             if directive == "scripts":
                 return scripts
             name = directive.removeprefix("include").strip()
@@ -36,10 +44,15 @@ def render_outputs():
             return expand(read_source(name), (*stack, name))
         return TOKEN.sub(replace, text)
 
-    return {
+    outputs = {
         "index.html": expand(read_source("src/index.template.html")),
         "Code.gs": "".join(read_source(name) for name in manifest["server"]),
     }
+    if mental:
+        keys = [entry['key'] for entry in mental[0]]
+        outputs['Code.gs'] = '// Generated from src/data/mental/catalog.json.\nvar MENTAL_SPORT_KEYS = ' + json.dumps(keys) + ';\n' + outputs['Code.gs']
+        outputs.update(review_documents(*mental))
+    return outputs
 
 
 def main():
@@ -52,14 +65,15 @@ def main():
     if args.check:
         if stale:
             parser.exit(1, "Build required: " + ", ".join(stale) + "\n")
-        print("OK: index.html and Code.gs match all source modules")
+        print("OK: deployment files and generated guides match source modules")
         return
     for name in stale:
         destination = ROOT / name
+        destination.parent.mkdir(parents=True, exist_ok=True)
         temporary = destination.with_suffix(destination.suffix + ".tmp")
         temporary.write_bytes(outputs[name].encode("utf-8"))
         temporary.replace(destination)
-    print("Built index.html and Code.gs")
+    print("Built deployment files and generated guides")
 
 
 if __name__ == "__main__":

@@ -45,7 +45,7 @@ python3 -m http.server 8000 --bind 127.0.0.1 --directory emr
 
 서버를 수정했다면 빌드된 `Code.gs` 전체를 Google Apps Script에 복사하고 기존 절차대로 새 버전을 배포합니다. `server/*.gs`와 빌드된 `Code.gs`를 동시에 등록하면 함수가 중복되므로 함께 올리지 않습니다. 빌드 자체는 Google 서버에 접근하거나 배포하지 않습니다.
 
-**`index.html`과 `Code.gs`는 생성 결과입니다. 직접 수정하면 다음 빌드에서 덮어써집니다.** 화면을 바꿀 때는 위 표에서 소스 파일을 찾아 수정하고 다시 빌드하세요. `--check`는 소스와 생성 결과가 다르면 실패하여 누락된 빌드를 알려줍니다.
+**`index.html`, `Code.gs`, `guides/mental/*.md`, `guides/MENTAL_SPORT_ADAPTATIONS.md`는 생성 결과입니다. 직접 수정하면 다음 빌드에서 덮어써집니다.** 화면을 바꿀 때는 위 표에서 소스 파일을 찾아 수정하고 다시 빌드하세요. `--check`는 소스와 생성 결과가 다르면 실패하여 누락된 빌드를 알려줍니다.
 
 ## 모듈 연결 방식
 
@@ -59,15 +59,15 @@ python3 -m http.server 8000 --bind 127.0.0.1 --directory emr
 
 최초 분리 후 재조합한 HTML과 Apps Script는 분리 전 파일과 바이트 단위로 동일함을 확인했습니다. JavaScript 25개와 서버 4개 파일의 문법 검사도 통과했습니다. 빌드 테스트는 생성 결과 일치, 소스 수정 반영, 누락 파일·중복 모듈·순환 include 검출을 확인합니다.
 
-이번 작업에서는 실제 환자 저장·삭제, Drive 업로드, 외부 배포를 실행하지 않았습니다.
+빌드와 로컬 테스트는 실제 환자 저장·삭제, Drive 업로드, 외부 배포를 실행하지 않습니다.
 
 ## AI MPS M-서베이
 
-입구는 1번 AI 스마트서베이, 2번 AI MPS M-서베이, 3번 HAEON EMR 순서입니다. 2번에서는 일반 → 축구 → 야구 → 농구 → 배구 → 골프를 선택한 다음 기본 정보와 체크리스트를 작성합니다.
+입구는 1번 AI 스마트서베이, 2번 AI MPS M-서베이, 3번 HAEON EMR 순서입니다. 2번에서는 일반 → 유소년축구 → 성인축구 → 야구 → 농구 → 배구 → 골프 → 발레 → 체조 → 빙상(피겨·쇼트트랙) → 아이스하키 → 태권도 → 스쿼시 중 종목을 선택한 다음 기본 정보와 체크리스트를 작성합니다.
 
 - 화면: `src/views/mental-survey.html`
 - 디자인: `src/styles/mental-survey.css` (기존 HAEON 폰트·블루/라벤더 색상 적용)
-- 문항: `src/data/mental-sports.json` (제공된 HTML의 6개 유형, 각 51문항 원문)
+- 문항: `src/data/mental/<종목키>.json` (13개 유형, 각 51문항; 종목별로 편집)
 - 동작·분석: `src/scripts/mental-survey.js` (독립 함수 범위, 기존 문진과 상태 분리)
 - 원문 보존 검사: `tools/test_mental.py`, `tools/mental-baseline.json`
 
@@ -75,7 +75,7 @@ python3 -m http.server 8000 --bind 127.0.0.1 --directory emr
 
 제출하면 Google Sheet의 기존 `records`에 `MPS 멘탈` 분류로 저장합니다. 서버의 완료 응답을 확인한 뒤 환자에게 작성 완료를 보여주며, 환자 화면에서는 결과를 공개하지 않습니다. 입구 3 HAEON EMR에서 환자 → MPS 멘탈 문진 기록을 선택하면 결과 차트, 요인별 점수, 51문항 응답, 주치의 안내, 프리노트를 확인할 수 있습니다. 결과 인쇄와 JSON 다운로드도 EMR에서 제공합니다.
 
-이미지 첨부·조회은 기존 기록별 이미지 기능을 사용합니다. 문진 기록당 최대 3개를 저장하며, 다른 문진의 첨부와 분리됩니다. 설문 문항과 결과 계산은 원본 그대로입니다.
+이미지 첨부·조회은 기존 기록별 이미지 기능을 사용합니다. 문진 기록당 최대 3개를 저장하며, 다른 문진의 첨부와 분리됩니다. 기존 유형의 문항과 결과 계산을 보존합니다. 유소년축구는 표시 제목만 변경했고, 추가 유형의 문항은 종목별 문서를 참고하세요.
 
 추가 소스: `src/views/mental-report.html`, `src/scripts/mental-emr.js`, `server/mental.gs`. 저장 확인용 `mental_requests` 시트는 자동 생성되며 요청 ID와 저장 시각만 보관합니다. 동일 요청 재시도와 저장 후 확인 응답 유실 시 중복 기록 생성을 방지합니다. 저장 결과가 불확실할 때는 제출 버튼으로 같은 요청을 재확인하며 응답 편집은 잠급니다.
 
@@ -123,3 +123,23 @@ AI 스마트서베이 7종의 공통 완료 화면과 메인 화면의 입구 4�
 첨부 원본은 `guides/source/`, 한약·치료 데이터는 `guides/*.json`, 공통 디자인과 동작은 `guides/guide.css`, `guides/guide.js`에 있습니다. 안내 내용과 차트 수치는 첨부 자료에서 가져왔으며 별도의 의학적 검증이나 수정은 하지 않았습니다.
 
 안내 페이지 수정 후 `python3 emr/tools/build_guides.py`, 메인 화면 수정 후 `python3 emr/tools/build.py`를 실행하세요. 배포 시 `emr/index.html`과 `emr/guides/` 폴더를 함께 올려야 합니다. 안내 기능에는 Code.gs 재배포가 필요하지 않습니다. 외부 폰트와 진료 과정 페이지의 기존 Tailwind·아이콘 리소스는 인터넷 연결이 필요합니다.
+
+## 추가 5개 종목 문항
+
+발레·체조·빙상(피겨/쇼트트랙 공통)·아이스하키·태권도 문항을 추가했습니다. [번호별 축구 원문 비교](guides/MENTAL_SPORT_ADAPTATIONS.md)에서 255개 추가 문항을 확인할 수 있습니다. 문항 번호와 요인 배정, 긍정/부정 방향, 계산식은 축구 기준과 동일하고 기존 6개 유형은 변경하지 않았습니다.
+
+새 종목을 서버에 저장하려면 빌드된 최신 Code.gs를 Google Apps Script에 교체하고 기존 배포를 새 버전으로 업데이트하세요.
+
+
+## M-서베이 종목 모듈 및 문항 문서
+
+전체 13개 유형의 문항을 [종목별 문항 목록](guides/mental/README.md)에서 확인하세요. 성인축구는 [별도 문서](guides/mental/adult_soccer.md)에 개발 성격과 참고문헌을 표시합니다. PCDEQ2 원 검사지와 다른 자체 51문항·5요인 구성입니다.
+
+- `src/data/mental/catalog.json`: 종목 선택 순서, 파일명, 아이콘, 대상, 설명의 단일 설정.
+- `src/data/mental/<종목키>.json`: 해당 종목의 제목·문항·요인·계산식. 기존 통합 `mental-sports.json`은 종목별 파일로 대체했습니다.
+- `tools/mental_catalog.py`: 문항 구조 검증, 데이터 조합, MD 생성.
+- `tools/build.py`: 종목 데이터를 HTML에 삽입하고 서버의 `MENTAL_SPORT_KEYS`도 같은 목록에서 생성합니다. 문서도 함께 생성·검사합니다.
+- `src/scripts/mental-survey.js`: 공통 설문 진행 및 채점. 종목별 분기 복제를 추가하지 않습니다.
+- `src/scripts/mental-emr.js`: 공통 결과 표시. 성인축구의 자체 문항 안내를 표시합니다.
+
+수정 후 `python3 emr/tools/build.py`를 실행하고 `--check`로 화면·서버·문서가 최신인지 확인하세요. 생성 MD를 직접 수정하면 다음 빌드에서 덮어씁니다. 기존 `soccer` 저장 식별자는 유지하며 제목만 유소년축구로 바뀌었습니다. 성인축구는 `adult_soccer`, 스쿼시는 `squash`로 분리되어 기존 응답과 섞이지 않습니다.

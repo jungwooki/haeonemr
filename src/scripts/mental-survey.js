@@ -1,9 +1,8 @@
 /* M-survey is scoped to avoid sharing state with the seven clinical surveys. */
 (() => {
   const root=document.getElementById('mental-survey-view');
-  const SPORT_ICONS={student:'일반',soccer:'⚽',baseball:'⚾',basketball:'🏀',volleyball:'🏐',golf:'⛳'};
   const SPORTS = JSON.parse(document.getElementById('sports-data').textContent);
-  const SPORT_ORDER = ['student','soccer','baseball','basketball','volleyball','golf'];
+  const SPORT_CATALOG = JSON.parse(document.getElementById('mental-sport-catalog').textContent);
   const LIKERT_LABELS = ['전혀 그렇지 않다','그렇지 않다','약간 그렇지 않다','약간 그렇다','그렇다','매우 그렇다'];
   const PAGE_SIZE = 6;
 
@@ -22,12 +21,14 @@
   // ---------- Screen 1 ----------
   function renderSportChoices(){
     const box = document.getElementById('sportChoices');
-    box.innerHTML = SPORT_ORDER.map(key=>{
+    box.innerHTML = SPORT_CATALOG.map(entry=>{
+      const key=entry.key;
       const s = SPORTS[key];
       return `
         <button type="button" class="sport-choice sport-btn rounded-xl p-3 flex flex-col items-center gap-1.5 text-slate-500 font-bold text-sm" data-val="${key}">
-          <span class="mental-sport-icon" aria-hidden="true">${SPORT_ICONS[key]}</span>
+          <span class="mental-sport-icon" aria-hidden="true">${entry.emoji}</span>
           <span>${key==='student'?'일반':s.label}</span>
+          ${entry.subtitle?`<span class="text-xs font-normal">${entry.subtitle}</span>`:''}
         </button>
       `;
     }).join('');
@@ -324,7 +325,7 @@
     const previous={...state};
     try{
       state.sport=data.sport;buildItems();state.answers={...data.answers};
-      return {sportLabel:SPORTS[data.sport].label,scores:calcFactorScores(),items:state.items.map(item=>({...item,answer:state.answers[item.no]}))};
+      return {sportLabel:SPORTS[data.sport].label,note:SPORT_CATALOG.find(entry=>entry.key===data.sport)?.note||'',scores:calcFactorScores(),items:state.items.map(item=>({...item,answer:state.answers[item.no]}))};
     }finally{Object.assign(state,previous);}
   }
   window.MpsMental=Object.freeze({isSaving:()=>saving,open,exit,back,discardAndExit,chooseSport,closeAdmin,downloadJSON,recordResult});

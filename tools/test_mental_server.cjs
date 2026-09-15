@@ -33,3 +33,11 @@ for(const operation of ['ocr','review']) assert.equal(f.post({...image,operation
 assert.equal(f.post({...image,operation:'delete',requestId:randomUUID(),id:list.images[0].id}).ok,true);
 assert.equal(f.get({type:'haeonImages',password:'1824',key,op:'list'}).images.length,0);
 console.log('PASS: OCR operations rejected; image deletion retained');
+
+for(const sport of ['ballet','gymnastics','ice_skating','ice_hockey','taekwondo','adult_soccer','squash']){
+  const payload=make('추가종목_'+sport);payload.formData.sport=sport;
+  assert.equal(f.post(payload).ok,true,sport);
+  const records=f.get({q:payload.name}).patients[0].records;
+  assert.equal(JSON.parse(records[0].data).sport,sport);
+}
+console.log('PASS: seven added sports save and reload with their sport keys');
