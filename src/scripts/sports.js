@@ -4,7 +4,7 @@ let sportsCameFromSearch = false;
 const sportsTotalSteps = 4;
 const sportsFormData = {
   name:'', dob:'', gender:'남', school:'', sport:'',
-  trainingRegular:'', trainingPersonal:'', heightChange:'', weightChange:'', chiefComplaint:'',
+  trainingRegular:'', trainingPersonal:'', chiefComplaint:'',
   abilityEndurance:'', abilityStrength:'', abilitySpeed:'', abilityAgility:'', abilityFlexibility:'', abilityBalance:'',
   energyNutrition:[], recoverySleep:[], immunityInjury:[], mentalityFocus:[],
   growthSelfCheck:[], growthNutrition:[], perfFocus:[],
@@ -79,7 +79,7 @@ const SPORTS_OPT_GROWTH_SELF = ['또래보다 키가 작다고 느낌','밤에 �
 const SPORTS_OPT_GROWTH_NUTR = ['아침 결식/적은 식사량','잦은 소화불량/체함','많은 훈련량으로 인한 성장 방해 우려','근육 대비 키 성장 부진'];
 const SPORTS_OPT_PERF_FOCUS = ['반응 속도/판단 느림','아는 동작 반복 실수','실수 후 눈에 띄게 위축','평소보다 예민/무기력'];
 const SPORTS_OPT_PAIN_LOC = ['목/어깨','허리','팔꿈치/손목','고관절','무릎','발목/발'];
-const SPORTS_OPT_IMM_RESP = ['심한 비염(콧물,코막힘)','운동 시 숨참/기침','피부 발진/가려움','긴장성 복통/설사'];
+const SPORTS_OPT_IMM_RESP = ['비염, 축농증','운동 시 숨참/기침','피부 발진/가려움','긴장성 복통/설사'];
 
 const sportsSections = {
   2:{ navTitle:'기본 정보', html:()=>`
@@ -92,10 +92,8 @@ const sportsSections = {
       ${SportsUI.inputRow('종목 및 포지션','sport','예: 축구/공격수')}
       ${SportsUI.inputRow('정규 훈련','trainingRegular','주 O회 / 총 O시간')}
       ${SportsUI.inputRow('개인 레슨','trainingPersonal','주 O회 / 총 O시간')}
-      ${SportsUI.inputRow('최근 6개월 키 변화','heightChange','0','number','cm')}
-      ${SportsUI.inputRow('최근 6개월 체중 변화','weightChange','0','number','kg')}
     `)}
-    ${SportsUI.subhead('주소증(병원을 방문하게 된 가장 주된 불편한 이유, 증상)')}
+    ${SportsUI.subhead('보호자분께서 아이에 대해 더 궁금한 부분이 있으면 기록해주세요.')}
     ${SportsUI.textarea('chiefComplaint','예: 요즘 키 성장이 멈춘 것 같아 걱정입니다.')}
   `},
   3:{ navTitle:'운동능력·컨디션', html:()=>`
@@ -124,7 +122,7 @@ const sportsSections = {
     ${SportsUI.subhead('영양/운동 요인')}
     ${SportsUI.group(SportsUI.checkGrid(SPORTS_OPT_GROWTH_NUTR,'growthNutrition'))}
 
-    ${SportsUI.header('스포츠 손상')}
+    ${SportsUI.header('불편한 부위')}
     ${SportsUI.subhead('통증 부위 (다중 선택)')}
     ${SportsUI.group(SportsUI.checkGrid(SPORTS_OPT_PAIN_LOC,'painLocation'))}
     ${SportsUI.subhead('통증 시기 & 현재 단계')}
@@ -133,7 +131,7 @@ const sportsSections = {
       ${SportsUI.selectRow('현재 운동 단계','activityLevel',['완전 휴식','가벼운 활동','개인 훈련','팀 훈련 복귀','정상 훈련'])}
     `)}
 
-    ${SportsUI.header('멘탈리티 (상세)')}
+    ${SportsUI.header('아이의 멘탈리티')}
     ${SportsUI.group(SportsUI.checkGrid(SPORTS_OPT_PERF_FOCUS,'perfFocus'))}
 
     ${SportsUI.header('면역 / 알레르기')}
@@ -203,7 +201,6 @@ function generateSportsReportAndShow(skipSave){
   document.getElementById('sports-rp-name').innerText=f.name||'미입력';
   document.getElementById('sports-rp-dob').innerText=`${f.gender} / ${f.dob||'미입력'}`;
   document.getElementById('sports-rp-sport').innerText=`${f.school||'-'} / ${f.sport||'-'}`;
-  document.getElementById('sports-rp-growth').innerText=`키 ${f.heightChange||'0'}cm / 체중 ${f.weightChange||'0'}kg`;
   document.getElementById('sports-rp-date').innerText=todayStr;
   document.getElementById('sports-rp-complaint').innerText=f.chiefComplaint||'특이 요청사항 없음';
   document.getElementById('sports-rp-footer-1').innerText=`측정일: ${todayStr}`;

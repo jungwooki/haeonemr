@@ -701,7 +701,7 @@ body { background: #FFF; }
           <i data-lucide="dumbbell" class="w-4 h-4 text-green-600"></i>
         </div>
         <span class="font-semibold text-[14px] text-slate-900 flex-1 min-w-0">유소년스포츠</span>
-        <span class="text-[10px] font-medium text-slate-400 shrink-0">만 0~15세</span>
+        <span class="text-[10px] font-medium text-slate-400 shrink-0">만 8~17세</span>
         <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300 shrink-0"></i>
       </button>
       <button onclick="enterChildSurvey()" class="haeon-survey-link w-full flex items-center gap-3 px-4 py-3.5 border-b border-slate-100 last:border-0 active:bg-slate-50 transition-colors text-left">
@@ -1694,7 +1694,7 @@ body { background: #FFF; }
         </div>
         <h2 class="text-[32px] font-extrabold tracking-tight text-black mb-4">유소년 엘리트<br>스포츠 선수 문진</h2>
         <p class="text-[17px] text-[#3C3C43] leading-[26px] mb-12 max-w-md px-4">
-          3대를 이어가는 한의원, 해온한의원을 찾아주셔서 감사합니다.<br>유소년 스포츠클리닉 문진표입니다. <b>주소증을 제외한 모든 질문은 최근 1주일을 기준</b>으로 편안하게 체크해 주세요.
+          3대를 이어가는 한의원, 해온한의원을 찾아주셔서 감사합니다.<br>만 8~17세 선수를 위한 유소년 스포츠클리닉 문진표입니다. <b>보호자 질문란을 제외한 모든 질문은 최근 1주일을 기준</b>으로 편안하게 체크해 주세요.
         </p>
         <button onclick="sportsNextStep()" class="haeon-cta w-full max-w-xs bg-[#fc582b] text-white font-bold text-[18px] py-4 rounded-[16px] shadow-sm hover:bg-[#c94622] active:scale-[0.98] transition-all">
           문진표 작성 시작하기
@@ -1743,12 +1743,11 @@ body { background: #FFF; }
       <div class="rp-info-item"><div class="rp-info-label">이름</div><div class="rp-info-value" id="sports-rp-name">-</div></div>
       <div class="rp-info-item"><div class="rp-info-label">성별/생년월일</div><div class="rp-info-value" id="sports-rp-dob" style="font-size:12px;">-</div></div>
       <div class="rp-info-item"><div class="rp-info-label">소속/종목</div><div class="rp-info-value" id="sports-rp-sport" style="font-size:12px;">-</div></div>
-      <div class="rp-info-item"><div class="rp-info-label">최근 6개월 성장</div><div class="rp-info-value" id="sports-rp-growth" style="font-size:12px;">-</div></div>
       <div class="rp-info-item"><div class="rp-info-label">측정일</div><div class="rp-info-value" id="sports-rp-date">-</div></div>
     </div>
 
     <div class="rp-card rp-soft">
-      <div class="rp-section-title"><i data-lucide="message-circle" class="w-4 h-4 text-[#fc582b]"></i>주소증(병원을 방문하게 된 가장 주된 불편한 이유, 증상)</div>
+      <div class="rp-section-title"><i data-lucide="message-circle" class="w-4 h-4 text-[#fc582b]"></i>보호자분께서 아이에 대해 더 궁금한 부분이 있으면 기록해주세요.</div>
       <p class="text-[13px] leading-[20px] text-[#3C3C43]" id="sports-rp-complaint">-</p>
     </div>
 
@@ -1788,13 +1787,13 @@ body { background: #FFF; }
     </div>
 
     <div class="rp-card mb-3">
-      <div class="rp-section-title"><i data-lucide="bone" class="w-4 h-4 text-[#fc582b]"></i>스포츠 손상</div>
+      <div class="rp-section-title"><i data-lucide="bone" class="w-4 h-4 text-[#fc582b]"></i>불편한 부위</div>
       <div id="sports-rp-injury" class="text-[12px] leading-[20px] text-[#3C3C43]"></div>
     </div>
 
     <div class="flex gap-4 mb-3">
       <div class="rp-card flex-1">
-        <div class="rp-section-title"><i data-lucide="brain" class="w-4 h-4 text-[#fc582b]"></i>멘탈리티</div>
+        <div class="rp-section-title"><i data-lucide="brain" class="w-4 h-4 text-[#fc582b]"></i>아이의 멘탈리티</div>
         <div id="sports-rp-mental" class="text-[12px] leading-[20px] text-[#3C3C43]"></div>
       </div>
       <div class="rp-card flex-1">
@@ -4553,7 +4552,7 @@ let sportsCameFromSearch = false;
 const sportsTotalSteps = 4;
 const sportsFormData = {
   name:'', dob:'', gender:'남', school:'', sport:'',
-  trainingRegular:'', trainingPersonal:'', heightChange:'', weightChange:'', chiefComplaint:'',
+  trainingRegular:'', trainingPersonal:'', chiefComplaint:'',
   abilityEndurance:'', abilityStrength:'', abilitySpeed:'', abilityAgility:'', abilityFlexibility:'', abilityBalance:'',
   energyNutrition:[], recoverySleep:[], immunityInjury:[], mentalityFocus:[],
   growthSelfCheck:[], growthNutrition:[], perfFocus:[],
@@ -4628,7 +4627,7 @@ const SPORTS_OPT_GROWTH_SELF = ['또래보다 키가 작다고 느낌','밤에 �
 const SPORTS_OPT_GROWTH_NUTR = ['아침 결식/적은 식사량','잦은 소화불량/체함','많은 훈련량으로 인한 성장 방해 우려','근육 대비 키 성장 부진'];
 const SPORTS_OPT_PERF_FOCUS = ['반응 속도/판단 느림','아는 동작 반복 실수','실수 후 눈에 띄게 위축','평소보다 예민/무기력'];
 const SPORTS_OPT_PAIN_LOC = ['목/어깨','허리','팔꿈치/손목','고관절','무릎','발목/발'];
-const SPORTS_OPT_IMM_RESP = ['심한 비염(콧물,코막힘)','운동 시 숨참/기침','피부 발진/가려움','긴장성 복통/설사'];
+const SPORTS_OPT_IMM_RESP = ['비염, 축농증','운동 시 숨참/기침','피부 발진/가려움','긴장성 복통/설사'];
 
 const sportsSections = {
   2:{ navTitle:'기본 정보', html:()=>`
@@ -4641,10 +4640,8 @@ const sportsSections = {
       ${SportsUI.inputRow('종목 및 포지션','sport','예: 축구/공격수')}
       ${SportsUI.inputRow('정규 훈련','trainingRegular','주 O회 / 총 O시간')}
       ${SportsUI.inputRow('개인 레슨','trainingPersonal','주 O회 / 총 O시간')}
-      ${SportsUI.inputRow('최근 6개월 키 변화','heightChange','0','number','cm')}
-      ${SportsUI.inputRow('최근 6개월 체중 변화','weightChange','0','number','kg')}
     `)}
-    ${SportsUI.subhead('주소증(병원을 방문하게 된 가장 주된 불편한 이유, 증상)')}
+    ${SportsUI.subhead('보호자분께서 아이에 대해 더 궁금한 부분이 있으면 기록해주세요.')}
     ${SportsUI.textarea('chiefComplaint','예: 요즘 키 성장이 멈춘 것 같아 걱정입니다.')}
   `},
   3:{ navTitle:'운동능력·컨디션', html:()=>`
@@ -4673,7 +4670,7 @@ const sportsSections = {
     ${SportsUI.subhead('영양/운동 요인')}
     ${SportsUI.group(SportsUI.checkGrid(SPORTS_OPT_GROWTH_NUTR,'growthNutrition'))}
 
-    ${SportsUI.header('스포츠 손상')}
+    ${SportsUI.header('불편한 부위')}
     ${SportsUI.subhead('통증 부위 (다중 선택)')}
     ${SportsUI.group(SportsUI.checkGrid(SPORTS_OPT_PAIN_LOC,'painLocation'))}
     ${SportsUI.subhead('통증 시기 & 현재 단계')}
@@ -4682,7 +4679,7 @@ const sportsSections = {
       ${SportsUI.selectRow('현재 운동 단계','activityLevel',['완전 휴식','가벼운 활동','개인 훈련','팀 훈련 복귀','정상 훈련'])}
     `)}
 
-    ${SportsUI.header('멘탈리티 (상세)')}
+    ${SportsUI.header('아이의 멘탈리티')}
     ${SportsUI.group(SportsUI.checkGrid(SPORTS_OPT_PERF_FOCUS,'perfFocus'))}
 
     ${SportsUI.header('면역 / 알레르기')}
@@ -4752,7 +4749,6 @@ function generateSportsReportAndShow(skipSave){
   document.getElementById('sports-rp-name').innerText=f.name||'미입력';
   document.getElementById('sports-rp-dob').innerText=`${f.gender} / ${f.dob||'미입력'}`;
   document.getElementById('sports-rp-sport').innerText=`${f.school||'-'} / ${f.sport||'-'}`;
-  document.getElementById('sports-rp-growth').innerText=`키 ${f.heightChange||'0'}cm / 체중 ${f.weightChange||'0'}kg`;
   document.getElementById('sports-rp-date').innerText=todayStr;
   document.getElementById('sports-rp-complaint').innerText=f.chiefComplaint||'특이 요청사항 없음';
   document.getElementById('sports-rp-footer-1').innerText=`측정일: ${todayStr}`;
