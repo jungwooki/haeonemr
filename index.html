@@ -622,6 +622,13 @@ body { background: #FFF; }
 }
 
 @media screen and (max-width:859px) { .clinic-list-pane { width:100%; } }
+</style><style>.youth-survey-group{margin:0 0 28px;border:1px solid #e3e0ef;border-radius:14px;background:#faf9ff;overflow:hidden}
+.youth-survey-group .haeon-survey-link>div{background:#f0edfa;border-color:#e4def4}
+.youth-survey-group .haeon-survey-link>div svg{color:#8071aa}
+.youth-survey-group .haeon-survey-link>span:first-of-type{color:#5f5878}
+.youth-survey-group .haeon-survey-link:hover{background:#f3f0fb}
+.youth-survey-group .haeon-survey-link:focus-visible{outline:2px solid #8071aa;outline-offset:-3px}
+#constitution-survey{position:fixed;inset:0;z-index:35;overflow:auto;background:radial-gradient(ellipse at top right,#e8efff,transparent 55%),#f6f8fb;color:#24334a}#constitution-survey[hidden]{display:none}.gc-shell{max-width:680px;margin:auto;padding:80px 24px 32px}.gc-header{display:flex;align-items:center;justify-content:space-between;font-size:12px;color:#68788f;gap:12px}.gc-header button{padding:8px 0;font-weight:700}.gc-progress{height:4px;background:#e0e7f1;border-radius:8px;margin:20px 0 40px}.gc-progress>div{height:100%;background:#5376c1;border-radius:8px;transition:width .2s}#gc-content{background:#fff;border:1px solid #e1e7ef;box-shadow:0 12px 40px #283e6510;border-radius:24px;padding:36px}#gc-content h1{font-size:28px;font-weight:800;line-height:1.45;letter-spacing:-.045em;margin:12px 0 18px}#gc-content p{font-size:14px;line-height:1.8;color:#758399}.gc-eyebrow{font-size:11px;font-weight:800;letter-spacing:.12em;color:#597db4}.gc-fields{display:grid;gap:18px;margin:28px 0}.gc-fields label{display:grid;gap:8px;font-size:13px;font-weight:700}.gc-fields input,.gc-fields select,.gc-number{width:100%;border:1px solid #dbe3ee;border-radius:12px;padding:14px;background:#fbfcff;font-size:16px}.gc-options{display:grid;gap:10px;margin-top:28px}.gc-options button{border:1px solid #e1e7ee;border-radius:12px;padding:16px;text-align:left;font-size:15px;transition:.15s}.gc-options button[aria-pressed=true]{border-color:#587ac1;background:#edf3ff;color:#385c9d}.gc-options button:hover{background:#f0f5fc}.gc-options small{display:block;margin-top:5px;color:#7b8799;font-size:12px}.gc-primary{width:100%;border-radius:12px;background:#395f9e;color:white;padding:16px;font-weight:700;font-size:15px;margin-top:24px}.gc-primary:disabled{opacity:.5}.gc-shell footer{text-align:center;color:#96a3b5;font-size:10px;letter-spacing:.14em;margin-top:32px}#gc-status{color:#526d98;font-size:14px;margin-top:18px}#constitution-report-view{display:none}#constitution-report-view.active{display:block;position:fixed;inset:0;z-index:40}.gc-score{display:grid;grid-template-columns:48px 1fr 44px;align-items:center;gap:12px;margin:14px 0;font-size:13px}.gc-score-track{height:8px;background:#edf1f7;border-radius:8px;overflow:hidden}.gc-score-track i{display:block;height:100%;background:#6888c0}.gc-result-hero{padding:22px;background:#edf3fb;border-radius:16px;margin-bottom:24px}.gc-result-hero h2{font-size:23px;font-weight:800}.gc-result-hero p,.gc-guidance p{font-size:14px;line-height:1.8;margin:10px 0}.gc-answer{font-size:13px;line-height:1.8;padding:10px 0;border-bottom:1px solid #edf0f5}.gc-guidance{margin-top:24px}.gc-guidance h3{font-size:16px;font-weight:800;margin-top:20px}@media(max-width:540px){.gc-shell{padding:72px 16px 24px}#gc-content{padding:24px}#gc-content h1{font-size:23px}}@media print{#constitution-report-view.active{position:static}#constitution-report-view,#constitution-report-view *{visibility:visible}.gc-result-hero,.gc-score,.gc-guidance p,.gc-answer{break-inside:avoid}}
 </style></head>
 <body class="p-0 text-[17px] m-0 overflow-hidden">
 <nav class="main-screen-bar no-print" aria-label="공통 메뉴"><button type="button" class="home-float-button" onclick="goToMainScreen()" aria-label="메인화면으로 이동" title="메인화면"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7"/><path d="M5 9v11h5v-6h4v6h5V9"/></svg></button></nav>
@@ -667,6 +674,14 @@ body { background: #FFF; }
       <div class="text-[19px] font-bold text-slate-900 mb-1">HAEON EMR</div>
       <p class="text-[13px] text-slate-500 leading-[19px]">환자별 문진 결과를 한 화면에서 확인하고, 진료 노트를 자유롭게 기록합니다.</p>
     </button>
+    <a href="https://growthai-two.vercel.app/#login" id="growth-ai-entry" class="haeon-entry-card" style="text-decoration:none">
+      <div class="flex items-center justify-between mb-3">
+        <span class="haeon-entry-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V4m0 16h16M8 15l4-4 4 2 4-7M16 6h4v4"/></svg></span>
+        <i data-lucide="arrow-right" class="w-4 h-4 text-slate-300"></i>
+      </div>
+      <div class="text-[19px] font-bold text-slate-900 mb-1">Growth AI</div>
+      <p class="text-[13px] text-slate-500 leading-[19px]">초음파 영상과 검사 결과를 연결하는 성장 판독보조. MPS 인증센터 계정으로 이용합니다.</p>
+    </a>
     <button onclick="openHaeonGuide()" class="haeon-entry-card">
       <div class="flex items-center justify-between mb-3">
         <span class="haeon-entry-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M12 6c-3-2-6-2-10-1v15c4-1 7-1 10 1 3-2 6-2 10-1V5c-4-1-7-1-10 1Zm0 0v15"/><path d="M5 9h4m-4 4h4m6-4h4m-4 4h4"/></svg></span><i data-lucide="arrow-right" class="w-4 h-4 text-slate-300"></i></div>
@@ -696,19 +711,11 @@ body { background: #FFF; }
         <span class="text-[10px] font-medium text-slate-400 shrink-0">전연령 대상</span>
         <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300 shrink-0"></i>
       </button>
-      <button onclick="enterSportsSurvey()" class="haeon-survey-link w-full flex items-center gap-3 px-4 py-3.5 border-b border-slate-100 last:border-0 active:bg-slate-50 transition-colors text-left">
-        <div class="w-9 h-9 rounded-[8px] border border-green-100 flex items-center justify-center shrink-0 bg-green-50">
-          <i data-lucide="dumbbell" class="w-4 h-4 text-green-600"></i>
-        </div>
-        <span class="font-semibold text-[14px] text-slate-900 flex-1 min-w-0">유소년스포츠</span>
-        <span class="text-[10px] font-medium text-slate-400 shrink-0">만 8~17세</span>
-        <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300 shrink-0"></i>
-      </button>
       <button onclick="enterChildSurvey()" class="haeon-survey-link w-full flex items-center gap-3 px-4 py-3.5 border-b border-slate-100 last:border-0 active:bg-slate-50 transition-colors text-left">
         <div class="w-9 h-9 rounded-[8px] border border-amber-100 flex items-center justify-center shrink-0 bg-amber-50">
           <i data-lucide="baby" class="w-4 h-4 text-amber-500"></i>
         </div>
-        <span class="font-semibold text-[14px] text-slate-900 flex-1 min-w-0">소아(청소년)</span>
+        <span class="font-semibold text-[14px] text-slate-900 flex-1 min-w-0">소아청소년</span>
         <span class="text-[10px] font-medium text-slate-400 shrink-0">만 0~15세</span>
         <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300 shrink-0"></i>
       </button>
@@ -745,9 +752,26 @@ body { background: #FFF; }
         <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300 shrink-0"></i>
       </button>
     </div>
+      <div class="youth-survey-group" aria-label="스포츠MPS 문진">
+      <button onclick="enterSportsSurvey()" class="haeon-survey-link w-full flex items-center gap-3 px-4 py-3.5 border-b border-slate-100 last:border-0 active:bg-slate-50 transition-colors text-left">
+        <div class="w-9 h-9 rounded-[8px] border border-green-100 flex items-center justify-center shrink-0 bg-green-50">
+          <i data-lucide="dumbbell" class="w-4 h-4 text-green-600"></i>
+        </div>
+        <span class="font-semibold text-[14px] text-slate-900 flex-1 min-w-0">유소년선수(일반)</span>
+        <span class="text-[10px] font-medium text-slate-400 shrink-0">만 8~17세</span>
+        <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300 shrink-0"></i>
+      </button>
+      <button onclick="GrowthConstitution.enter()" class="haeon-survey-link w-full flex items-center gap-3 px-4 py-3.5 border-b border-slate-100 last:border-0 active:bg-slate-50 transition-colors text-left">
+        <div class="w-9 h-9 rounded-[8px] border border-green-100 flex items-center justify-center shrink-0 bg-green-50">
+          <i data-lucide="sprout" class="w-4 h-4 text-green-600"></i>
+        </div>
+        <span class="font-semibold text-[14px] text-slate-900 flex-1 min-w-0">유소년스포츠 (성장체질)</span>
+        <span class="text-[10px] font-medium text-slate-400 shrink-0">활동량 · 체질</span>
+        <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300 shrink-0"></i>
+      </button>
+      </div>
   </div>
 </div>
-
 <div id="app-shell" class="haeon-survey flex-col w-screen h-screen bg-[var(--ios-bg)] relative overflow-hidden" style="display:none;">
   <div class="h-16 bg-white/90 backdrop-blur-md border-b border-[#EDEEF1] flex items-center justify-between px-4 shrink-0 z-30 relative">
     <button onclick="prevStep()" id="btn-back" class="text-slate-800 flex items-center gap-1 font-semibold text-[16px] active:opacity-50 transition-opacity w-20">
@@ -1667,7 +1691,7 @@ body { background: #FFF; }
 </div>
 </div>
 
-<!-- ===================== 유소년스포츠 문진 ===================== -->
+<!-- ===================== 유소년선수(일반) 문진 ===================== -->
 <div id="sports-app-shell" class="haeon-survey flex-col w-screen h-screen bg-[var(--ios-bg)] relative overflow-hidden" style="display:none;">
   <div class="h-16 bg-white/90 backdrop-blur-md border-b border-[#EDEEF1] flex items-center justify-between px-4 shrink-0 z-30 relative">
     <button onclick="sportsPrevStep()" class="text-slate-800 flex items-center gap-1 font-semibold text-[16px] active:opacity-50 transition-opacity w-20">
@@ -1711,7 +1735,7 @@ body { background: #FFF; }
   </div>
 </div>
 
-<!-- ===================== 유소년스포츠 리포트 ===================== -->
+<!-- ===================== 유소년선수(일반) 리포트 ===================== -->
 <div id="sports-report-view">
 <div class="report-scroll">
   <div class="report-toolbar no-print">
@@ -2102,6 +2126,29 @@ body { background: #FFF; }
         <div id="mental-rp-private-note-slot"></div>
         <div class="rp-card"><div class="rp-section-title">문항별 응답</div><div id="mental-rp-answers"></div></div>
       </div>
+    </div>
+  </div>
+</div>
+<section id="constitution-survey" hidden>
+  <div class="gc-shell">
+    <header class="gc-header"><button type="button" onclick="GrowthConstitution.back()">← 이전</button><span>AI 스마트서베이</span><span id="gc-counter">성장체질</span></header>
+    <div class="gc-progress"><div id="gc-progress-fill"></div></div>
+    <main id="gc-content"></main>
+    <p id="gc-status" role="status" aria-live="polite"></p>
+    <footer>HAEON · YOUTH ATHLETE CARE</footer>
+  </div>
+</section>
+<div id="constitution-report-view">
+  <div class="report-scroll">
+    <div class="report-toolbar no-print"><span class="emr-workspace-brand">HAEON EMR</span><button onclick="GrowthConstitution.close()">← 환자 기록으로</button><span>유소년스포츠 (성장체질)</span><button onclick="window.print()">인쇄 / PDF</button></div>
+    <div class="report-columns">
+      <div class="report-col report-col-left"><div class="a4-page">
+        <div class="rp-header"><div><div class="rp-title">유소년스포츠 (성장체질)</div><div class="rp-sub">활동량 · 회복 · 성장체질 분석</div></div></div>
+        <div id="gc-rp-info" class="rp-info-bar"></div>
+        <div id="gc-rp-result"></div>
+        <div id="gc-rp-doctor-note-slot"></div>
+      </div></div>
+      <div class="report-col report-col-right"><div id="gc-rp-private-note-slot"></div><div class="rp-card"><div class="rp-section-title">활동량 및 전체 응답</div><div id="gc-rp-answers"></div></div></div>
     </div>
   </div>
 </div>
@@ -2853,12 +2900,13 @@ window.goToMainScreen = function(){
   if(!dialog.open) dialog.showModal();
 };
 window.confirmMainScreen = function(){
-  if(window.MpsMental && MpsMental.isSaving()){
+  if((window.MpsMental && MpsMental.isSaving()) || (window.GrowthConstitution && GrowthConstitution.isSaving())){
     document.getElementById('main-screen-confirm-status').textContent='저장 중입니다. 저장이 끝난 후 다시 이동해 주세요.';
     return;
   }
   window.location.reload();
 };
+function surveyCategoryLabel(category){ return category==='유소년스포츠'?'유소년선수(일반)':(category||'-'); }
 /* ===================== 저장 / 검색 (Google Sheet) ===================== */
 function isSheetConfigured(){ return CONFIG.SHEET_URL && CONFIG.SHEET_URL.trim().length > 0; }
 
@@ -2969,7 +3017,7 @@ window.searchRecords = function(query){
 function renderPatientList(patients){
   const resultsEl=document.getElementById('search-results');
   resultsEl.innerHTML = patients.map((p,i)=>{
-    const cats = [...new Set(p.records.map(r=>r.category||'-'))];
+    const cats = [...new Set(p.records.map(r=>surveyCategoryLabel(r.category)))];
     const d = p.records[0] ? new Date(p.records[0].ts) : null;
     const dateLabel = (d && !isNaN(d)) ? `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}` : '';
     const active = i===window._currentPatientIdx;
@@ -3000,12 +3048,12 @@ function renderPatientDetail(p){
     return `<div class="emr-record-list-row"><button onclick="viewPatientRecord(${window._currentPatientIdx},${ri})" class="w-full text-left bg-white border border-[#EDEEF1] rounded-[12px] p-4 flex justify-between items-center active:bg-gray-50 mb-2 hover:shadow-sm transition-shadow">
       <div class="flex items-center gap-3">
         <div class="w-9 h-9 rounded-[9px] bg-[#F5F6F8] flex items-center justify-center shrink-0"><i data-lucide="file-text" class="w-4 h-4 text-[#8E8E93]"></i></div>
-        <div><span class="text-[11px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full">${r.category||'-'}</span><div class="text-[12px] text-[#8E8E93] mt-1">${dateLabel}</div></div>
+        <div><span class="text-[11px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full">${surveyCategoryLabel(r.category)}</span><div class="text-[12px] text-[#8E8E93] mt-1">${dateLabel}</div></div>
       </div>
       <i data-lucide="chevron-right" class="w-4 h-4 text-[#8E8E93] shrink-0"></i>
     </button><button type="button" class="emr-delete-record" onclick="deletePatientRecord(${window._currentPatientIdx},${ri})" ${emrDeletingRecord?'disabled':''}>삭제</button></div>`;
   }).join('');
-  const cats = [...new Set(p.records.map(r=>r.category||'-'))];
+  const cats = [...new Set(p.records.map(r=>surveyCategoryLabel(r.category)))];
   const latest = p.records[0] || {};
   panel.innerHTML = `
     <div class="max-w-2xl mx-auto p-5 md:p-8">
@@ -3070,12 +3118,13 @@ window.viewPatientRecord = function(patientIdx, recIdx){
   window._currentInterpretationNote = rec.interpretationNote || '';
   window._currentRecordCategory = cat;
   document.getElementById('search-view').style.display='none';
+  if(cat === '유소년스포츠 (성장체질)'){ GrowthConstitution.open(parsed,rec); return; }
   if(cat === 'MPS 멘탈'){ MentalEmr.open(parsed,rec); return; }
   if(cat === '심층진료'){ Object.assign(deepFormData, parsed); deepCameFromSearch=true; generateDeepReportAndShow(true); return; }
   if(cat === '다이어트'){ Object.assign(dietFormData, parsed); dietCameFromSearch=true; generateDietReportAndShow(true); return; }
   if(cat === '여성'){ Object.assign(womenFormData, parsed); womenCameFromSearch=true; generateWomenReportAndShow(true); return; }
   if(cat === '통증'){ Object.assign(painFormData, parsed); painCameFromSearch=true; generatePainReportAndShow(true); return; }
-  if(cat === '유소년스포츠'){ Object.assign(sportsFormData, parsed); sportsCameFromSearch=true; generateSportsReportAndShow(true); return; }
+  if(cat === '유소년스포츠' || cat === '유소년선수(일반)'){ Object.assign(sportsFormData, parsed); sportsCameFromSearch=true; generateSportsReportAndShow(true); return; }
   if(cat === '산후'){ Object.assign(postpartumFormData, parsed); postpartumCameFromSearch=true; generatePostpartumReportAndShow(true); return; }
   Object.assign(formData, parsed); cameFromSearch=true; generateReportAndShow(true);
 };
@@ -4546,7 +4595,7 @@ function savePainRecordToSheet(){
     .then(()=>{ if(statusEl) statusEl.innerText='저장 요청 완료 ✓'; })
     .catch((err)=>{ console.error('저장 실패:',err); if(statusEl) statusEl.innerText='저장 실패 - 설정을 확인해 주세요'; });
 }
-/* ===================== 유소년스포츠 모듈 ===================== */
+/* ===================== 유소년선수(일반) 모듈 ===================== */
 let sportsCurrentStep = 1;
 let sportsCameFromSearch = false;
 const sportsTotalSteps = 4;
@@ -4744,7 +4793,7 @@ window.sportsBackToForm = function(){
 
 function generateSportsReportAndShow(skipSave){
   const f=sportsFormData, todayStr=new Date().toLocaleDateString('ko-KR');
-  document.title = `${(f.name||'이름미상').replace(/\s+/g,'')}_유소년스포츠_${new Date().toISOString().slice(0,10).replace(/-/g,'')}`;
+  document.title = `${(f.name||'이름미상').replace(/\s+/g,'')}_유소년선수(일반)_${new Date().toISOString().slice(0,10).replace(/-/g,'')}`;
 
   document.getElementById('sports-rp-name').innerText=f.name||'미입력';
   document.getElementById('sports-rp-dob').innerText=`${f.gender} / ${f.dob||'미입력'}`;
@@ -4794,7 +4843,7 @@ function saveSportsRecordToSheet(){
   const statusEl=document.getElementById('sports-save-status');
   if(!isSheetConfigured()){ if(statusEl) statusEl.innerText='저장소 미설정'; return; }
   if(statusEl) statusEl.innerText='저장 중...';
-  const payload = { category:'유소년스포츠', name: sportsFormData.name, birthDate: sportsFormData.dob, gender: sportsFormData.gender, ageGroup:'', formData: sportsFormData };
+  const payload = { category:'유소년선수(일반)', name: sportsFormData.name, birthDate: sportsFormData.dob, gender: sportsFormData.gender, ageGroup:'', formData: sportsFormData };
   fetch(CONFIG.SHEET_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain;charset=utf-8'}, body: JSON.stringify(payload) })
     .then(()=>{ if(statusEl) statusEl.innerText='저장 요청 완료 ✓'; })
     .catch((err)=>{ console.error('저장 실패:',err); if(statusEl) statusEl.innerText='저장 실패 - 설정을 확인해 주세요'; });
@@ -5209,7 +5258,7 @@ function mountEmrWorkspace(prefix){
     patient.records.forEach((record,index)=>{
       const button=document.createElement('button');button.className='emr-record';
       button.setAttribute('aria-current',String(record.ts===window._currentRecordTs&&(!window._currentRecordCategory||record.category===window._currentRecordCategory)));
-      button.textContent=record.category||'소아';
+      button.textContent=surveyCategoryLabel(record.category||'소아');
       const date=document.createElement('small');const timestamp=new Date(record.ts);
       date.textContent=isNaN(timestamp)?'날짜 미상':timestamp.toLocaleString('ko-KR');button.append(date);
       button.onclick=()=>emrOpenRecord(window._currentPatientIdx,index);records.append(button);
@@ -5832,6 +5881,263 @@ window.openHaeonGuide=function(page='index'){
 };
 document.getElementById('haeon-guide-close').addEventListener('click',()=>document.getElementById('haeon-guide-dialog').close());
 document.getElementById('haeon-guide-dialog').addEventListener('close',()=>document.querySelector('#haeon-guide-dialog iframe').src='about:blank');
+window.GrowthConstitutionData=(()=>{
+        const QUESTIONS = [
+            { id: 1, category: '기허', text: "경기가 끝나면 다른 친구들보다 회복하는 데 시간이 훨씬 오래 걸려요.", weight: 10 },
+            { id: 2, category: '기허', text: "후반전이 되면 다리가 풀리고 숨이 너무 차서 뛰기가 힘들어요.", weight: 8 },
+            { id: 3, category: '기허', text: "평소에 목소리에 힘이 없고 조금만 움직여도 땀이 비오듯 쏟아져요.", weight: 6 },
+            { id: 4, category: '기허', text: "밥맛이 별로 없고, 조금만 먹어도 배가 금방 불러요.", weight: 7 },
+            { id: 5, category: '기허', text: "아침에 일어나는 게 너무 힘들고 낮에도 자꾸 눕고만 싶어요.", weight: 8 },
+            { id: 6, category: '기역', text: "경기 중에 실수를 하거나 심판 판정이 억울하면 얼굴이 확 달아오르고 화가 잘 안 참아져요.", weight: 10 },
+            { id: 7, category: '기역', text: "흥분하면 머리가 아프거나 가슴이 두근거려서 경기에 집중이 안 돼요.", weight: 8 },
+            { id: 8, category: '기역', text: "잠들기 전에 생각이 너무 많아져서 깊게 잠들지 못해요.", weight: 7 },
+            { id: 9, category: '기역', text: "가끔 이유 없이 딸국질이 자주 나거나 트림이 위로 치밀어 올라와요.", weight: 6 },
+            { id: 10, category: '기역', text: "긴장하면 목에 무언가 걸린 듯 답답하고 헛기침이 나와요.", weight: 7 },
+            { id: 11, category: '기울', text: "중요한 시합 전에는 가슴이 답답하고 나도 모르게 한숨을 자주 쉬어요.", weight: 10 },
+            { id: 12, category: '기울', text: "긴장하면 배가 살살 아프거나 가스가 차서 몸이 둔해져요.", weight: 8 },
+            { id: 13, category: '기울', text: "걱정이 많아서 경기 전날 밤에 자꾸 뒤척이며 잠을 설쳐요.", weight: 6 },
+            { id: 14, category: '기울', text: "옆구리나 가슴 부위가 팽팽하게 붓거나 아픈 느낌이 들 때가 있어요.", weight: 7 },
+            { id: 15, category: '기울', text: "기분에 따라 경기력 기복이 심하다는 소리를 자주 들어요.", weight: 9 },
+            { id: 16, category: '혈허', text: "경기 중에 종아리나 발바닥에 '쥐(근육 경련)'가 자주 나서 교체될 때가 있어요.", weight: 10 },
+            { id: 17, category: '혈허', text: "갑자기 방향을 전환하거나 헤더를 할 때 순간적으로 눈앞이 어질어질해요.", weight: 8 },
+            { id: 18, category: '혈허', text: "손톱이 얇고 잘 깨지며, 머리카락이 유난히 푸석푸석해요.", weight: 6 },
+            { id: 19, category: '혈허', text: "피부가 건조해서 자주 가렵고, 눈이 금방 피로해져서 침침해요.", weight: 7 },
+            { id: 20, category: '혈허', text: "잠을 자는 동안 팔다리가 저리거나 남의 살 같은 느낌이 들어요.", weight: 8 },
+            { id: 21, category: '어혈', text: "상대 선수와 부딪히면 남들보다 멍이 진하게 들고 유독 오래 가요.", weight: 10 },
+            { id: 22, category: '어혈', text: "예전에 다쳤던 부위가 날씨가 안 좋거나 밤이 되면 더 콕콕 쑤셔요.", weight: 8 },
+            { id: 23, category: '어혈', text: "입술 색이 푸르스름하거나 혀를 보면 검은 점 같은 게 보여요.", weight: 7 },
+            { id: 24, category: '어혈', text: "얼굴색이 어둡고 칙칙하며 다크서클이 얼굴에 엄청 내려온 것 같아요.", weight: 6 },
+            { id: 25, category: '어혈', text: "몸 어딘가에 딱딱하게 뭉친 곳이 있고 누르면 아픈 부위가 고정되어 있어요.", weight: 9 },
+            { id: 26, category: '수체', text: "비가 오거나 날씨가 흐리면 몸이 물에 젖은 솜처럼 무거워져요.", weight: 10 },
+            { id: 27, category: '수체', text: "아침에 일어나면 얼굴이나 손발이 퉁퉁 부어서 신발이 꽉 끼기도 해요.", weight: 8 },
+            { id: 28, category: '수체', text: "관절(무릎, 발목)이 뻑뻑하고 소리가 자주 나며 움직임이 둔해요.", weight: 7 },
+            { id: 29, category: '수체', text: "조금만 먹어도 속이 메스껍고 소화가 안 될 때 '꿀렁거리는' 소리가 나요.", weight: 6 },
+            { id: 30, category: '수체', text: "대변이 시원하지 않고 끈적거리거나 소변 양이 적고 시원치 않아요.", weight: 8 }
+        ];
+
+        const CATEGORY_INFO = {
+            '기허': { 
+                name: '에너지 방전형', 
+                color: '#00C3BD', 
+                desc: "기초 에너지가 부족하여 후반전에 탈진하기 쉬운 유형입니다. '양'보다 '질'과 '빈도'에 집중한 영양 공급이 필수적입니다.",
+                diet: {
+                    daily: "매일 아침 따뜻한 꿀물로 위장을 깨우세요. 간식으로 미숫가루나 약밥 같은 전통 곡물을 활용해 탄수화물 로딩 상태를 유지하는 것이 좋습니다.",
+                    pre: "경기 4시간 전 닭죽(껍질 제거)이나 소고기 야채죽 등 소화가 쉬운 고탄수화물 식사를 하세요. 2시간 전에는 찐 감자나 고구마가 좋습니다.",
+                    post: "경기 후 30분 내 초코우유나 카스테라를 섭취하세요. 메인 식사는 삼계탕, 전복죽 등 단백질이 풍부한 따뜻한 보양식을 추천합니다."
+                },
+                sleep: "밤 10시 이전 취침이 필수입니다. 낮잠은 15분 이내로 제한하고 일정한 수면 리듬을 확보하세요.",
+                morning: [
+                    "[누워서 기지개] 눈 뜨자마자 팔다리를 대자로 뻗어 10초간 버티며 전신 근육 깨우기",
+                    "[폼롤러 흉추 롤링] 등(날개뼈 아래)에 폼롤러를 대고 위아래로 부드럽게 문질러 척추 신경계 자극하기",
+                    "[아기 자세] 무릎 꿇고 엎드려 이마를 바닥에 대고 허리 긴장을 풀며 깊게 호흡하기"
+                ],
+                fullDefinition: "신체 에너지(기)가 부족한 상태. 숨이 차고 땀이 잘 나며 소화력이 낮습니다. 성장기 선수가 이 상태면 뼈와 근육의 성장이 더딥니다."
+            },
+            '기역': { 
+                name: '다혈질 과부하형', 
+                color: '#EF4444', 
+                desc: "위로 치솟는 기운으로 인해 경기 중 구역감이나 역류 느낌이 나타나기 쉽습니다. 위장관 진정과 식사 타이밍 조절이 핵심입니다.",
+                diet: {
+                    daily: "과식을 절대 금하며 식사 도중 물을 많이 마시지 마세요. 저녁 식사는 취침 3시간 전에 마쳐 야간 역류를 방지해야 합니다.",
+                    pre: "경기 4시간 전 맑은 무국에 흰 밥, 연두부 등 체류 시간이 짧은 유동식을 드세요. 경기 직전에는 생강 캔디나 생강차가 구역감 예방에 효과적입니다.",
+                    post: "위장관 느낌이 진정될 때까지 자극적인 음식을 피하세요. 된장국, 흰 살 생선찜, 매실차 등 위를 편안하게 하는 식단을 구성하세요."
+                },
+                sleep: "자기 전 미지근한 물로 족욕을 하여 상체의 열을 내리세요. 암막 커튼으로 깊은 수면 환경을 조성하세요.",
+                morning: [
+                    "[폼롤러 종아리 풀기] 폼롤러 위에 종아리를 올리고 좌우로 도리도리 흔들어 하체로 혈류 유도하기",
+                    "[목 & 승모근 스트레칭] 고개를 옆으로 지그시 눌러 머리로 쏠린 열과 긴장 내려주기",
+                    "[나비 자세 호흡] 앉아서 발바닥을 붙이고 상체를 숙여 차분하게 1분간 명상 호흡하기"
+                ],
+                fullDefinition: "기운이 정상적으로 순환하지 못하고 위로 치미는 상태. 두통, 안면홍조, 딸국질, 흥분 증상이 잦으며 경기 중 멘탈 관리가 어렵습니다."
+            },
+            '기울': { 
+                name: '유리멘탈 긴장형', 
+                color: '#8B5CF6', 
+                desc: "심리적 압박이 신체화되어 근육이 경직되기 쉬운 유형입니다. 아로마 효과와 자율신경 균형을 돕는 영양이 필요합니다.",
+                diet: {
+                    daily: "녹색 채소와 신맛 나는 과일(시트러스)을 꾸준히 섭취하세요. 즐거운 식사 환경을 만드는 것이 기 순환에 매우 중요합니다.",
+                    pre: "경기 4시간 전 강황이 든 카레라이스나 유자 드레싱 샐러드를 곁들인 가벼운 식사를 하세요. 경기 직전 오렌지 향을 맡는 것도 좋습니다.",
+                    post: "비타민 B1이 풍부한 돼지고기 수육과 부추 무침을 추천합니다. 식초가 들어간 초무침 요리는 젖산 분해와 기운 수렴에 도움을 줍니다."
+                },
+                sleep: "명상이나 잔잔한 음악으로 긴장을 완화하세요. 잠자기 2시간 전에는 경기 영상이나 게임 시청을 중단하세요.",
+                morning: [
+                    "[폼롤러 겨드랑이 롤링] 옆으로 누워 겨드랑이에 폼롤러를 끼고 움직여 림프 순환 돕기",
+                    "[오픈 북 스트레칭] 옆으로 누워 팔을 반대로 넘기며 닫혀있는 가슴과 흉곽 활짝 열어주기",
+                    "[개구리 자세] 엎드려서 무릎을 벌리고 골반의 긴장을 툭 내려놓기"
+                ],
+                fullDefinition: "정서적 억울함이나 긴장으로 기운이 정체된 상태. 가슴 답답함, 옆구리 통증, 한숨이 잦으며 경기 전 과도한 긴장으로 실력 발휘가 안 됩니다."
+            },
+            '혈허': { 
+                name: '근육 영양 공급부족형', 
+                color: '#F97316', 
+                desc: "성장기 급성장으로 인해 혈액과 영양이 근육에 충분히 공급되지 못하는 상태입니다. 근육 경련(쥐)에 취약하므로 철분 흡수 극대화 전략이 필요합니다.",
+                diet: {
+                    daily: "1일 1회 붉은 육류 섭취를 원칙으로 하세요. 간식으로는 철분이 강화된 시리얼이나 건포도, 육포 등을 활용하면 좋습니다.",
+                    pre: "경기 4시간 전 소고기 주먹밥, 떡갈비 등 철분과 탄수화물이 조화된 식사를 하세요. 비타민 C가 풍부한 오렌지 주스를 곁들이면 흡수율이 높아집니다.",
+                    post: "조혈 작용을 돕는 소고기 미역국, 선지, 포도주스를 섭취하세요. 우유(칼슘)는 철분 흡수를 방해할 수 있으므로 시간차를 두세요."
+                },
+                sleep: "취침 전 폼롤러 스트레칭으로 근육 긴장을 푸세요. 가습기를 사용하여 점막 건조를 예방하세요.",
+                morning: [
+                    "[발목 펌핑 & 발가락 운동] 누워서 발목을 까딱이고 발가락으로 가위바위보를 하며 말초 신경 깨우기",
+                    "[폼롤러 허벅지 앞쪽] 엎드려서 허벅지 앞쪽(대퇴사두근)을 부드럽게 롤링하여 혈액 공급하기",
+                    "[모관 운동] 누워서 팔다리를 천장으로 들고 가볍게 30초간 털어주기"
+                ],
+                fullDefinition: "체내 혈액과 영양물질이 부족한 상태. 어지럼증, 안구건조, 손발 저림, 쥐가 잘 납니다. 성장기 근육 발달의 가장 큰 방해 요인입니다."
+            },
+            '어혈': { 
+                name: '회복 지연형', 
+                color: '#475569', 
+                desc: "혈류가 정체되어 염증 경향이 높고 부상 회복이 느린 유형입니다. 항염증 식품과 미세 순환 개선이 핵심입니다.",
+                diet: {
+                    daily: "식용유 대신 올리브유나 들기름을 사용하세요. 요리에 마늘, 양파, 생강, 강황 등 향신료를 적극 활용하여 혈액을 맑게 유지하세요.",
+                    pre: "경기 2-3시간 전 비트 주스를 마시면 지구력 향상에 큰 도움이 됩니다. 연어 오니기리와 맑은 부추국으로 혈류량을 늘리세요.",
+                    post: "운동 후 근육통 감소를 위해 타트 체리 주스나 카레(강황)를 드세요. 파인애플의 브로멜라인 성분은 멍과 부종 제거에 탁월합니다."
+                },
+                sleep: "반신욕을 주 3회 이상 실시하세요. 발을 심장보다 높게 두고 자면 혈액 순환과 피로 해소에 효과적입니다.",
+                morning: [
+                    "[폼롤러 엉덩이 풀기] 한쪽 엉덩이를 폼롤러에 대고 체중을 실어 뭉친 부위(둔근) 집중 공략하기",
+                    "[폼롤러 허벅지 옆쪽] 옆으로 누워 허벅지 바깥쪽(장경인대)을 살살 문질러 굳은 근막 이완하기",
+                    "[동적 런지] 깊게 앉았다 일어나며 고관절과 허벅지를 늘려 혈류량 빠르게 증가시키기"
+                ],
+                fullDefinition: "혈액 순환이 원활치 않아 탁한 피가 정체된 상태. 피부가 어둡고 멍이 잘 들며 통증 부위가 고정되어 있습니다. 부상이 만성화되기 쉽습니다."
+            },
+            '수체': { 
+                name: '무거운 다리형', 
+                color: '#3B82F6', 
+                desc: "체내 수분 대사가 원활하지 않아 몸이 무겁고 잘 붓는 유형입니다. 저염 식단과 효율적인 수분 배출 전략이 필요합니다.",
+                diet: {
+                    daily: "저녁 식사를 싱겁게 먹고 야식을 엄금하세요. 율무차나 옥수수수염차를 물 대신 수시로 마셔 불필요한 수분을 배출하세요.",
+                    pre: "경기 4시간 전 팥밥이나 율무밥, 호박죽 등으로 몸을 가볍게 하세요. 물은 한 번에 많이 마시기보다 15분 간격으로 조금씩 자주 마셔야 합니다.",
+                    post: "콩국수(식물성 단백질)나 수박 화채로 전해질을 보충하세요. 경기 후 짠 국물 요리(라면 등)는 부종을 악화시키므로 절대 금물입니다."
+                },
+                sleep: "땀을 약간 낼 정도로 따뜻하게 자는 것이 좋습니다. 습도가 높은 날엔 제습기를 가동해 쾌적한 환경을 유지하세요.",
+                morning: [
+                    "[폼롤러 목 베개] 폼롤러를 베고 누워 고개를 좌우로 도리도리하며 머리와 목의 붓기 빼기",
+                    "[L자 다리] 벽에 다리를 올리고 3분간 유지하여 하체에 쏠린 수분 순환시키기",
+                    "[가벼운 제자리 콩콩] 발뒤꿈치를 살짝 들고 가볍게 20회 뛰며 전신 림프 순환 시동 걸기"
+                ],
+                fullDefinition: "수분 대사가 안 되어 불필요한 노폐물(습기)이 차 있는 상태. 몸과 다리가 무겁고 날씨가 흐리면 경기력이 저하되며 부종이 심합니다."
+            },
+        };
+
+        // --- PARENT ACTIVITY DATA ---
+        const ACTIVITY_QUESTIONS = [
+            {
+                id: 'team_training_sessions',
+                section: '팀 훈련',
+                text: '보통 일주일에 팀 훈련을 몇 회 하나요?',
+                help: '소속팀의 정규 훈련만 적어주세요. 공식경기·연습경기는 뒤에서 별도로 입력합니다.',
+                type: 'number', min: 0, max: 14, step: 1, unit: '회'
+            },
+            {
+                id: 'team_training_hours',
+                section: '팀 훈련',
+                text: '보통 일주일의 팀 훈련시간은 총 몇 시간인가요?',
+                help: '실제 운동시간을 합산해주세요. 예: 1.5시간 × 5회 = 7.5시간',
+                type: 'number', min: 0, max: 30, step: 0.5, unit: '시간'
+            },
+            {
+                id: 'individual_training_sessions',
+                section: '개인 훈련',
+                text: '보통 일주일에 개인 훈련을 몇 회 하나요?',
+                help: '개인운동, 개인레슨, 소그룹 레슨 등 소속팀 정규 훈련 외의 축구 훈련을 모두 포함해주세요.',
+                type: 'number', min: 0, max: 14, step: 1, unit: '회'
+            },
+            {
+                id: 'individual_training_hours',
+                section: '개인 훈련',
+                text: '보통 일주일의 개인 훈련시간은 총 몇 시간인가요?',
+                help: '개인운동·개인레슨·소그룹 레슨의 실제 운동시간을 합산해주세요.',
+                type: 'number', min: 0, max: 30, step: 0.5, unit: '시간'
+            },
+            {
+                id: 'matches_per_week',
+                section: '경기 활동량',
+                text: '보통 일주일에 경기 또는 연습경기를 몇 회 하나요?',
+                help: '공식경기와 연습경기를 모두 포함해주세요.',
+                type: 'number', min: 0, max: 7, step: 1, unit: '회'
+            },
+            {
+                id: 'match_minutes',
+                section: '경기 활동량',
+                text: '경기 1회당 평균적으로 몇 분 정도 출전하나요?',
+                help: '최근 4주 정도의 평균 출전시간을 기준으로 작성해주세요.',
+                type: 'number', min: 0, max: 120, step: 5, unit: '분'
+            },
+            {
+                id: 'intensity',
+                section: '훈련 강도',
+                text: '최근 4주간의 평균적인 훈련 강도는 어느 정도였나요?',
+                help: '보호자가 알고 있는 선수의 체감 난이도를 기준으로 선택해주세요.',
+                type: 'choice',
+                options: [
+                    { label: '낮음', value: 'low', sub: '가볍게 운동하고 끝난 뒤 여유가 많은 편', rpe: 3 },
+                    { label: '보통', value: 'moderate', sub: '숨은 차지만 대부분의 훈련을 무리 없이 수행', rpe: 5 },
+                    { label: '높음', value: 'high', sub: '훈련 후 피로가 뚜렷하고 회복이 필요한 편', rpe: 7 },
+                    { label: '매우 높음', value: 'very_high', sub: '훈련 후 매우 지치고 다음 날까지 피로가 이어지는 편', rpe: 9 }
+                ]
+            },
+            {
+                id: 'rest_days',
+                section: '회복',
+                text: '일주일 중 축구 훈련이나 경기가 전혀 없는 완전 휴식일은 며칠인가요?',
+                help: '회복 목적의 가벼운 산책·스트레칭은 휴식일로 포함해도 됩니다.',
+                type: 'number', min: 0, max: 7, step: 1, unit: '일'
+            }
+        ];
+
+
+return {QUESTIONS,CATEGORY_INFO,ACTIVITY_QUESTIONS};
+})();
+window.GrowthConstitution=(()=>{
+  const {QUESTIONS,CATEGORY_INFO,ACTIVITY_QUESTIONS}=GrowthConstitutionData;
+  const category='유소년스포츠 (성장체질)', labels=['전혀 아니에요','아닌 편이에요','보통이에요','그런 편이에요','매우 그래요'];
+  let step=-1, data={}, saving=false, attempted=false;
+  const el=id=>document.getElementById(id);
+  const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  function enter(){data={name:'',parent:'',dob:'',gender:'',answers:{},activityAnswers:{},requestId:crypto.randomUUID(),schemaVersion:1};step=-1;attempted=false;el('hub-view').style.display='none';el('constitution-survey').hidden=false;render();}
+  function render(){
+    el('gc-status').textContent='';el('gc-counter').textContent=step<0?'성장체질':`${Math.min(step+1,38)} / 38`;
+    el('gc-progress-fill').style.width=`${Math.max(0,step)/38*100}%`;
+    if(step<0){el('gc-content').innerHTML=`<span class="gc-eyebrow">GROWTH & BALANCE</span><h1>유소년스포츠<br>(성장체질)</h1><p>선수의 훈련과 회복, 몸의 신호를 살펴봅니다.<br>보호자와 선수가 함께 38개 문항에 답해주세요.</p><form id="gc-intro"><div class="gc-fields"><label>선수 이름<input name="name" required maxlength="80" value="${esc(data.name)}" autocomplete="name"></label><label>보호자 이름<input name="parent" required maxlength="80" value="${esc(data.parent)}"></label><label>생년월일<input name="dob" type="date" required max="${new Date().toLocaleDateString('en-CA')}" value="${esc(data.dob)}"></label><label>성별<select name="gender" required><option value="">선택해주세요</option><option ${data.gender==='남'?'selected':''}>남</option><option ${data.gender==='여'?'selected':''}>여</option></select></label></div><p>작성 결과는 진료 시 의료진이 EMR에서 확인합니다.</p><button class="gc-primary">문진 시작하기</button></form>`;el('gc-intro').onsubmit=e=>{e.preventDefault();const values=Object.fromEntries(new FormData(e.target));if(!values.name.trim()||!values.parent.trim())return;Object.assign(data,values,{name:values.name.trim(),parent:values.parent.trim()});step=0;render();};return;}
+    if(step===38){el('gc-content').innerHTML='<span class="gc-eyebrow">READY TO SUBMIT</span><h1>모든 문항을 작성했어요.</h1><p>활동량 8문항과 성장체질 30문항을 작성했습니다.<br>제출 후 결과는 의료진의 EMR 기록으로 전달됩니다.</p><button class="gc-primary" id="gc-submit">제출하기</button>';el('gc-submit').onclick=submit;return;}
+    const activity=step<8,q=activity?ACTIVITY_QUESTIONS[step]:QUESTIONS[step-8],selected=activity?data.activityAnswers[q.id]:data.answers[q.id];
+    el('gc-content').innerHTML=`<span class="gc-eyebrow">${activity?'01 · 활동량 / '+esc(q.section):'02 · 성장체질'}</span><h1>${esc(q.text)}</h1><p>${esc(q.help||'평소 몸의 상태를 기준으로 가장 가까운 답을 선택해주세요.')}</p><div id="gc-options" class="gc-options"></div><button id="gc-next" class="gc-primary">${step===37?'작성 내용 확인':'다음 문항'}</button>`;
+    if(q.type==='number'){
+      el('gc-options').innerHTML=`<label>${esc(q.unit)}<input id="gc-number" class="gc-number" type="number" min="${q.min}" max="${q.max}" step="${q.step}" required value="${esc(selected??'')}" aria-label="${esc(q.text)}"></label>`;
+      el('gc-next').onclick=()=>{const input=el('gc-number');if(!input.reportValidity())return;data.activityAnswers[q.id]=Number(input.value);step++;render();};
+    }else{
+      const opts=activity?q.options:labels.map((label,i)=>({label,value:i+1}));
+      opts.forEach(o=>{const b=document.createElement('button');b.type='button';b.setAttribute('aria-pressed',String((activity?selected?.value:selected)===o.value));b.innerHTML=esc(o.label)+(o.sub?`<small>${esc(o.sub)}</small>`:'');b.onclick=()=>{if(activity)data.activityAnswers[q.id]={...o};else data.answers[q.id]=o.value;render();};el('gc-options').append(b);});
+      el('gc-next').disabled=selected==null;el('gc-next').onclick=()=>{step++;render();};
+    }
+    el('constitution-survey').scrollTop=0;
+  }
+  function back(){if(saving||attempted){el('gc-status').textContent='제출 결과를 확인 중입니다. 제출 버튼으로 저장 여부를 다시 확인해주세요.';return;}if(step<0){el('constitution-survey').hidden=true;returnToHub();}else{step--;render();}}
+  async function findSaved(){const response=await fetch(`${CONFIG.SHEET_URL}?q=${encodeURIComponent(data.name)}`);if(!response.ok)throw Error('조회 실패');const result=await response.json();if(!result.ok)throw Error('조회 실패');return (result.patients||[]).some(p=>p.records.some(r=>{try{return r.category===category&&JSON.parse(r.data).requestId===data.requestId;}catch{return false;}}));}
+  async function submit(){
+    if(saving)return;if(!isSheetConfigured()){el('gc-status').textContent='저장소 설정이 필요합니다.';return;}saving=true;el('gc-submit').disabled=true;
+    try{
+      el('gc-status').textContent='저장 여부를 확인하고 있습니다…';
+      let saved=await findSaved();
+      if(!saved&&!attempted){attempted=true;await fetch(CONFIG.SHEET_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({category,name:data.name,birthDate:data.dob,gender:data.gender,formData:data})});for(let i=0;i<4&&!saved;i++){await new Promise(r=>setTimeout(r,1000));saved=await findSaved();}}
+      if(!saved)throw Error('저장 확인이 지연되고 있습니다. 잠시 후 다시 확인해주세요. 중복 제출은 하지 않습니다.');
+      attempted=false;el('constitution-survey').hidden=true;showCompletion();
+    }catch(error){el('gc-status').textContent=attempted?'저장 완료를 확인하지 못했습니다. 잠시 후 저장 확인을 다시 눌러주세요.': '연결하지 못했습니다. 연결 상태를 확인하고 다시 제출해주세요.';el('gc-submit').textContent=attempted?'저장 확인 다시 하기':'다시 제출하기';}finally{saving=false;el('gc-submit').disabled=false;}
+  }
+  function scores(answers){return Object.keys(CATEGORY_INFO).map(subject=>{const qs=QUESTIONS.filter(q=>q.category===subject);return {subject,value:Math.round(qs.reduce((n,q)=>n+answers[q.id]*(q.weight/10),0)/qs.reduce((n,q)=>n+5*(q.weight/10),0)*100)};});}
+  function open(record,meta){
+    if(!record.answers||!record.activityAnswers||QUESTIONS.some(q=>!Number.isInteger(record.answers[q.id])||record.answers[q.id]<1||record.answers[q.id]>5)){alert('성장체질 응답 데이터가 올바르지 않습니다.');el('search-view').style.display='flex';return;}
+    const result=scores(record.answers),top=[...result].sort((a,b)=>b.value-a.value)[0],info=CATEGORY_INFO[top.subject],a=record.activityAnswers;
+    el('constitution-report-view').classList.add('active');
+    el('gc-rp-info').innerHTML=[['선수',record.name],['보호자',record.parent],['생년월일',record.dob],['성별',record.gender],['작성일',new Date(meta.ts).toLocaleDateString('ko-KR')]].map(([k,v])=>`<div class="rp-info-item"><div class="rp-info-label">${k}</div><div class="rp-info-value">${esc(v)}</div></div>`).join('');
+    el('gc-rp-result').innerHTML=`<div class="gc-result-hero"><div class="gc-eyebrow">성장체질 · 주요 응답 경향</div><h2>${esc(top.subject)} · ${esc(info.name)}</h2><p>${esc(info.desc)}</p></div><div>${result.map(r=>`<div class="gc-score"><b>${r.subject}</b><div class="gc-score-track"><i style="width:${r.value}%"></i></div><span>${r.value}%</span></div>`).join('')}</div><div class="gc-guidance"><h3>주간 활동량</h3><p>총 훈련 ${Number(a.team_training_sessions)+Number(a.individual_training_sessions)}회 · ${Number(a.team_training_hours)+Number(a.individual_training_hours)}시간<br>Training Load: ${Math.round((Number(a.team_training_hours)+Number(a.individual_training_hours))*60*Number(a.intensity?.rpe||0))} AU · 경기 ${Number(a.matches_per_week)*Number(a.match_minutes)}분 / 주<br>완전 휴식 ${esc(a.rest_days)}일 / 주</p><h3>유형별 식사 안내</h3>${[['평소',info.diet.daily],['경기 전',info.diet.pre],['경기 후',info.diet.post],['수면',info.sleep]].map(([k,v])=>`<p><b>${k}</b><br>${esc(v)}</p>`).join('')}<h3>아침 회복 루틴</h3>${info.morning.map(v=>`<p>${esc(v)}</p>`).join('')}<h3>성장체질 유형 안내</h3>${Object.entries(CATEGORY_INFO).map(([k,v])=>`<p><b>${k} · ${esc(v.name)}</b><br>${esc(v.fullDefinition)}</p>`).join('')}</div>`;
+    el('gc-rp-answers').innerHTML=ACTIVITY_QUESTIONS.map(q=>`<p class="gc-answer">${esc(q.text)}<br><b>${esc(q.type==='choice'?a[q.id]?.label:a[q.id])} ${esc(q.unit||'')}</b></p>`).join('')+QUESTIONS.map(q=>`<p class="gc-answer">${q.id}. ${esc(q.text)}<br><b>${esc(labels[record.answers[q.id]-1])} (${record.answers[q.id]}/5)</b></p>`).join('');
+    el('gc-rp-doctor-note-slot').innerHTML=doctorNoteBoxHtml('gc-rp');el('gc-rp-private-note-slot').innerHTML=privateNoteBoxHtml('gc-rp');fillNoteBoxes('gc-rp');
+  }
+  function close(){if(!emrCanNavigate())return;el('constitution-report-view').classList.remove('active');el('search-view').style.display='flex';}
+  return {enter,back,open,close,scores,isSaving:()=>saving};
+})();
 window.onload=()=>{ document.getElementById('gateway-view').style.display='flex'; };
 </script>
 </body>

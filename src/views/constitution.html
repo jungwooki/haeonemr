@@ -1,0 +1,23 @@
+<section id="constitution-survey" hidden>
+  <div class="gc-shell">
+    <header class="gc-header"><button type="button" onclick="GrowthConstitution.back()">← 이전</button><span>AI 스마트서베이</span><span id="gc-counter">성장체질</span></header>
+    <div class="gc-progress"><div id="gc-progress-fill"></div></div>
+    <main id="gc-content"></main>
+    <p id="gc-status" role="status" aria-live="polite"></p>
+    <footer>HAEON · YOUTH ATHLETE CARE</footer>
+  </div>
+</section>
+<div id="constitution-report-view">
+  <div class="report-scroll">
+    <div class="report-toolbar no-print"><span class="emr-workspace-brand">HAEON EMR</span><button onclick="GrowthConstitution.close()">← 환자 기록으로</button><span>유소년스포츠 (성장체질)</span><button onclick="window.print()">인쇄 / PDF</button></div>
+    <div class="report-columns">
+      <div class="report-col report-col-left"><div class="a4-page">
+        <div class="rp-header"><div><div class="rp-title">유소년스포츠 (성장체질)</div><div class="rp-sub">활동량 · 회복 · 성장체질 분석</div></div></div>
+        <div id="gc-rp-info" class="rp-info-bar"></div>
+        <div id="gc-rp-result"></div>
+        <div id="gc-rp-doctor-note-slot"></div>
+      </div></div>
+      <div class="report-col report-col-right"><div id="gc-rp-private-note-slot"></div><div class="rp-card"><div class="rp-section-title">활동량 및 전체 응답</div><div id="gc-rp-answers"></div></div></div>
+    </div>
+  </div>
+</div>

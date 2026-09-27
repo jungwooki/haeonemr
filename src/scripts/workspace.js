@@ -73,7 +73,7 @@ function mountEmrWorkspace(prefix){
     patient.records.forEach((record,index)=>{
       const button=document.createElement('button');button.className='emr-record';
       button.setAttribute('aria-current',String(record.ts===window._currentRecordTs&&(!window._currentRecordCategory||record.category===window._currentRecordCategory)));
-      button.textContent=record.category||'소아';
+      button.textContent=surveyCategoryLabel(record.category||'소아');
       const date=document.createElement('small');const timestamp=new Date(record.ts);
       date.textContent=isNaN(timestamp)?'날짜 미상':timestamp.toLocaleString('ko-KR');button.append(date);
       button.onclick=()=>emrOpenRecord(window._currentPatientIdx,index);records.append(button);

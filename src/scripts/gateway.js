@@ -28,7 +28,7 @@ window.goToMainScreen = function(){
   if(!dialog.open) dialog.showModal();
 };
 window.confirmMainScreen = function(){
-  if(window.MpsMental && MpsMental.isSaving()){
+  if((window.MpsMental && MpsMental.isSaving()) || (window.GrowthConstitution && GrowthConstitution.isSaving())){
     document.getElementById('main-screen-confirm-status').textContent='저장 중입니다. 저장이 끝난 후 다시 이동해 주세요.';
     return;
   }

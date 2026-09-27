@@ -1,4 +1,4 @@
-/* ===================== 유소년스포츠 모듈 ===================== */
+/* ===================== 유소년선수(일반) 모듈 ===================== */
 let sportsCurrentStep = 1;
 let sportsCameFromSearch = false;
 const sportsTotalSteps = 4;
@@ -196,7 +196,7 @@ window.sportsBackToForm = function(){
 
 function generateSportsReportAndShow(skipSave){
   const f=sportsFormData, todayStr=new Date().toLocaleDateString('ko-KR');
-  document.title = `${(f.name||'이름미상').replace(/\s+/g,'')}_유소년스포츠_${new Date().toISOString().slice(0,10).replace(/-/g,'')}`;
+  document.title = `${(f.name||'이름미상').replace(/\s+/g,'')}_유소년선수(일반)_${new Date().toISOString().slice(0,10).replace(/-/g,'')}`;
 
   document.getElementById('sports-rp-name').innerText=f.name||'미입력';
   document.getElementById('sports-rp-dob').innerText=`${f.gender} / ${f.dob||'미입력'}`;
@@ -246,7 +246,7 @@ function saveSportsRecordToSheet(){
   const statusEl=document.getElementById('sports-save-status');
   if(!isSheetConfigured()){ if(statusEl) statusEl.innerText='저장소 미설정'; return; }
   if(statusEl) statusEl.innerText='저장 중...';
-  const payload = { category:'유소년스포츠', name: sportsFormData.name, birthDate: sportsFormData.dob, gender: sportsFormData.gender, ageGroup:'', formData: sportsFormData };
+  const payload = { category:'유소년선수(일반)', name: sportsFormData.name, birthDate: sportsFormData.dob, gender: sportsFormData.gender, ageGroup:'', formData: sportsFormData };
   fetch(CONFIG.SHEET_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain;charset=utf-8'}, body: JSON.stringify(payload) })
     .then(()=>{ if(statusEl) statusEl.innerText='저장 요청 완료 ✓'; })
     .catch((err)=>{ console.error('저장 실패:',err); if(statusEl) statusEl.innerText='저장 실패 - 설정을 확인해 주세요'; });

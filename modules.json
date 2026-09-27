@@ -28,6 +28,8 @@
     "src/scripts/mental-survey.js",
     "src/scripts/mental-emr.js",
     "src/scripts/guides.js",
+    "src/scripts/constitution-data.js",
+    "src/scripts/constitution.js",
     "src/scripts/bootstrap.js"
   ],
   "server": [

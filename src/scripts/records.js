@@ -1,3 +1,4 @@
+function surveyCategoryLabel(category){ return category==='유소년스포츠'?'유소년선수(일반)':(category||'-'); }
 /* ===================== 저장 / 검색 (Google Sheet) ===================== */
 function isSheetConfigured(){ return CONFIG.SHEET_URL && CONFIG.SHEET_URL.trim().length > 0; }
 
@@ -108,7 +109,7 @@ window.searchRecords = function(query){
 function renderPatientList(patients){
   const resultsEl=document.getElementById('search-results');
   resultsEl.innerHTML = patients.map((p,i)=>{
-    const cats = [...new Set(p.records.map(r=>r.category||'-'))];
+    const cats = [...new Set(p.records.map(r=>surveyCategoryLabel(r.category)))];
     const d = p.records[0] ? new Date(p.records[0].ts) : null;
     const dateLabel = (d && !isNaN(d)) ? `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}` : '';
     const active = i===window._currentPatientIdx;
@@ -139,12 +140,12 @@ function renderPatientDetail(p){
     return `<div class="emr-record-list-row"><button onclick="viewPatientRecord(${window._currentPatientIdx},${ri})" class="w-full text-left bg-white border border-[#EDEEF1] rounded-[12px] p-4 flex justify-between items-center active:bg-gray-50 mb-2 hover:shadow-sm transition-shadow">
       <div class="flex items-center gap-3">
         <div class="w-9 h-9 rounded-[9px] bg-[#F5F6F8] flex items-center justify-center shrink-0"><i data-lucide="file-text" class="w-4 h-4 text-[#8E8E93]"></i></div>
-        <div><span class="text-[11px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full">${r.category||'-'}</span><div class="text-[12px] text-[#8E8E93] mt-1">${dateLabel}</div></div>
+        <div><span class="text-[11px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full">${surveyCategoryLabel(r.category)}</span><div class="text-[12px] text-[#8E8E93] mt-1">${dateLabel}</div></div>
       </div>
       <i data-lucide="chevron-right" class="w-4 h-4 text-[#8E8E93] shrink-0"></i>
     </button><button type="button" class="emr-delete-record" onclick="deletePatientRecord(${window._currentPatientIdx},${ri})" ${emrDeletingRecord?'disabled':''}>삭제</button></div>`;
   }).join('');
-  const cats = [...new Set(p.records.map(r=>r.category||'-'))];
+  const cats = [...new Set(p.records.map(r=>surveyCategoryLabel(r.category)))];
   const latest = p.records[0] || {};
   panel.innerHTML = `
     <div class="max-w-2xl mx-auto p-5 md:p-8">
@@ -209,12 +210,13 @@ window.viewPatientRecord = function(patientIdx, recIdx){
   window._currentInterpretationNote = rec.interpretationNote || '';
   window._currentRecordCategory = cat;
   document.getElementById('search-view').style.display='none';
+  if(cat === '유소년스포츠 (성장체질)'){ GrowthConstitution.open(parsed,rec); return; }
   if(cat === 'MPS 멘탈'){ MentalEmr.open(parsed,rec); return; }
   if(cat === '심층진료'){ Object.assign(deepFormData, parsed); deepCameFromSearch=true; generateDeepReportAndShow(true); return; }
   if(cat === '다이어트'){ Object.assign(dietFormData, parsed); dietCameFromSearch=true; generateDietReportAndShow(true); return; }
   if(cat === '여성'){ Object.assign(womenFormData, parsed); womenCameFromSearch=true; generateWomenReportAndShow(true); return; }
   if(cat === '통증'){ Object.assign(painFormData, parsed); painCameFromSearch=true; generatePainReportAndShow(true); return; }
-  if(cat === '유소년스포츠'){ Object.assign(sportsFormData, parsed); sportsCameFromSearch=true; generateSportsReportAndShow(true); return; }
+  if(cat === '유소년스포츠' || cat === '유소년선수(일반)'){ Object.assign(sportsFormData, parsed); sportsCameFromSearch=true; generateSportsReportAndShow(true); return; }
   if(cat === '산후'){ Object.assign(postpartumFormData, parsed); postpartumCameFromSearch=true; generatePostpartumReportAndShow(true); return; }
   Object.assign(formData, parsed); cameFromSearch=true; generateReportAndShow(true);
 };
