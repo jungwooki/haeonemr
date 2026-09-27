@@ -6108,8 +6108,8 @@ window.GrowthConstitution=(()=>{
       el('gc-next').onclick=()=>{const input=el('gc-number');if(!input.reportValidity())return;data.activityAnswers[q.id]=Number(input.value);step++;render();};
     }else{
       const opts=activity?q.options:labels.map((label,i)=>({label,value:i+1}));
-      opts.forEach(o=>{const b=document.createElement('button');b.type='button';b.setAttribute('aria-pressed',String((activity?selected?.value:selected)===o.value));b.innerHTML=esc(o.label)+(o.sub?`<small>${esc(o.sub)}</small>`:'');b.onclick=()=>{if(activity)data.activityAnswers[q.id]={...o};else data.answers[q.id]=o.value;render();};el('gc-options').append(b);});
-      el('gc-next').disabled=selected==null;el('gc-next').onclick=()=>{step++;render();};
+      opts.forEach(o=>{const b=document.createElement('button');b.type='button';b.setAttribute('aria-pressed',String((activity?selected?.value:selected)===o.value));b.innerHTML=esc(o.label)+(o.sub?`<small>${esc(o.sub)}</small>`:'');b.onclick=()=>{if(activity)data.activityAnswers[q.id]={...o};else data.answers[q.id]=o.value;step++;render();};el('gc-options').append(b);});
+      el('gc-next').hidden=true;
     }
     el('constitution-survey').scrollTop=0;
   }
