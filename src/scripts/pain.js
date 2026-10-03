@@ -237,15 +237,17 @@ window.painUpdateUI = function(){
 };
 window.painNextStep = function(){ if(!SurveyUX.canAdvance('pain-',painCurrentStep)) return;
   if(painCurrentStep<painTotalSteps){ painCurrentStep++; painUpdateUI(); }
-  else { savePainRecordToSheet(); document.getElementById('pain-app-shell').style.display='none'; showCompletion(); }
+  else { return emrSubmitSurvey(savePainRecordToFirebase,'pain-app-shell'); }
 };
 window.painPrevStep = function(){ if(painCurrentStep>1){ painCurrentStep--; painUpdateUI(); } else { document.getElementById('pain-app-shell').style.display='none'; returnToHub(); } };
 window.enterPainSurvey = function(){
+  EmrFirebase.beginSurvey(painFormData);
   document.getElementById('hub-view').style.display='none';
   const shell=document.getElementById('pain-app-shell'); shell.style.display='flex'; triggerFadeIn(shell);
   painCurrentStep=1; painActiveBodyView='front'; painUpdateUI();
 };
-window.painBackToForm = function(){
+window.painBackToForm = async function(){
+  if(!await emrCanNavigate())return;
   document.getElementById('pain-report-view').classList.remove('active');
   if(painCameFromSearch){
     painCameFromSearch=false;
@@ -297,22 +299,20 @@ function generatePainReportAndShow(skipSave){
     <div>• 복용약: ${f.medication||'없음'}</div>`;
 
   document.getElementById('pain-app-shell').style.display='none';
-  const _rv=document.getElementById('pain-report-view'); _rv.classList.add('active'); triggerFadeIn(_rv.querySelector('.report-scroll'));
+  const _rv=document.getElementById('pain-report-view'); _rv.classList.add('active'); 
   if(window.lucide) lucide.createIcons();
   const statusEl=document.getElementById('pain-save-status'); if(statusEl) statusEl.innerText='';
     document.getElementById('pain-rp-doctor-note-slot').innerHTML = doctorNoteBoxHtml('pain-rp');
   document.getElementById('pain-rp-private-note-slot').innerHTML = privateNoteBoxHtml('pain-rp');
   fillNoteBoxes('pain-rp');
   if(window.lucide) lucide.createIcons();
-if(!skipSave) savePainRecordToSheet();
+if(!skipSave) savePainRecordToFirebase();
 }
 
-function savePainRecordToSheet(){
+function savePainRecordToFirebase(){
   const statusEl=document.getElementById('pain-save-status');
-  if(!isSheetConfigured()){ if(statusEl) statusEl.innerText='저장소 미설정'; return; }
+  if(!isEmrConfigured()){ if(statusEl) statusEl.innerText='저장소 미설정'; return; }
   if(statusEl) statusEl.innerText='저장 중...';
   const payload = { category:'통증', name: painFormData.name, birthDate: painFormData.birthDate, gender:'', ageGroup:'', formData: painFormData };
-  fetch(CONFIG.SHEET_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain;charset=utf-8'}, body: JSON.stringify(payload) })
-    .then(()=>{ if(statusEl) statusEl.innerText='저장 요청 완료 ✓'; })
-    .catch((err)=>{ console.error('저장 실패:',err); if(statusEl) statusEl.innerText='저장 실패 - 설정을 확인해 주세요'; });
+  return emrSaveSurvey(statusEl,payload,painFormData);
 }

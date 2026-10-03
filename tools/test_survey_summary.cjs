@@ -1,0 +1,33 @@
+const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
+const root=path.join(__dirname,'..'),read=p=>fs.readFileSync(path.join(root,p),'utf8');
+const labels=JSON.parse(read('src/data/survey-labels.json')),student=JSON.parse(read('src/data/mental/student.json'));
+const ctx=vm.createContext({console,Map,Set,JSON,window:{},document:{getElementById:id=>({textContent:JSON.stringify(id==='survey-field-labels'?labels:{student})})}});
+vm.runInContext(read('src/scripts/constitution-data.js'),ctx);ctx.GrowthConstitutionData=ctx.window.GrowthConstitutionData;
+vm.runInContext(read('src/scripts/survey-summary.js'),ctx);const summary=vm.runInContext('SurveySummary',ctx);
+for(const category of ['소아','심층진료','다이어트','여성','통증','유소년스포츠','산후']){
+ const data={name:'테스트',chiefComplaint:'문자 그대로\n둘째 줄 <script>alert(1)</script>',currentPainScale:0,frequentColds:false,sleepQuality:'없음',otherSymptoms:[],unknownField:{nested:'기록 유지'},requestId:'INTERNAL-ID',factorScores:[{score:99}]};
+ const record={category,ts:'2026-10-03T01:02:03.000Z',data:JSON.stringify(data),privateNote:'PRIVATE-SECRET',doctorNote:'DOCTOR-SECRET',interpretationNote:'INTERPRETATION-SECRET'};const before=JSON.stringify(record);
+ const out=summary.exportText({name:'테스트',chartNumber:'TEST'},record);
+ for(const excluded of ['PRIVATE-SECRET','DOCTOR-SECRET','INTERPRETATION-SECRET','INTERNAL-ID','factorScores'])assert(!out.includes(excluded));
+ assert(out.includes('둘째 줄 <script>alert(1)</script>'));assert(out.includes('체크되지 않음'));assert(out.includes('미기록'));assert(out.includes('nested: 기록 유지'));assert(out.includes('현재 통증 강도: 0'));assert.equal(JSON.stringify(record),before);
+ assert(summary.mainRows(summary.entries(record)).some(r=>r.key==='currentPainScale'&&r.value==='0'));
+ assert(!summary.mainRows(summary.entries(record)).some(r=>r.key==='frequentColds'));
+}
+const mental={category:'MPS 멘탈',data:JSON.stringify({sport:'student',answers:Object.fromEntries(Array.from({length:51},(_,i)=>[i+1,i%6+1]))})};
+const rows=summary.entries(mental),facts=summary.mainRows(rows);
+assert.equal(rows.filter(r=>r.key.startsWith('answers.')).length,51);
+assert(rows.some(r=>r.label.includes(student.sections[0].items[0].text)));
+assert(facts.every(r=>r.key.startsWith('distribution.')));assert(facts.every(r=>r.value.includes('문항')));
+assert.equal(facts.reduce((total,r)=>total+[...r.value.matchAll(/ (\d+)문항/g)].reduce((n,m)=>n+Number(m[1]),0),0),51);
+const growth={category:'유소년스포츠 (성장체질)',data:JSON.stringify({answers:Object.fromEntries(ctx.GrowthConstitutionData.QUESTIONS.map(q=>[q.id,3])),activityAnswers:{rest_days:2}})};
+assert.equal(summary.entries(growth).length,31);assert(summary.exportText({},growth).includes(ctx.GrowthConstitutionData.QUESTIONS[0].text));
+assert(summary.mainRows(summary.entries(growth)).some(r=>r.value==='3점 30문항'));
+assert.throws(()=>summary.entries({data:'not json'}));
+console.log('PASS: seven clinical forms, 51 mental question labels/distributions, growth answers, zero/unchecked/missing values, unknown fields, multiline content, private note exclusion and original immutability');
+for(const value of [0,3,10])assert.equal(summary.entries({data:JSON.stringify({currentPainScale:value})})[0].scale.value,value);
+for(const value of ['',null,false,' ',11,-1,'알 수 없음'])assert.equal(summary.entries({data:JSON.stringify({currentPainScale:value})})[0].scale,null);
+const durationRecord={data:JSON.stringify({currentPainScale:3,maxPainScale:3,painDurationNum:2,painDurationUnit:'일'})};
+const combined=summary.mainRows(summary.entries(durationRecord));assert.equal(combined.find(r=>r.key==='painDurationNum').value,'2일');assert(!combined.some(r=>r.key==='painDurationUnit'));assert(summary.exportText({},durationRecord).includes('통증 지속 기간(단위): 일'));
+assert.equal(summary.entries(mental).find(r=>r.key==='answers.1').scale.max,6);
+assert.equal(summary.entries(growth).find(r=>r.key.startsWith('answers.')).scale.max,5);
+console.log('PASS: verified scale bounds, zero, invalid/missing values, combined duration and unchanged full export');

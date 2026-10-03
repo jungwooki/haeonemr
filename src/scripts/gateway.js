@@ -1,5 +1,6 @@
 /* ===================== 메인 화면 내비게이션 ===================== */
 window.enterChildSurvey = function(){
+  EmrFirebase.beginSurvey(formData);
   document.getElementById('hub-view').style.display='none';
   const shell=document.getElementById('app-shell'); shell.style.display='flex'; triggerFadeIn(shell);
   currentStep=1; updateUI();
@@ -27,8 +28,9 @@ window.goToMainScreen = function(){
   document.getElementById('main-screen-confirm-status').textContent='';
   if(!dialog.open) dialog.showModal();
 };
-window.confirmMainScreen = function(){
-  if((window.MpsMental && MpsMental.isSaving()) || (window.GrowthConstitution && GrowthConstitution.isSaving())){
+window.confirmMainScreen = async function(){
+  if(!await emrCanNavigate())return;
+  if(emrPendingSaves || (window.MpsMental && MpsMental.isSaving()) || (window.GrowthConstitution && GrowthConstitution.isSaving())){
     document.getElementById('main-screen-confirm-status').textContent='저장 중입니다. 저장이 끝난 후 다시 이동해 주세요.';
     return;
   }

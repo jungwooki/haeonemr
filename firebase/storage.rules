@@ -1,0 +1,16 @@
+rules_version = '2';
+service firebase.storage {
+ match /b/{bucket}/o {
+  function emrStaff() {
+   return request.auth != null
+    && request.auth.token.firebase.sign_in_provider != 'anonymous'
+    && (request.auth.token.get('emrAdmin', false) == true || request.auth.token.get('emrStaff', false) == true);
+  }
+  match /emr/{recordId}/{imageId} {
+   allow read, delete: if emrStaff();
+   allow create, update: if emrStaff()
+    && request.resource.size <= 10 * 1024 * 1024
+    && request.resource.contentType.matches('image/(jpeg|png|webp|gif)');
+  }
+ }
+}

@@ -28,9 +28,10 @@ window.updateUI = function(){
   renderProgress(); if(window.lucide) lucide.createIcons();
   if(scrollContainer) scrollContainer.scrollTo(0,0);
 };
-window.nextStep=function(){ if(!SurveyUX.canAdvance('',currentStep)) return; if(currentStep<getTotalSteps()){ currentStep++; updateUI(); } else { saveRecordToSheet(); document.getElementById('app-shell').style.display='none'; showCompletion(); } };
+window.nextStep=function(){ if(!SurveyUX.canAdvance('',currentStep)) return; if(currentStep<getTotalSteps()){ currentStep++; updateUI(); } else { return emrSubmitSurvey(saveRecordToFirebase,'app-shell'); } };
 window.prevStep=function(){ if(currentStep>1){ currentStep--; updateUI(); } else { returnToHub(); } };
-window.backToForm=function(){
+window.backToForm = async function(){
+  if(!await emrCanNavigate())return;
   document.title='해온 AI EMR';
   document.getElementById('report-view').classList.remove('active');
   if(cameFromSearch){

@@ -163,14 +163,16 @@ window.deepUpdateUI = function(){
   deepRenderProgress(); if(window.lucide) lucide.createIcons();
   if(scrollContainer) scrollContainer.scrollTo(0,0);
 };
-window.deepNextStep = function(){ if(!SurveyUX.canAdvance('deep-',deepCurrentStep)) return; if(deepCurrentStep<deepGetTotalSteps()){ deepCurrentStep++; deepUpdateUI(); } else { saveDeepRecordToSheet(); document.getElementById('deep-app-shell').style.display='none'; showCompletion(); } };
+window.deepNextStep = function(){ if(!SurveyUX.canAdvance('deep-',deepCurrentStep)) return; if(deepCurrentStep<deepGetTotalSteps()){ deepCurrentStep++; deepUpdateUI(); } else { return emrSubmitSurvey(saveDeepRecordToFirebase,'deep-app-shell'); } };
 window.deepPrevStep = function(){ if(deepCurrentStep>1){ deepCurrentStep--; deepUpdateUI(); } else { document.getElementById('deep-app-shell').style.display='none'; returnToHub(); } };
 window.enterDeepSurvey = function(){
+  EmrFirebase.beginSurvey(deepFormData);
   document.getElementById('hub-view').style.display='none';
   const shell=document.getElementById('deep-app-shell'); shell.style.display='flex'; triggerFadeIn(shell);
   deepCurrentStep=1; deepUpdateUI();
 };
-window.deepBackToForm = function(){
+window.deepBackToForm = async function(){
+  if(!await emrCanNavigate())return;
   document.getElementById('deep-report-view').classList.remove('active');
   if(deepCameFromSearch){
     deepCameFromSearch=false;
@@ -306,23 +308,21 @@ function generateDeepReportAndShow(skipSave){
     `주호소 "${f.chiefComplaint||'특이 증상 없음'}"과 문진 응답을 종합하면 오장 중 ${weakestOrgan[0]}(${organModern[weakestOrgan[0]]}) 계통과, 변증상 ${weakestQhs[0]}(${qhsModern[weakestQhs[0]]}) 경향이 상대적으로 두드러집니다. 진료실에서 체질에 맞는 처방과 관리 계획을 안내해 드리겠습니다.`;
 
   document.getElementById('deep-app-shell').style.display='none';
-  const _rv=document.getElementById('deep-report-view'); _rv.classList.add('active'); triggerFadeIn(_rv.querySelector('.report-scroll'));
+  const _rv=document.getElementById('deep-report-view'); _rv.classList.add('active'); 
   if(window.lucide) lucide.createIcons();
   const statusEl=document.getElementById('deep-save-status'); if(statusEl) statusEl.innerText='';
     document.getElementById('deep-rp-doctor-note-slot').innerHTML = doctorNoteBoxHtml('deep-rp');
   document.getElementById('deep-rp-private-note-slot').innerHTML = privateNoteBoxHtml('deep-rp');
   fillNoteBoxes('deep-rp');
   if(window.lucide) lucide.createIcons();
-if(!skipSave) saveDeepRecordToSheet();
+if(!skipSave) saveDeepRecordToFirebase();
 }
 
-function saveDeepRecordToSheet(){
+function saveDeepRecordToFirebase(){
   const statusEl=document.getElementById('deep-save-status');
-  if(!isSheetConfigured()){ if(statusEl) statusEl.innerText='저장소 미설정'; return; }
+  if(!isEmrConfigured()){ if(statusEl) statusEl.innerText='저장소 미설정'; return; }
   if(statusEl) statusEl.innerText='저장 중...';
   const payload = { category:'심층진료', name: deepFormData.name, birthDate: deepFormData.birthDate, gender: deepFormData.gender, ageGroup:'', formData: deepFormData };
-  fetch(CONFIG.SHEET_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain;charset=utf-8'}, body: JSON.stringify(payload) })
-    .then(()=>{ if(statusEl) statusEl.innerText='저장 요청 완료 ✓'; })
-    .catch((err)=>{ console.error('저장 실패:',err); if(statusEl) statusEl.innerText='저장 실패 - 설정을 확인해 주세요'; });
+  return emrSaveSurvey(statusEl,payload,deepFormData);
 }
 

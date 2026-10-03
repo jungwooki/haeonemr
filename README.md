@@ -1,3 +1,5 @@
+> **mps-emr Firebase 버전:** 현재 저장·로그인·이미지 설정은 [FIREBASE_MIGRATION.md](FIREBASE_MIGRATION.md)를 따릅니다. 아래 Google Apps Script 안내는 보관 중인 구 버전 자료입니다.
+
 # HAEON EMR 소스 구조
 
 수정은 `src/`와 `server/`에서 하고, 실행·배포는 빌드된 `index.html`과 `Code.gs`를 사용합니다. 다른 프로젝트 폴더와 연결되지 않은 독립 구조입니다.

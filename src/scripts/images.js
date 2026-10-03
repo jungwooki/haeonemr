@@ -1,4 +1,4 @@
-/* Patient images are stored on Drive through the configured Apps Script. */
+/* Patient images use protected Firebase Storage objects. */
 const emrImageWidgets=new Set();
 let emrImagePassword='';
 const EMR_IMAGE_PROTOCOL='haeon-images-v2';
@@ -8,9 +8,9 @@ function emrImageRecordKey(patient,record){
 async function emrImageRequest(key,op,extra={}){
   if(!emrImagePassword) throw new Error('EMR 홈에서 비밀번호를 입력한 뒤 다시 접속해 주세요.');
   const params=new URLSearchParams({type:'haeonImages',op,key,password:emrImagePassword,q:'__haeon_image_api_probe__',...extra});
-  const response=await fetch(CONFIG.SHEET_URL+'?'+params,{signal:AbortSignal.timeout(30000)});
+  const response=await emrStoreRequest(CONFIG.STORE_URL+'?'+params,{signal:AbortSignal.timeout(30000)});
   const result=await response.json();
-  if(result.protocol!==EMR_IMAGE_PROTOCOL) throw new Error('이미지 서버 연결 대기 중입니다. Apps Script 이미지 기능 업데이트가 필요합니다.');
+  if(result.protocol!==EMR_IMAGE_PROTOCOL) throw new Error('Firebase 이미지 연결을 확인해 주세요.');
   if(!result.ok) throw new Error(result.error||'이미지 서버 요청에 실패했습니다.');
   return result;
 }
@@ -26,7 +26,7 @@ async function changeEmrImages(key,operation,images=[],id=''){
     reader.readAsDataURL(item.blob);
   })));
   invalidateEmrReadCache('images:'+key);
-  await fetch(CONFIG.SHEET_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({type:'haeonImages',operation,key,password:emrImagePassword,requestId,files,id}),signal:AbortSignal.timeout(60000)});
+  await emrStoreRequest(CONFIG.STORE_URL,{method:'POST',body:JSON.stringify({type:'haeonImages',operation,key,password:emrImagePassword,requestId,files,id}),signal:AbortSignal.timeout(60000)});
   for(let attempt=0;attempt<12;attempt++){
     const result=await emrImageRequest(key,'status',{requestId});
     if(result.state==='complete'){invalidateEmrReadCache('images:'+key);return result;}
@@ -62,6 +62,7 @@ function mountEmrImages(host,patient,record){
   }
   host.replaceChildren();
   const section=document.createElement('section');section.className='emr-image-card no-print';
+  if(!CONFIG.STORAGE_ENABLED)return;
   section.innerHTML='<div class="emr-image-header"><h3>검사(이미지자료) <span class="emr-image-count">0 / 3</span></h3><label class="emr-image-upload">이미지 첨부<input type="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple aria-label="환자 이미지 자료 첨부"></label></div><p class="emr-image-help">서버 보관 · 이 문진 기록에 최대 3개 · JPG, PNG, WEBP, GIF · 파일당 10MB<br>이미지를 클릭하면 크게 볼 수 있습니다. 다른 기기에서도 같은 문진 기록의 자료를 확인할 수 있습니다.</p><button type="button" class="emr-image-reload" style="color:#2563EB;font-size:13px;margin-bottom:12px">목록 새로고침</button><div class="emr-image-grid"></div><p class="emr-image-status" role="status" aria-live="polite"></p>';
   host.append(section);
   const key=emrImageRecordKey(patient,record),input=section.querySelector('input'),status=section.querySelector('.emr-image-status');
@@ -74,12 +75,13 @@ function mountEmrImages(host,patient,record){
       widget.urls.forEach(URL.revokeObjectURL);widget.urls=[];
       const grid=section.querySelector('.emr-image-grid');grid.replaceChildren();
       section.querySelector('.emr-image-count').textContent=items.length+' / 3';
-      input.disabled=items.length>=3;status.textContent='';
+      input.disabled=items.length>=3||!CONFIG.STORAGE_ENABLED;status.textContent=CONFIG.STORAGE_ENABLED?'':'이미지 업로드는 저장소 설정 완료 후 사용할 수 있습니다.';
       items.forEach(item=>{
         const tile=document.createElement('div');tile.className='emr-image-tile';
         const open=document.createElement('button');open.type='button';open.className='emr-image-thumb';open.setAttribute('aria-label',item.name+' 미리보기');
         const img=document.createElement('img');img.alt=item.name;
         if(item.thumbnail) img.src='data:'+(item.thumbnailMime||'image/jpeg')+';base64,'+item.thumbnail;
+        else if(item.thumbnailPath)emrImageRequest(key,'thumbnail',{id:item.id}).then(result=>{if(version===widget.version&&section.isConnected)img.src='data:'+result.mimeType+';base64,'+result.data;}).catch(()=>{img.alt='미리보기 재조회 필요';});
         open.append(img);open.onclick=()=>previewEmrImage(item,key);
         const name=document.createElement('p');name.textContent=item.name;name.title=item.name;
         const remove=document.createElement('button');remove.type='button';remove.className='emr-image-remove';remove.textContent='삭제';remove.setAttribute('aria-label',item.name+' 삭제');

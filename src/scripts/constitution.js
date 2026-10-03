@@ -23,16 +23,16 @@ window.GrowthConstitution=(()=>{
     el('constitution-survey').scrollTop=0;
   }
   function back(){if(saving||attempted){el('gc-status').textContent='제출 결과를 확인 중입니다. 제출 버튼으로 저장 여부를 다시 확인해주세요.';return;}if(step<0){el('constitution-survey').hidden=true;returnToHub();}else{step--;render();}}
-  async function findSaved(){const response=await fetch(`${CONFIG.SHEET_URL}?q=${encodeURIComponent(data.name)}`);if(!response.ok)throw Error('조회 실패');const result=await response.json();if(!result.ok)throw Error('조회 실패');return (result.patients||[]).some(p=>p.records.some(r=>{try{return r.category===category&&JSON.parse(r.data).requestId===data.requestId;}catch{return false;}}));}
+  async function findSaved(){return (await EmrFirebase.receipt(data.requestId)).state==='complete';}
   async function submit(){
-    if(saving)return;if(!isSheetConfigured()){el('gc-status').textContent='저장소 설정이 필요합니다.';return;}saving=true;el('gc-submit').disabled=true;
+    if(saving)return;if(!isEmrConfigured()){el('gc-status').textContent='저장소 설정이 필요합니다.';return;}saving=true;el('gc-submit').disabled=true;
     try{
       el('gc-status').textContent='저장 여부를 확인하고 있습니다…';
       let saved=await findSaved();
-      if(!saved&&!attempted){attempted=true;await fetch(CONFIG.SHEET_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({category,name:data.name,birthDate:data.dob,gender:data.gender,formData:data})});for(let i=0;i<4&&!saved;i++){await new Promise(r=>setTimeout(r,1000));saved=await findSaved();}}
+      if(!saved&&!attempted){attempted=true;await emrStoreRequest(CONFIG.STORE_URL,{method:'POST',body:JSON.stringify({category,name:data.name,birthDate:data.dob,gender:data.gender,formData:data})});for(let i=0;i<4&&!saved;i++){await new Promise(r=>setTimeout(r,1000));saved=await findSaved();}}
       if(!saved)throw Error('저장 확인이 지연되고 있습니다. 잠시 후 다시 확인해주세요. 중복 제출은 하지 않습니다.');
       attempted=false;el('constitution-survey').hidden=true;showCompletion();
-    }catch(error){el('gc-status').textContent=attempted?'저장 완료를 확인하지 못했습니다. 잠시 후 저장 확인을 다시 눌러주세요.': '연결하지 못했습니다. 연결 상태를 확인하고 다시 제출해주세요.';el('gc-submit').textContent=attempted?'저장 확인 다시 하기':'다시 제출하기';}finally{saving=false;el('gc-submit').disabled=false;}
+    }catch(error){attempted=false;el('gc-status').textContent=attempted?'저장 완료를 확인하지 못했습니다. 잠시 후 저장 확인을 다시 눌러주세요.': '연결하지 못했습니다. 연결 상태를 확인하고 다시 제출해주세요.';el('gc-submit').textContent=attempted?'저장 확인 다시 하기':'다시 제출하기';}finally{saving=false;el('gc-submit').disabled=false;}
   }
   function scores(answers){return Object.keys(CATEGORY_INFO).map(subject=>{const qs=QUESTIONS.filter(q=>q.category===subject);return {subject,value:Math.round(qs.reduce((n,q)=>n+answers[q.id]*(q.weight/10),0)/qs.reduce((n,q)=>n+5*(q.weight/10),0)*100)};});}
   function open(record,meta){
@@ -44,6 +44,6 @@ window.GrowthConstitution=(()=>{
     el('gc-rp-answers').innerHTML=ACTIVITY_QUESTIONS.map(q=>`<p class="gc-answer">${esc(q.text)}<br><b>${esc(q.type==='choice'?a[q.id]?.label:a[q.id])} ${esc(q.unit||'')}</b></p>`).join('')+QUESTIONS.map(q=>`<p class="gc-answer">${q.id}. ${esc(q.text)}<br><b>${esc(labels[record.answers[q.id]-1])} (${record.answers[q.id]}/5)</b></p>`).join('');
     el('gc-rp-doctor-note-slot').innerHTML=doctorNoteBoxHtml('gc-rp');el('gc-rp-private-note-slot').innerHTML=privateNoteBoxHtml('gc-rp');fillNoteBoxes('gc-rp');
   }
-  function close(){if(!emrCanNavigate())return;el('constitution-report-view').classList.remove('active');el('search-view').style.display='flex';}
+  async function close(){if(!await emrCanNavigate())return;el('constitution-report-view').classList.remove('active');el('search-view').style.display='flex';}
   return {enter,back,open,close,scores,isSaving:()=>saving};
 })();

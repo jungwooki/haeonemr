@@ -40,13 +40,14 @@ window.MentalEmr=(()=>{
     });
     if(window.lucide) lucide.createIcons();
   }
-  function close(){
-    if(!emrCanNavigate()) return;
+  async function close(){
+    if(!await emrCanNavigate()) return;
     document.getElementById('mental-report-view').classList.remove('active');
     document.getElementById('search-view').style.display='flex';
     const patient=window._patients?.[window._currentPatientIdx];if(patient) renderPatientDetail(patient);
   }
-  function download(){
+  async function download(){
+    if(!await EmrAudit.record('export_json'))return;
     if(!current) return;
     const {data,record,result}=current;
     const payload={name:window._currentRecordName,gender:record.gender,dob:record.birthDate,sport:result.sportLabel,answers:data.answers,factorScores:result.scores,completedAt:new Date(record.ts).toISOString()};

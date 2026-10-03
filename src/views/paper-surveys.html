@@ -1,0 +1,17 @@
+<section id="paper-survey" hidden aria-label="스마트 서베이">
+ <div class="paper-survey-shell">
+  <header class="paper-survey-header"><button type="button" id="paper-back">← 이전</button><span id="paper-counter"></span><span>HAEON</span></header>
+  <div class="paper-progress"><span id="paper-progress-fill"></span></div>
+  <main id="paper-content"></main>
+  <p id="paper-status" role="status" aria-live="polite"></p>
+ </div>
+</section>
+<div id="paper-report-view">
+ <div class="report-scroll">
+  <div class="report-toolbar no-print"><span class="emr-workspace-brand">MPS EMR</span><button type="button" onclick="PaperSurveys.close()">← 환자 기록으로</button><span>문진 응답</span><button type="button" onclick="EmrAudit.print()">인쇄 / PDF</button></div>
+  <div class="report-columns">
+   <div class="report-col report-col-left"><div class="a4-page"><div class="rp-header"><div><div id="paper-rp-title" class="rp-title"></div><div class="rp-sub">환자 작성 문진 응답</div></div></div><div id="paper-rp-info" class="rp-info-bar"></div><div id="paper-rp-answers"></div></div></div>
+   <div class="report-col report-col-right"><div id="paper-rp-private-note-slot"></div><div id="paper-rp-doctor-note-slot"></div></div>
+  </div>
+ </div>
+</div>

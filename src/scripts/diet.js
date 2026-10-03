@@ -163,14 +163,16 @@ window.dietUpdateUI = function(){
   dietRenderProgress(); if(window.lucide) lucide.createIcons();
   if(scrollContainer) scrollContainer.scrollTo(0,0);
 };
-window.dietNextStep = function(){ if(!SurveyUX.canAdvance('diet-',dietCurrentStep)) return; if(dietCurrentStep<dietGetTotalSteps()){ dietCurrentStep++; dietUpdateUI(); } else { saveDietRecordToSheet(); document.getElementById('diet-app-shell').style.display='none'; showCompletion(); } };
+window.dietNextStep = function(){ if(!SurveyUX.canAdvance('diet-',dietCurrentStep)) return; if(dietCurrentStep<dietGetTotalSteps()){ dietCurrentStep++; dietUpdateUI(); } else { return emrSubmitSurvey(saveDietRecordToFirebase,'diet-app-shell'); } };
 window.dietPrevStep = function(){ if(dietCurrentStep>1){ dietCurrentStep--; dietUpdateUI(); } else { document.getElementById('diet-app-shell').style.display='none'; returnToHub(); } };
 window.enterDietSurvey = function(){
+  EmrFirebase.beginSurvey(dietFormData);
   document.getElementById('hub-view').style.display='none';
   const shell=document.getElementById('diet-app-shell'); shell.style.display='flex'; triggerFadeIn(shell);
   dietCurrentStep=1; dietUpdateUI();
 };
-window.dietBackToForm = function(){
+window.dietBackToForm = async function(){
+  if(!await emrCanNavigate())return;
   document.getElementById('diet-report-view').classList.remove('active');
   if(dietCameFromSearch){
     dietCameFromSearch=false;
@@ -270,23 +272,21 @@ function generateDietReportAndShow(skipSave){
     `"${f.dietReason||'다이어트 목표'}"를 위한 문진 응답을 종합하면 오장 중 ${weakestOrgan[0]}(${organModern[weakestOrgan[0]]}) 계통과, 변증상 ${weakestQhs[0]}(${qhsModern[weakestQhs[0]]}) 경향이 상대적으로 두드러집니다. 진료실에서 체질에 맞는 1:1 맞춤 감량 처방을 안내해 드리겠습니다.`;
 
   document.getElementById('diet-app-shell').style.display='none';
-  const _rv=document.getElementById('diet-report-view'); _rv.classList.add('active'); triggerFadeIn(_rv.querySelector('.report-scroll'));
+  const _rv=document.getElementById('diet-report-view'); _rv.classList.add('active'); 
   if(window.lucide) lucide.createIcons();
   const statusEl=document.getElementById('diet-save-status'); if(statusEl) statusEl.innerText='';
     document.getElementById('diet-rp-doctor-note-slot').innerHTML = doctorNoteBoxHtml('diet-rp');
   document.getElementById('diet-rp-private-note-slot').innerHTML = privateNoteBoxHtml('diet-rp');
   fillNoteBoxes('diet-rp');
   if(window.lucide) lucide.createIcons();
-if(!skipSave) saveDietRecordToSheet();
+if(!skipSave) saveDietRecordToFirebase();
 }
 
-function saveDietRecordToSheet(){
+function saveDietRecordToFirebase(){
   const statusEl=document.getElementById('diet-save-status');
-  if(!isSheetConfigured()){ if(statusEl) statusEl.innerText='저장소 미설정'; return; }
+  if(!isEmrConfigured()){ if(statusEl) statusEl.innerText='저장소 미설정'; return; }
   if(statusEl) statusEl.innerText='저장 중...';
   const payload = { category:'다이어트', name: dietFormData.name, birthDate: dietFormData.birthDate, gender: dietFormData.gender, ageGroup:'', formData: dietFormData };
-  fetch(CONFIG.SHEET_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain;charset=utf-8'}, body: JSON.stringify(payload) })
-    .then(()=>{ if(statusEl) statusEl.innerText='저장 요청 완료 ✓'; })
-    .catch((err)=>{ console.error('저장 실패:',err); if(statusEl) statusEl.innerText='저장 실패 - 설정을 확인해 주세요'; });
+  return emrSaveSurvey(statusEl,payload,dietFormData);
 }
 

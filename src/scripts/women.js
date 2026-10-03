@@ -151,14 +151,16 @@ window.womenUpdateUI = function(){
   womenRenderProgress(); if(window.lucide) lucide.createIcons();
   if(scrollContainer) scrollContainer.scrollTo(0,0);
 };
-window.womenNextStep = function(){ if(!SurveyUX.canAdvance('women-',womenCurrentStep)) return; if(womenCurrentStep<womenTotalSteps){ womenCurrentStep++; womenUpdateUI(); } else { saveWomenRecordToSheet(); document.getElementById('women-app-shell').style.display='none'; showCompletion(); } };
+window.womenNextStep = function(){ if(!SurveyUX.canAdvance('women-',womenCurrentStep)) return; if(womenCurrentStep<womenTotalSteps){ womenCurrentStep++; womenUpdateUI(); } else { return emrSubmitSurvey(saveWomenRecordToFirebase,'women-app-shell'); } };
 window.womenPrevStep = function(){ if(womenCurrentStep>1){ womenCurrentStep--; womenUpdateUI(); } else { document.getElementById('women-app-shell').style.display='none'; returnToHub(); } };
 window.enterWomenSurvey = function(){
+  EmrFirebase.beginSurvey(womenFormData);
   document.getElementById('hub-view').style.display='none';
   const shell=document.getElementById('women-app-shell'); shell.style.display='flex'; triggerFadeIn(shell);
   womenCurrentStep=1; womenUpdateUI();
 };
-window.womenBackToForm = function(){
+window.womenBackToForm = async function(){
+  if(!await emrCanNavigate())return;
   document.getElementById('women-report-view').classList.remove('active');
   if(womenCameFromSearch){
     womenCameFromSearch=false;
@@ -283,23 +285,21 @@ function generateWomenReportAndShow(skipSave){
     `주호소 "${f.chiefComplaint||'특이 증상 없음'}"과 문진 응답을 종합하면 오장 중 ${weakestOrgan[0]}(${organModern[weakestOrgan[0]]}) 계통과, 변증상 ${weakestQhs[0]}(${qhsModern[weakestQhs[0]]}) 경향이 상대적으로 두드러집니다. 진료실에서 체질과 자궁 건강에 맞춘 처방과 관리 계획을 안내해 드리겠습니다.`;
 
   document.getElementById('women-app-shell').style.display='none';
-  const _rv=document.getElementById('women-report-view'); _rv.classList.add('active'); triggerFadeIn(_rv.querySelector('.report-scroll'));
+  const _rv=document.getElementById('women-report-view'); _rv.classList.add('active'); 
   if(window.lucide) lucide.createIcons();
   const statusEl=document.getElementById('women-save-status'); if(statusEl) statusEl.innerText='';
     document.getElementById('women-rp-doctor-note-slot').innerHTML = doctorNoteBoxHtml('women-rp');
   document.getElementById('women-rp-private-note-slot').innerHTML = privateNoteBoxHtml('women-rp');
   fillNoteBoxes('women-rp');
   if(window.lucide) lucide.createIcons();
-if(!skipSave) saveWomenRecordToSheet();
+if(!skipSave) saveWomenRecordToFirebase();
 }
 
-function saveWomenRecordToSheet(){
+function saveWomenRecordToFirebase(){
   const statusEl=document.getElementById('women-save-status');
-  if(!isSheetConfigured()){ if(statusEl) statusEl.innerText='저장소 미설정'; return; }
+  if(!isEmrConfigured()){ if(statusEl) statusEl.innerText='저장소 미설정'; return; }
   if(statusEl) statusEl.innerText='저장 중...';
   const payload = { category:'여성', name: womenFormData.name, birthDate: womenFormData.birthDate, gender:'여성', ageGroup:'', formData: womenFormData };
-  fetch(CONFIG.SHEET_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain;charset=utf-8'}, body: JSON.stringify(payload) })
-    .then(()=>{ if(statusEl) statusEl.innerText='저장 요청 완료 ✓'; })
-    .catch((err)=>{ console.error('저장 실패:',err); if(statusEl) statusEl.innerText='저장 실패 - 설정을 확인해 주세요'; });
+  return emrSaveSurvey(statusEl,payload,womenFormData);
 }
 

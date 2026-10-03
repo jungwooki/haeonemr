@@ -175,15 +175,17 @@ window.sportsUpdateUI = function(){
 };
 window.sportsNextStep = function(){ if(!SurveyUX.canAdvance('sports-',sportsCurrentStep)) return;
   if(sportsCurrentStep<sportsTotalSteps){ sportsCurrentStep++; sportsUpdateUI(); }
-  else { saveSportsRecordToSheet(); document.getElementById('sports-app-shell').style.display='none'; showCompletion(); }
+  else { return emrSubmitSurvey(saveSportsRecordToFirebase,'sports-app-shell'); }
 };
 window.sportsPrevStep = function(){ if(sportsCurrentStep>1){ sportsCurrentStep--; sportsUpdateUI(); } else { document.getElementById('sports-app-shell').style.display='none'; returnToHub(); } };
 window.enterSportsSurvey = function(){
+  EmrFirebase.beginSurvey(sportsFormData);
   document.getElementById('hub-view').style.display='none';
   const shell=document.getElementById('sports-app-shell'); shell.style.display='flex'; triggerFadeIn(shell);
   sportsCurrentStep=1; sportsUpdateUI();
 };
-window.sportsBackToForm = function(){
+window.sportsBackToForm = async function(){
+  if(!await emrCanNavigate())return;
   document.getElementById('sports-report-view').classList.remove('active');
   if(sportsCameFromSearch){
     sportsCameFromSearch=false;
@@ -232,23 +234,21 @@ function generateSportsReportAndShow(skipSave){
   document.getElementById('sports-rp-guardian').innerText = f.guardianName||'미입력';
 
   document.getElementById('sports-app-shell').style.display='none';
-  const _rv=document.getElementById('sports-report-view'); _rv.classList.add('active'); triggerFadeIn(_rv.querySelector('.report-scroll'));
+  const _rv=document.getElementById('sports-report-view'); _rv.classList.add('active'); 
   if(window.lucide) lucide.createIcons();
   const statusEl=document.getElementById('sports-save-status'); if(statusEl) statusEl.innerText='';
     document.getElementById('sports-rp-doctor-note-slot').innerHTML = doctorNoteBoxHtml('sports-rp');
   document.getElementById('sports-rp-private-note-slot').innerHTML = privateNoteBoxHtml('sports-rp');
   fillNoteBoxes('sports-rp');
   if(window.lucide) lucide.createIcons();
-if(!skipSave) saveSportsRecordToSheet();
+if(!skipSave) saveSportsRecordToFirebase();
 }
 
-function saveSportsRecordToSheet(){
+function saveSportsRecordToFirebase(){
   const statusEl=document.getElementById('sports-save-status');
-  if(!isSheetConfigured()){ if(statusEl) statusEl.innerText='저장소 미설정'; return; }
+  if(!isEmrConfigured()){ if(statusEl) statusEl.innerText='저장소 미설정'; return; }
   if(statusEl) statusEl.innerText='저장 중...';
   const payload = { category:'유소년선수(일반)', name: sportsFormData.name, birthDate: sportsFormData.dob, gender: sportsFormData.gender, ageGroup:'', formData: sportsFormData };
-  fetch(CONFIG.SHEET_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain;charset=utf-8'}, body: JSON.stringify(payload) })
-    .then(()=>{ if(statusEl) statusEl.innerText='저장 요청 완료 ✓'; })
-    .catch((err)=>{ console.error('저장 실패:',err); if(statusEl) statusEl.innerText='저장 실패 - 설정을 확인해 주세요'; });
+  return emrSaveSurvey(statusEl,payload,sportsFormData);
 }
 

@@ -180,9 +180,9 @@
   let saving=false, saved=false, submissionId='';
   async function mentalReceipt(op){
     const params=new URLSearchParams({type:'mpsMental',op,requestId:submissionId,q:'__mental_protocol_probe__'});
-    const response=await fetch(CONFIG.SHEET_URL+'?'+params,{signal:AbortSignal.timeout(30000)});
+    const response=await emrStoreRequest(CONFIG.STORE_URL+'?'+params,{signal:AbortSignal.timeout(30000)});
     const json=await response.json();
-    if(json.protocol!=='haeon-mental-v1') throw new Error('M-서베이 저장을 위해 최신 Code.gs를 Google Apps Script에 반영하고 새 버전으로 배포해 주세요.');
+    if(json.protocol!=='haeon-mental-v1') throw new Error('Firebase 연결을 확인해 주세요.');
     if(!json.ok) throw new Error(json.error||'서버 저장 확인에 실패했습니다.');
     return json;
   }
@@ -197,9 +197,9 @@
     root.querySelectorAll('.likert-btn').forEach(button=>button.disabled=true);
     status.textContent='서버에 저장하는 중입니다…';
     try{
-      if(!isSheetConfigured()) throw new Error('서버 저장소가 설정되지 않았습니다.');
+      if(!isEmrConfigured()) throw new Error('서버 저장소가 설정되지 않았습니다.');
       if((await mentalReceipt('status')).state!=='complete'){
-        await fetch(CONFIG.SHEET_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},signal:AbortSignal.timeout(60000),body:JSON.stringify({
+        await emrStoreRequest(CONFIG.STORE_URL,{method:'POST',signal:AbortSignal.timeout(60000),body:JSON.stringify({
           type:'mpsMental',requestId:submissionId,name:state.name.trim(),gender:state.gender,birthDate:state.dob,
           formData:{name:state.name.trim(),gender:state.gender,dob:state.dob,sport:state.sport,answers:{...state.answers},factorScores:calcFactorScores(),submissionId}
         })});

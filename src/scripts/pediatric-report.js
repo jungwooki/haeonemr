@@ -115,13 +115,13 @@ function generateReportAndShow(skipSave){
   }
 
   document.getElementById('app-shell').style.display='none';
-  const _rv=document.getElementById('report-view'); _rv.classList.add('active'); triggerFadeIn(_rv.querySelector('.report-scroll'));
+  const _rv=document.getElementById('report-view'); _rv.classList.add('active'); 
   if(window.lucide) lucide.createIcons();
   const statusEl=document.getElementById('save-status'); if(statusEl) statusEl.innerText='';
     document.getElementById('rp-doctor-note-slot').innerHTML = doctorNoteBoxHtml('rp');
   document.getElementById('rp-private-note-slot').innerHTML = privateNoteBoxHtml('rp');
   fillNoteBoxes('rp');
   if(window.lucide) lucide.createIcons();
-if(!skipSave) saveRecordToSheet();
+if(!skipSave) saveRecordToFirebase();
 }
 

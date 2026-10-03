@@ -1,0 +1,6 @@
+const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),path=require('node:path');
+const root=path.join(__dirname,'..'),context=vm.createContext({Event:class{constructor(type){this.type=type;}}});vm.runInContext(fs.readFileSync(path.join(root,'src/scripts/plan-picker.js'),'utf8'),context);const picker=vm.runInContext('PlanPicker',context);
+const herbs=JSON.parse(fs.readFileSync(path.join(root,'guides/prescription.json'),'utf8')).data,treatments=JSON.parse(fs.readFileSync(path.join(root,'guides/treatment.json'),'utf8')).data;
+const original=JSON.stringify(herbs);assert.equal(herbs.length,76);assert.equal(treatments.length,28);assert(picker.search(herbs,'갈근탕').length);assert(picker.search(herbs,'뒷목').some(x=>x.name==='갈근탕'));assert.equal(picker.search(herbs,'없는항목xyz').length,0);assert.equal(JSON.stringify(herbs),original);
+let events=0;const input={value:'기존 문장',dispatchEvent:e=>{assert.equal(e.type,'input');events++;}};assert(picker.add(input,'갈근탕'));assert.equal(input.value,'기존 문장 [갈근탕]');assert.equal(picker.add(input,'갈근탕'),false);assert.equal(events,1);assert(picker.add(input,'침치료'));assert.equal(input.value,'기존 문장 [갈근탕] [침치료]');
+console.log('PASS: guide name/indication search, original guide preservation, keyword insertion, duplicate prevention, autosave input event');

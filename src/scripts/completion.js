@@ -4,11 +4,6 @@ window.showCompletion = function(){
   triggerFadeIn(document.getElementById('completion-view'));
 };
 window.returnToHubFromCompletion = function(){
-  document.getElementById('completion-view').style.display='none';
-  ['app-shell','deep-app-shell','diet-app-shell','women-app-shell','pain-app-shell','sports-app-shell','postpartum-app-shell'].forEach(id=>{
-    const el=document.getElementById(id); if(el) el.style.display='none';
-  });
-  returnToHub();
+  // A new page clears every questionnaire model, textarea, chart and in-memory draft.
+  window.location.reload();
 };
-
-

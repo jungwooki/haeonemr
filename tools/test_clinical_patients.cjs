@@ -1,0 +1,11 @@
+const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict'),path=require('node:path');
+const context={Intl,Date};vm.createContext(context);vm.runInContext(fs.readFileSync(path.join(__dirname,'../src/scripts/clinical-patients.js'),'utf8'),context);
+const info=(birth,now)=>context.clinicalPatientInfo({name:'Test',birthDate:birth,records:[]},new Date(now));
+assert.equal(info('2012-10-03','2026-10-02T15:00:00Z').age,'만 14세');
+assert.equal(info('2012-10-03','2026-10-02T14:59:59Z').age,'만 13세');
+assert.equal(info('2012-02-30','2026-10-03').birth,'미등록');
+assert.equal(info('2030-01-01','2026-10-03').age,'');
+assert.equal(info('','2026-10-03').age,'');
+const value=context.clinicalPatientInfo({records:[{ts:'2026-01-01',gender:'여',birthDate:'2000-01-01'},{ts:'2026-10-02T16:00:00Z',gender:'여'}]},new Date('2026-10-03'));
+assert.equal(value.date,'2026-10-03');assert.equal(value.birth,'2000-01-01');assert.equal(value.age,'만 26세');
+console.log('PASS: birthday boundary in Seoul, invalid/future dates, missing fields, latest record and metadata fallback');

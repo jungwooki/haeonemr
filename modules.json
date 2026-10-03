@@ -1,7 +1,11 @@
 {
   "scripts": [
     "src/scripts/config.js",
+    "src/scripts/staff-accounts.js",
+    "src/scripts/firebase-store.js",
     "src/scripts/request-cache.js",
+    "src/scripts/plan-picker.js",
+    "src/scripts/audit-ui.js",
     "src/scripts/notes.js",
     "src/scripts/state.js",
     "src/scripts/age.js",
@@ -11,6 +15,8 @@
     "src/scripts/pediatric-sections.js",
     "src/scripts/navigation.js",
     "src/scripts/gateway.js",
+    "src/scripts/clinical-patients.js",
+    "src/scripts/clinical-history.js",
     "src/scripts/records.js",
     "src/scripts/completion.js",
     "src/scripts/analysis.js",
@@ -30,7 +36,11 @@
     "src/scripts/guides.js",
     "src/scripts/constitution-data.js",
     "src/scripts/constitution.js",
-    "src/scripts/bootstrap.js"
+    "src/scripts/pdf-survey-data.js",
+    "src/scripts/paper-surveys.js",
+    "src/scripts/bootstrap.js",
+    "src/scripts/survey-summary.js",
+    "src/scripts/clinical-v2.js"
   ],
   "server": [
     "server/records.gs",

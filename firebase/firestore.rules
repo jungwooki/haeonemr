@@ -1,0 +1,134 @@
+// Complete ruleset based on the current user-provided public rules.
+// Only mental collections are restricted; all other collections retain the existing public policy.
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function mentalCoach() {
+      return request.auth != null
+        && request.auth.token.firebase.sign_in_provider != 'anonymous'
+        && request.auth.token.get('mentalCoach', false) == true;
+    }
+    function mentalPlayer(playerId) {
+      return mentalCoach()
+        && (request.auth.token.get('mentalAdmin', false) == true
+          || playerId in request.auth.token.get('mentalPlayerIds', []));
+    }
+    match /mental_players/{playerId} {
+      allow read, create, update: if mentalPlayer(playerId);
+      allow delete: if false;
+    }
+    match /mental_sessions/{sessionId} {
+      allow read: if mentalPlayer(resource.data.playerId);
+      allow create: if mentalPlayer(request.resource.data.playerId);
+      allow update: if mentalPlayer(resource.data.playerId)
+        && request.resource.data.playerId == resource.data.playerId;
+      allow delete: if false;
+    }
+    match /mental_summaries/{playerId} {
+      allow read: if mentalPlayer(resource.data.playerId);
+      allow create: if mentalPlayer(playerId)
+        && request.resource.data.playerId == playerId;
+      allow update: if mentalPlayer(resource.data.playerId)
+        && request.resource.data.playerId == resource.data.playerId
+        && request.resource.data.playerId == playerId;
+      allow delete: if false;
+    }
+    match /mental_report_players/{playerId} {
+      allow read, create, update: if mentalPlayer(playerId);
+      allow delete: if false;
+    }
+    match /mental_reports/{reportId} {
+      allow read: if mentalPlayer(resource.data.playerId);
+      allow create: if mentalPlayer(request.resource.data.playerId);
+      allow update: if mentalPlayer(resource.data.playerId)
+        && request.resource.data.playerId == resource.data.playerId;
+      allow delete: if false;
+    }
+    function emrStaff() {
+      return request.auth != null
+        && request.auth.token.firebase.sign_in_provider != 'anonymous'
+        && (request.auth.token.get('emrAdmin', false) == true || request.auth.token.get('emrStaff', false) == true);
+    }
+    // Public write-only intake. Random receipt IDs expose status only, never answers.
+    function intakeId(id) { return id.matches('^[a-f0-9-]{36}$'); }
+    match /emr_intakes/{id} {
+      allow read, update, delete: if emrStaff();
+      allow create: if emrStaff() || (intakeId(id)
+        && request.resource.data.keys().hasOnly(['requestId','name','birthDate','gender','ageGroup','category','data','createdAt','imported'])
+        && request.resource.data.requestId == id
+        && request.resource.data.name is string && request.resource.data.name.size() > 0 && request.resource.data.name.size() <= 100
+        && request.resource.data.birthDate is string && request.resource.data.birthDate.size() <= 16
+        && request.resource.data.gender is string && request.resource.data.gender.size() <= 20
+        && request.resource.data.ageGroup is string && request.resource.data.ageGroup.size() <= 100
+        && request.resource.data.category in ['소아','심층진료','다이어트','여성','통증','유소년스포츠','유소년선수(일반)','산후','MPS 멘탈','유소년스포츠 (성장체질)','교통사고','소아감기','유산후']
+        && request.resource.data.data is string && request.resource.data.data.size() <= 200000
+        && request.resource.data.imported == false
+        && request.resource.data.createdAt == request.time
+        && getAfter(/databases/$(database)/documents/emr_intake_receipts/$(id)).data.state == 'complete');
+    }
+    match /emr_intake_receipts/{id} {
+      allow get: if intakeId(id) || emrStaff();
+      allow list, update, delete: if emrStaff();
+      allow create: if emrStaff() || (intakeId(id)
+        && request.resource.data.keys().hasOnly(['state']) && request.resource.data.state == 'complete'
+        && !exists(/databases/$(database)/documents/emr_intakes/$(id))
+        && getAfter(/databases/$(database)/documents/emr_intakes/$(id)).data.requestId == id);
+    }
+    function auditFor(data) {
+      return getAfter(/databases/$(database)/documents/emr_audit/$(data._auditId)).data;
+    }
+    function freshAudit(data) {
+      return emrStaff() && auditFor(data).actorUid == request.auth.uid
+        && auditFor(data).createdAt == request.time;
+    }
+    match /emr_audit/{id} {
+      allow read: if emrStaff();
+      allow create: if emrStaff()
+        && request.resource.data.keys().hasOnly(['actorUid','actorName','action','targetId','patientId','field','before','after','createdAt'])
+        && request.resource.data.actorUid == request.auth.uid
+        && request.resource.data.actorName == request.auth.token.get('emrName', request.auth.token.email)
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.action in ['login','logout','session_resume','patient_list','patient_open','record_open','record_create','note_update','chart_update','record_delete','copy_request','copy_success','copy_manual','print_request','export_text','export_json']
+        && request.resource.data.targetId is string && request.resource.data.patientId is string
+        && request.resource.data.field is string && request.resource.data.before is string && request.resource.data.after is string;
+      allow update, delete: if false;
+    }
+    match /emr_patients/{id} {
+      allow read: if emrStaff();
+      allow create: if freshAudit(request.resource.data) && auditFor(request.resource.data).patientId == id && auditFor(request.resource.data).action == 'record_create';
+      allow update: if freshAudit(request.resource.data) && auditFor(request.resource.data).patientId == id
+        && (auditFor(request.resource.data).action in ['record_create','record_delete']
+          || (auditFor(request.resource.data).action == 'chart_update'
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['chartNumber','_auditId'])
+            && auditFor(request.resource.data).before == resource.data.get('chartNumber', '')
+            && auditFor(request.resource.data).after == request.resource.data.chartNumber));
+      allow delete: if false;
+    }
+    match /emr_records/{id} {
+      allow read: if emrStaff();
+      allow create: if freshAudit(request.resource.data) && auditFor(request.resource.data).targetId == id && auditFor(request.resource.data).action == 'record_create';
+      allow update: if freshAudit(request.resource.data) && auditFor(request.resource.data).targetId == id
+        && auditFor(request.resource.data).action == 'record_delete'
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['deleted','deletedAt','_auditId']) && request.resource.data.deleted == true;
+      allow delete: if false;
+    }
+    match /emr_record_content/{id} {
+      allow read: if emrStaff();
+      allow create: if freshAudit(request.resource.data) && auditFor(request.resource.data).targetId == id && auditFor(request.resource.data).action == 'record_create';
+      allow update: if freshAudit(request.resource.data) && auditFor(request.resource.data).targetId == id
+        && auditFor(request.resource.data).action == 'note_update'
+        && auditFor(request.resource.data).field in ['doctorNote','privateNote','interpretationNote']
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([auditFor(request.resource.data).field,'_auditId'])
+        && auditFor(request.resource.data).before == resource.data.get(auditFor(request.resource.data).field,'')
+        && auditFor(request.resource.data).after == request.resource.data[auditFor(request.resource.data).field];
+      allow delete: if false;
+    }
+    match /emr_requests/{id} { allow read, write: if emrStaff(); }
+    match /emr_migrations/{id} { allow read: if emrStaff(); allow write: if false; }
+    match /{collection}/{document=**} {
+      allow read, write: if !collection.matches('emr_.*') && !(collection in [
+        'mental_players', 'mental_sessions', 'mental_summaries', 'mental_reports', 'mental_report_players'
+      ]);
+    }
+  }
+}

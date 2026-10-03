@@ -1,0 +1,12 @@
+<aside id="clinical-navigation" class="clinical-navigation no-print" hidden aria-label="EMR 메뉴">
+ <button class="clinical-brand" onclick="goToMainScreen()" aria-label="MPS 첫 화면"><img src="assets/mps-logo-black.png" alt="MPS"><span>emr</span></button>
+ <span class="clinical-nav-label">한의원 워크스페이스</span>
+ <nav aria-label="진료 메뉴">
+ <button onclick="clinicalPatientList()" aria-current="page"><span>01</span> 환자 · 진료기록</button>
+ <button onclick="clinicalFocus('notes')" data-clinical-record><span>02</span> 진료 메모</button>
+ <button onclick="clinicalFocus('results')" data-clinical-record><span>03</span> 서베이 · 리포트</button>
+ </nav>
+ <div class="clinical-nav-divider"></div><span class="clinical-nav-label">환자 안내</span>
+ <nav><button onclick="openHaeonGuide()"><span>04</span> 한의원 가이드</button><button onclick="goToMainScreen()"><span>↗</span> 메인화면</button></nav>
+ <div class="clinical-nav-footer"><span>MPS EMR 2.0</span><b>기록을 다음 진료로.</b><small>해온한의원</small></div>
+</aside>

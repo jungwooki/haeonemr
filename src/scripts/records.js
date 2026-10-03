@@ -1,63 +1,37 @@
 function surveyCategoryLabel(category){ return category==='유소년스포츠'?'유소년선수(일반)':(category||'-'); }
-/* ===================== 저장 / 검색 (Google Sheet) ===================== */
-function isSheetConfigured(){ return CONFIG.SHEET_URL && CONFIG.SHEET_URL.trim().length > 0; }
+/* ===================== 저장 / 검색 (Firebase) ===================== */
+function isEmrConfigured(){ return CONFIG.STORE_URL && CONFIG.STORE_URL.trim().length > 0; }
 
-function saveRecordToSheet(){
+function saveRecordToFirebase(){
   const statusEl = document.getElementById('save-status');
-  if(!isSheetConfigured()){
-    if(statusEl) statusEl.innerText = '저장소 미설정 (검색 기능을 쓰려면 CONFIG.SHEET_URL 설정 필요)';
+  if(!isEmrConfigured()){
+    if(statusEl) statusEl.innerText = '저장소 설정을 확인해 주세요.';
     return;
   }
   if(statusEl) statusEl.innerText = '저장 중...';
   const payload = { category:'소아', name: formData.name, birthDate: formData.birthDate, gender: formData.gender, ageGroup: getAgeGroup(), formData: formData };
-  // 구글 앱스크립트 웹앱은 응답 전에 googleusercontent.com으로 리다이렉트되는데,
-  // 이 과정에서 브라우저가 CORS를 이유로 fetch를 실패 처리하는 경우가 많습니다.
-  // 저장은 "보내기만" 하면 되므로 no-cors 모드로 전송해 이 문제를 피합니다.
-  fetch(CONFIG.SHEET_URL, {
-    method:'POST',
-    mode:'no-cors',
-    headers:{'Content-Type':'text/plain;charset=utf-8'},
-    body: JSON.stringify(payload)
-  })
-    .then(()=>{ if(statusEl) statusEl.innerText = '저장 요청 완료 ✓'; })
-    .catch((err)=>{
-      console.error('저장 실패:', err);
-      if(statusEl) statusEl.innerText = '저장 실패 - CONFIG.SHEET_URL 및 배포 설정을 확인해 주세요';
-    });
+  return emrSaveSurvey(statusEl,payload,formData);
 }
 
-// The standalone HTML uses an entry gate; server authorization is separate.
-window.openSearchView = function(){
-  const dialog=document.getElementById('emr-password-dialog');
-  document.getElementById('emr-password-form').reset();
-  document.getElementById('emr-password-error').textContent='';
-  document.getElementById('emr-password').removeAttribute('aria-invalid');
-  if(!dialog.open) dialog.showModal();
+// The dialog signs in to Firebase; every database operation is also rule-protected.
+window.openSearchView = async function(){
+  try{await EmrFirebase.requireStaff();clearEmrReadCache();emrImagePassword='firebase-session';enterEmrAfterPassword();}
+  catch(error){if(!error.message.includes('취소'))alert('Firebase 로그인에 연결하지 못했습니다. 연결 상태를 확인해 주세요.');}
 };
-document.getElementById('emr-password-cancel').addEventListener('click',()=>{
-  document.getElementById('emr-password-dialog').close();
-});
+document.getElementById('emr-password-cancel').addEventListener('click',()=>document.getElementById('emr-password-dialog').close());
 document.getElementById('emr-password-dialog').addEventListener('close',()=>{
-  document.getElementById('emr-password-form').reset();
-  document.getElementById('emr-password-error').textContent='';
+  EmrFirebase.cancelLogin();document.getElementById('emr-password-form').reset();document.getElementById('emr-password-error').textContent='';
 });
-document.getElementById('emr-password-form').addEventListener('submit',event=>{
-  event.preventDefault();
-  const input=document.getElementById('emr-password');
-  if(input.value!=='1824'){
-    document.getElementById('emr-password-error').textContent='비밀번호가 올바르지 않습니다. 다시 입력해 주세요.';
-    input.setAttribute('aria-invalid','true');
-    input.value=''; input.focus();
-    return;
-  }
-  clearEmrReadCache();
-  emrImagePassword=input.value;
-  document.getElementById('emr-password-dialog').close();
-  enterEmrAfterPassword();
+document.getElementById('emr-password-form').addEventListener('submit',async event=>{
+  event.preventDefault();const button=event.target.querySelector('[type=submit]');button.disabled=true;
+  try{await EmrFirebase.login(document.getElementById('emr-email').value.trim(),document.getElementById('emr-password').value);}
+  catch(error){document.getElementById('emr-password-error').textContent=error.code==='auth/too-many-requests'?'잠시 후 다시 시도해 주세요.':'계정·비밀번호와 EMR 접근 권한을 확인해 주세요.';}
+  finally{button.disabled=false;}
 });
+let emrNavigationVersion=0,emrSearchVersion=0;
 function enterEmrAfterPassword(){
-  if(!isSheetConfigured()){
-    alert('아직 검색 저장소(Google Sheet)가 설정되지 않았습니다. CONFIG.SHEET_URL 을 설정한 뒤 사용해 주세요.');
+  if(!isEmrConfigured()){
+    alert('Firebase 저장소 설정을 확인해 주세요.');
     return;
   }
   document.getElementById('gateway-view').style.display='none';
@@ -65,8 +39,8 @@ function enterEmrAfterPassword(){
   document.getElementById('app-shell').style.display='none';
   document.getElementById('search-view').style.display='flex';
   document.getElementById('search-input').value='';
-  window._currentPatientIdx = -1;
-  resetPatientDetailPlaceholder();
+  window._currentPatientIdx = -1;clinicalPatientQuery='';emrNavigationVersion++;
+  resetPatientDetailPlaceholder();mountClinicalToolbar(document.getElementById('search-view'));
   searchRecords('');
 };
 window.closeSearchView = function(){
@@ -89,10 +63,12 @@ function resetPatientDetailPlaceholder(){
 
 window.searchRecords = function(query){
   const statusEl=document.getElementById('search-status'), resultsEl=document.getElementById('search-results');
+  const version=++emrSearchVersion;clinicalPatientQuery=query||'';emrNavigationVersion++;window._currentPatientIdx=-1;resetPatientDetailPlaceholder();
   statusEl.innerText='검색 중...'; resultsEl.innerHTML='';
-  fetch(`${CONFIG.SHEET_URL}?q=${encodeURIComponent(query||'')}`)
+  emrStoreRequest(CONFIG.STORE_URL)
     .then(r=>r.json())
     .then(json=>{
+      if(version!==emrSearchVersion)return;
       if(!json.ok || !json.patients || !json.patients.length){
         statusEl.innerText='검색 결과가 없습니다.';
         window._patients=[];
@@ -103,80 +79,39 @@ window.searchRecords = function(query){
       statusEl.innerText=`환자 ${json.patients.length}명`;
       renderPatientList(json.patients);
     })
-    .catch((err)=>{ console.error('검색 실패:', err); statusEl.innerText='검색 중 오류가 발생했습니다. (배포 접근권한이 "모든 사용자"인지 확인해 주세요)'; });
+    .catch((err)=>{ if(version!==emrSearchVersion)return;console.error('검색 실패:', err); statusEl.innerText='Firebase 조회에 실패했습니다. 로그인과 네트워크를 확인해 주세요.'; });
 };
 
 function renderPatientList(patients){
   const resultsEl=document.getElementById('search-results');
-  resultsEl.innerHTML = patients.map((p,i)=>{
-    const cats = [...new Set(p.records.map(r=>surveyCategoryLabel(r.category)))];
-    const d = p.records[0] ? new Date(p.records[0].ts) : null;
-    const dateLabel = (d && !isNaN(d)) ? `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}` : '';
-    const active = i===window._currentPatientIdx;
-    return `<button onclick="openPatientDetail(${i})" class="w-full text-left px-4 py-3 border-b border-[#F0F0F2] flex justify-between items-center transition-colors ${active?'bg-blue-50':'hover:bg-[#FAFAFA]'}">
-      <div class="min-w-0">
-        <div class="font-bold text-[14px] ${active?'text-blue-700':'text-black'} truncate">${p.name||'이름 미상'}</div>
-        <div class="text-[11px] text-[#8E8E93] mt-0.5">${p.chartNumber ? '차트#'+p.chartNumber : '차트번호 미지정'}${(p.records[0]&&p.records[0].birthDate)?' · '+p.records[0].birthDate:''}</div>
-        <div class="text-[10px] text-[#8E8E93] mt-1 flex flex-wrap gap-1">${cats.slice(0,3).map(c=>`<span class="bg-[#F2F2F7] px-1.5 py-0.5 rounded-full">${c}</span>`).join('')}${cats.length>3?`<span>+${cats.length-3}</span>`:''}</div>
-      </div>
-      <div class="text-[10px] text-[#8E8E93] shrink-0 ml-2 text-right">${dateLabel}<br>${p.records.length}건</div>
-    </button>`;
-  }).join('');
+  renderClinicalPatientRows(resultsEl,patients);
+  const active=document.querySelector('.clinical-report.active');
+  if(active){
+    const host=active.querySelector('.emr-patients');if(host)renderClinicalPatientRows(host,patients);
+    const identity=active.querySelector('.clinical-identity');if(identity)renderClinicalIdentity(identity,patients[window._currentPatientIdx]);
+  }
+
 }
 
-window.openPatientDetail = function(idx){
-  const p = window._patients[idx];
-  if(!p) return;
-  window._currentPatientIdx = idx;
-  renderPatientList(window._patients);
+window.openPatientDetail = async function(idx){
+  const p=window._patients[idx];if(!p)return;
+  const version=++emrNavigationVersion;window._currentPatientIdx=idx;renderPatientList(window._patients);
   renderPatientDetail(p);
+  const host=document.querySelector('#patient-detail-panel .clinical-history-tree');host.textContent='회차별 기록을 불러오는 중…';
+  try{await EmrFirebase.loadRecords(p);if(version!==emrNavigationVersion)return;renderPatientDetail(p);}
+  catch(error){if(version===emrNavigationVersion)host.textContent='기록을 불러오지 못했습니다. 환자를 다시 선택해 주세요.';}
 };
 
 function renderPatientDetail(p){
   const panel=document.getElementById('patient-detail-panel');
-  const recordsHtml = p.records.map((r,ri)=>{
-    const d=new Date(r.ts);
-    const dateLabel = isNaN(d) ? '' : `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
-    return `<div class="emr-record-list-row"><button onclick="viewPatientRecord(${window._currentPatientIdx},${ri})" class="w-full text-left bg-white border border-[#EDEEF1] rounded-[12px] p-4 flex justify-between items-center active:bg-gray-50 mb-2 hover:shadow-sm transition-shadow">
-      <div class="flex items-center gap-3">
-        <div class="w-9 h-9 rounded-[9px] bg-[#F5F6F8] flex items-center justify-center shrink-0"><i data-lucide="file-text" class="w-4 h-4 text-[#8E8E93]"></i></div>
-        <div><span class="text-[11px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full">${surveyCategoryLabel(r.category)}</span><div class="text-[12px] text-[#8E8E93] mt-1">${dateLabel}</div></div>
-      </div>
-      <i data-lucide="chevron-right" class="w-4 h-4 text-[#8E8E93] shrink-0"></i>
-    </button><button type="button" class="emr-delete-record" onclick="deletePatientRecord(${window._currentPatientIdx},${ri})" ${emrDeletingRecord?'disabled':''}>삭제</button></div>`;
-  }).join('');
-  const cats = [...new Set(p.records.map(r=>surveyCategoryLabel(r.category)))];
-  const latest = p.records[0] || {};
-  panel.innerHTML = `
-    <div class="max-w-2xl mx-auto p-5 md:p-8">
-      <div class="bg-white border border-[#EDEEF1] rounded-[16px] p-5 md:p-6 mb-5">
-        <div class="flex items-start justify-between gap-4 flex-wrap">
-          <div class="min-w-0">
-            <div class="flex items-center gap-2 flex-wrap">
-              <div class="font-extrabold text-[24px] text-black">${p.name||'이름 미상'}</div>
-              ${latest.gender?`<span class="text-[11px] font-bold text-[#8E8E93] bg-[#F5F6F8] px-2 py-0.5 rounded-full">${latest.gender}</span>`:''}
-            </div>
-            <div class="flex flex-wrap gap-x-4 gap-y-1 mt-2 text-[13px] text-[#3C3C43]">
-              <div><span class="text-[#8E8E93]">생년월일</span> · <b>${p.birthDate || latest.birthDate || '미상'}</b></div>
-              <div><span class="text-[#8E8E93]">차트번호</span> · <b>${p.chartNumber || '미지정'}</b></div>
-            </div>
-          </div>
-          <button onclick="editChartNumber()" class="bg-black text-white text-[13px] font-semibold px-4 py-2.5 rounded-[10px] shrink-0 flex items-center gap-1.5">
-            <i data-lucide="pencil" class="w-3.5 h-3.5"></i> 차트번호 수정
-          </button>
-        </div>
-        <div class="flex flex-wrap gap-1.5 mt-4 pt-4 border-t border-[#F0F0F2]">
-          ${cats.map(c=>`<span class="text-[11px] font-bold text-[#3C3C43] bg-[#F5F6F8] px-2.5 py-1 rounded-full">${c}</span>`).join('')}
-        </div>
-      </div>
-
-      <div class="flex items-center justify-between mb-2">
-        <div class="text-[13px] font-bold text-[#8E8E93]">문진 기록 (${p.records.length}건)</div>
-      </div>
-      <p id="record-delete-status" role="status" aria-live="polite" class="text-[13px] text-slate-600 mb-3"></p>
-      ${recordsHtml}
-    </div>
-  `;
+  panel.innerHTML = `<div class="emr-overview">
+    <header class="clinical-identity emr-overview-identity"></header>
+    <section class="emr-overview-records" aria-label="회차와 설문 분야별 기록"><p id="record-delete-status" role="status" aria-live="polite"></p><div class="clinical-history-tree"></div></section>
+    <section class="emr-overview-prompt"><h2>프리노트</h2><p>회차별 문진 기록을 선택하면<br>해당 기록의 프리노트가 여기에 열립니다.</p></section>
+  </div>`;
+  renderClinicalIdentity(panel.querySelector('.clinical-identity'),p);
+  mountClinicalToolbar(document.getElementById('search-view'));
+  renderClinicalHistory(panel.querySelector('.clinical-history-tree'),p,window._currentPatientIdx,{allowDelete:true});
   if(window.lucide) lucide.createIcons();
 }
 
@@ -185,9 +120,9 @@ window.editChartNumber = function(){
   if(!p) return;
   const val = prompt(`${p.name}님의 차트번호를 입력해 주세요.`, p.chartNumber||'');
   if(val === null) return;
-  fetch(CONFIG.SHEET_URL, {
-    method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain;charset=utf-8'},
-    body: JSON.stringify({ type:'updateChart', name:p.name, newChartNumber: val.trim() })
+  emrStoreRequest(CONFIG.STORE_URL, {
+    method:'POST',  
+    body: JSON.stringify({ type:'updateChart', patientId:p.id, name:p.name, newChartNumber: val.trim() })
   }).then(()=>{
     p.chartNumber = val.trim();
     renderPatientDetail(p);
@@ -195,10 +130,15 @@ window.editChartNumber = function(){
   }).catch((err)=>{ console.error(err); alert('차트번호 수정 요청 중 오류가 발생했습니다.'); });
 };
 
-window.viewPatientRecord = function(patientIdx, recIdx){
+window.viewPatientRecord = async function(patientIdx, recIdx){
   const p = window._patients[patientIdx];
   const rec = p && p.records[recIdx];
   if(!rec) return;
+  const version=++emrNavigationVersion;
+  try{await EmrFirebase.loadContent(rec);}catch(error){alert('문진을 불러오지 못했습니다. 네트워크와 로그인 상태를 확인해 주세요.');return;}
+  if(version!==emrNavigationVersion)return;
+  document.querySelectorAll('[id$="report-view"].active').forEach(view=>view.classList.remove('active'));
+  window._currentRecordId=rec.id;
   window._currentPatientIdx=patientIdx;
   const cat = rec.category || '소아';
   let parsed;
@@ -210,6 +150,7 @@ window.viewPatientRecord = function(patientIdx, recIdx){
   window._currentInterpretationNote = rec.interpretationNote || '';
   window._currentRecordCategory = cat;
   document.getElementById('search-view').style.display='none';
+  if(cat === '교통사고'||cat === '소아감기'||cat === '유산후'){ PaperSurveys.open(parsed,rec); return; }
   if(cat === '유소년스포츠 (성장체질)'){ GrowthConstitution.open(parsed,rec); return; }
   if(cat === 'MPS 멘탈'){ MentalEmr.open(parsed,rec); return; }
   if(cat === '심층진료'){ Object.assign(deepFormData, parsed); deepCameFromSearch=true; generateDeepReportAndShow(true); return; }

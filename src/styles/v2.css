@@ -1,0 +1,51 @@
+/* MPS EMR 2.0 — shared with the MPS Mental visual language.
+   All clinical rendering/data handlers remain in their original modules. */
+@font-face{font-family:'MPS Pretendard';src:url('assets/PretendardVariable.woff2') format('woff2');font-weight:100 900;font-display:swap}
+:root{--v2-bg:#f8f9fe;--v2-ink:#252735;--v2-muted:#676c85;--v2-line:#e1e3ef;--v2-blue:#477ee9;--v2-sidebar:232px;--ios-bg:var(--v2-bg);--ios-text:var(--v2-ink);--ios-tint:var(--v2-blue);--ios-separator:var(--v2-line);--emr-surface:var(--v2-bg);--emr-blue:var(--v2-blue);--emr-line:var(--v2-line)}
+body{font-family:'MPS Pretendard','Pretendard',sans-serif!important;color:var(--v2-ink);background:var(--v2-bg);line-height:1.6}
+button,input,select,textarea{font-family:inherit!important}button,a,input,select,textarea,summary{-webkit-tap-highlight-color:transparent}button,a{touch-action:manipulation}button:disabled{cursor:not-allowed}
+[hidden]{display:none!important}
+/* Survey controls: common spacing, typography and selection affordances. */
+@media screen{
+ #hub-view,[id$="app-shell"],#mental-survey-view,#constitution-survey{background:var(--v2-bg)!important}
+ .haeon-survey>div:first-child,.mental-header{background:#fff!important;border-bottom:1px solid var(--v2-line);box-shadow:none}
+ .haeon-survey [id$="scroll-container"]{padding-top:30px}.haeon-survey [id$="step-1"]{padding:30px;background:#fff;border:1px solid var(--v2-line);border-radius:5px}
+ .haeon-survey h2{font-size:28px!important;font-weight:750}.haeon-survey [id$="step-1"]>div:first-child{width:54px;height:54px;background:#eeebf8!important;border-radius:5px;box-shadow:none;margin-bottom:23px}.haeon-survey [id$="step-1"]>div:first-child svg{width:27px;height:27px}
+ .haeon-survey :is([class*="rounded-"],textarea,select,input:not([type=radio]),button),#mental-survey-view :is([class*="rounded-"],button,input,select,textarea),#constitution-survey :is(button,input,select,#gc-content){border-radius:5px!important;box-shadow:none!important}
+ .haeon-survey .survey-field-row{padding:17px 20px}.haeon-survey .survey-field-row :is(input,select),.haeon-survey textarea{background:#f8f9fe;border-color:#d8dfeb}.haeon-survey .survey-actions{background:#fff;border-top:1px solid var(--v2-line);box-shadow:none}.haeon-survey .survey-actions button{background:var(--v2-blue);min-height:48px;font-weight:650;font-size:15px}
+ .haeon-survey .survey-choice-button{border:1px solid #e1e3ef;background:#fff}.haeon-survey .survey-choice-button[aria-pressed=true]{background:#eaf0fc!important;color:#315fab!important;outline-color:#477ee9}
+ #mental-survey-view .mental-intro{max-width:1000px;width:100%;text-align:left;padding:32px 24px 18px;margin:auto}#mental-survey-view .mental-intro h1{font-size:30px!important}.mental-sport-grid{max-width:1000px!important;gap:14px!important;padding:0 24px 36px!important}.mental-sport-card{border:1px solid var(--v2-line)!important;background:#fff!important;border-radius:5px!important;box-shadow:none!important}.mental-sport-card:hover{background:#eaf1fc!important}
+ #mental-survey-view #screenInfo>div{background:white;border:1px solid var(--v2-line);border-radius:5px;padding:28px;max-width:600px}.mental-header{padding-inline:24px!important}.mental-header-tag{background:#eeebf8!important;color:#766493!important;border-radius:5px!important}.likert-btn.selected{background:#eaf0fc!important;color:#315fab!important}.gc-shell{max-width:780px}.gc-progress{margin-bottom:26px}#gc-content{box-shadow:none;border-radius:5px;padding:32px;border-color:var(--v2-line)}.gc-primary{background:var(--v2-blue)}
+ /* Clinical workspace, AI results, growth reports and dialogs. */
+ #search-view>div:first-child,.report-toolbar{background:#fff!important;border-color:var(--v2-line);min-height:65px}.clinic-list-pane,.emr-sidebar{background:#fff!important;border-color:var(--v2-line)}.emr-sidebar input,.clinic-list-pane input{border-radius:5px;background:var(--v2-bg)}
+ .report-col-left,#patient-detail-panel{background:var(--v2-bg)!important}.report-col-right{background:#fff}.report-col{padding:22px}.a4-page,.rp-card,.emr-image-card,.emr-notes [id$="note-slot"]>.rp-card{border-radius:5px!important;box-shadow:none!important;border-color:var(--v2-line)!important}.rp-info-bar,.rp-soft,.gc-result-hero{background:#f0f3fb!important;border-radius:5px}.rp-page-badge,.rp-chip{background:#eeebf8!important;color:#6b5897!important;border:0!important;border-radius:5px}.rp-title{font-size:22px;font-weight:750}.rp-section-title{font-size:15px}.emr-notes textarea{border-radius:5px;background:#fafbfe}.emr-patient[aria-current=true],.emr-record[aria-current=true]{background:#eaf0fc!important;color:#315fab}.report-toolbar button,dialog,dialog button,.emr-image-thumb{border-radius:5px!important}.report-toolbar button{font-weight:600}.emr-sidebar-head{padding:20px 16px}
+ #haeon-guide-dialog{width:min(1200px,calc(100vw - 40px));max-width:1200px;height:90dvh;max-height:90dvh;padding:0;border:1px solid var(--v2-line);box-shadow:0 20px 80px #25273520}dialog::backdrop{background:#25273565;backdrop-filter:blur(3px)}
+}
+
+/* Patient-facing flows are designed for a portrait iPad, independently of EMR. */
+@media screen {
+ #hub-view>div{max-width:620px;padding-top:32px;padding-bottom:32px}
+ #hub-view .haeon-survey-link{min-height:72px;padding:16px 20px}
+ #hub-view .haeon-survey-link>span:first-of-type{font-size:17px}
+ #hub-view .haeon-survey-link>span:nth-of-type(2){font-size:12px}
+ #hub-view .haeon-survey-link>div{width:42px;height:42px;border-radius:5px}
+ .haeon-survey [id$="scroll-container"]>div{max-width:680px;margin-inline:auto}
+ .haeon-survey .survey-actions button{max-width:680px;min-height:56px}
+ #mental-survey-view .mental-intro{max-width:680px;text-align:center;padding-top:32px}
+ #mental-survey-view .mental-sport-grid{max-width:680px!important;grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ #mental-survey-view .mental-sport-card{min-height:88px}
+ #mental-survey-view #screenInfo>div{max-width:560px}
+ #mental-survey-view .likert-btn{min-height:56px}
+ #mental-survey-view input,#mental-survey-view select{min-height:52px}
+ .gc-shell{max-width:680px}
+}
+@media(max-width:600px){
+ .haeon-survey [id$="step-1"]{padding:22px}
+ .haeon-survey [id$="scroll-container"]{padding:16px!important}
+ #mental-survey-view .mental-intro{padding:26px 18px 18px}
+ .mental-sport-grid{padding:0 18px 26px!important}
+ .gc-shell{padding:24px 16px}.mental-header{padding-inline:16px!important}
+ #haeon-guide-dialog{width:calc(100vw - 16px);height:94dvh;max-height:94dvh}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+@media print{body{font-family:'MPS Pretendard','Pretendard',sans-serif!important}}

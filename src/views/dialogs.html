@@ -2,11 +2,13 @@
 <!-- EMR entry password -->
 <dialog id="emr-password-dialog" aria-labelledby="emr-password-title" style="width:min(400px,calc(100% - 32px));padding:0;border:1px solid #E8E9F2;border-radius:20px;box-shadow:0 24px 80px #20233330;">
   <form id="emr-password-form" style="padding:28px;background:linear-gradient(180deg,#F3EFFE,#FFFFFF 180px);">
-    <div class="emr-brand">HAEON EMR</div>
-    <h2 id="emr-password-title" style="margin:12px 0 8px;">비밀번호 입력</h2>
-    <p style="font-size:14px;color:#697386;margin:0 0 24px;">환자 조회 화면에 들어가려면 비밀번호를 입력해 주세요.</p>
+    <div class="emr-brand">MPS EMR</div>
+    <h2 id="emr-password-title" style="margin:12px 0 8px;">의료진 로그인</h2>
+    <p style="font-size:14px;color:#697386;margin:0 0 24px;">접근 권한이 있는 의료진·간호사 계정으로 로그인해 주세요.</p>
+    <label for="emr-email" style="display:block;font-size:14px;font-weight:600;margin-bottom:8px;">로그인 이름</label>
+    <select id="emr-email" autocomplete="username" required style="box-sizing:border-box;width:100%;padding:12px 14px;margin-bottom:14px;border:1px solid #DDD5FA;border-radius:10px;background:white;"><option value="admin">admin</option><option value="jung-jieun">정지은</option><option value="han-yookyung">한유경</option><option value="lee-jungwook">이정욱</option><option value="park-soohyun">박수현</option><option value="yoo-seungmi">유승미</option><option value="lee-namhee">이남희</option><option value="lim-sehee">임세희</option><option value="cho-naekyung">조내경</option><option value="jung-kyungah">정경아</option></select>
     <label for="emr-password" style="display:block;font-size:14px;font-weight:600;margin-bottom:8px;">비밀번호</label>
-    <input id="emr-password" type="password" inputmode="numeric" autocomplete="off" required autofocus aria-describedby="emr-password-error" style="box-sizing:border-box;width:100%;padding:12px 14px;border:1px solid #DDD5FA;border-radius:10px;font-size:18px;background:#FFF;">
+    <input id="emr-password" type="password" autocomplete="current-password" required autofocus aria-describedby="emr-password-error" style="box-sizing:border-box;width:100%;padding:12px 14px;border:1px solid #DDD5FA;border-radius:10px;font-size:18px;background:#FFF;">
     <p id="emr-password-error" role="alert" style="min-height:22px;margin:8px 0 16px;color:#DC2626;font-size:13px;"></p>
     <div style="display:flex;gap:10px;">
       <button type="button" id="emr-password-cancel" style="flex:1;padding:12px;border:1px solid #E8E9F2;border-radius:10px;background:#FFF;color:#697386;font-weight:600;">취소</button>

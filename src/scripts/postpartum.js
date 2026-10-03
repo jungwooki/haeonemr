@@ -193,15 +193,17 @@ window.postpartumUpdateUI = function(){
 };
 window.postpartumNextStep = function(){ if(!SurveyUX.canAdvance('postpartum-',postpartumCurrentStep)) return;
   if(postpartumCurrentStep<postpartumTotalSteps){ postpartumCurrentStep++; postpartumUpdateUI(); }
-  else { savePostpartumRecordToSheet(); document.getElementById('postpartum-app-shell').style.display='none'; showCompletion(); }
+  else { return emrSubmitSurvey(savePostpartumRecordToFirebase,'postpartum-app-shell'); }
 };
 window.postpartumPrevStep = function(){ if(postpartumCurrentStep>1){ postpartumCurrentStep--; postpartumUpdateUI(); } else { document.getElementById('postpartum-app-shell').style.display='none'; returnToHub(); } };
 window.enterPostpartumSurvey = function(){
+  EmrFirebase.beginSurvey(postpartumFormData);
   document.getElementById('hub-view').style.display='none';
   const shell=document.getElementById('postpartum-app-shell'); shell.style.display='flex'; triggerFadeIn(shell);
   postpartumCurrentStep=1; postpartumUpdateUI();
 };
-window.postpartumBackToForm = function(){
+window.postpartumBackToForm = async function(){
+  if(!await emrCanNavigate())return;
   document.getElementById('postpartum-report-view').classList.remove('active');
   if(postpartumCameFromSearch){
     postpartumCameFromSearch=false;
@@ -311,24 +313,22 @@ function generatePostpartumReportAndShow(skipSave){
     `${f.additionalInfo?('추가 문의: "'+f.additionalInfo+'". '):''}문진 응답을 종합하면 ${weakest[0]}(${qhsModern[weakest[0]]}) 경향이 상대적으로 두드러집니다. 진료실에서 산모 체질과 회복 속도에 맞춘 한방 관리 계획을 안내해 드리겠습니다.`;
 
   document.getElementById('postpartum-app-shell').style.display='none';
-  const _rv=document.getElementById('postpartum-report-view'); _rv.classList.add('active'); triggerFadeIn(_rv.querySelector('.report-scroll'));
+  const _rv=document.getElementById('postpartum-report-view'); _rv.classList.add('active'); 
   if(window.lucide) lucide.createIcons();
   const statusEl=document.getElementById('postpartum-save-status'); if(statusEl) statusEl.innerText='';
     document.getElementById('postpartum-rp-doctor-note-slot').innerHTML = doctorNoteBoxHtml('postpartum-rp');
   document.getElementById('postpartum-rp-private-note-slot').innerHTML = privateNoteBoxHtml('postpartum-rp');
   fillNoteBoxes('postpartum-rp');
   if(window.lucide) lucide.createIcons();
-if(!skipSave) savePostpartumRecordToSheet();
+if(!skipSave) savePostpartumRecordToFirebase();
 }
 
-function savePostpartumRecordToSheet(){
+function savePostpartumRecordToFirebase(){
   const statusEl=document.getElementById('postpartum-save-status');
-  if(!isSheetConfigured()){ if(statusEl) statusEl.innerText='저장소 미설정'; return; }
+  if(!isEmrConfigured()){ if(statusEl) statusEl.innerText='저장소 미설정'; return; }
   if(statusEl) statusEl.innerText='저장 중...';
   const payload = { category:'산후', name: postpartumFormData.name, birthDate: postpartumFormData.birthDate, gender:'여성', ageGroup:'', formData: postpartumFormData };
-  fetch(CONFIG.SHEET_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain;charset=utf-8'}, body: JSON.stringify(payload) })
-    .then(()=>{ if(statusEl) statusEl.innerText='저장 요청 완료 ✓'; })
-    .catch((err)=>{ console.error('저장 실패:',err); if(statusEl) statusEl.innerText='저장 실패 - 설정을 확인해 주세요'; });
+  return emrSaveSurvey(statusEl,payload,postpartumFormData);
 }
 
 

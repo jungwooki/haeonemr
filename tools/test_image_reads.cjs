@@ -4,7 +4,7 @@ const path=require('node:path');
 const vm=require('node:vm');
 module.exports=(async()=>{
   let calls=0;
-  const ctx=vm.createContext({console,Date,Map,Set,Promise,URLSearchParams,AbortSignal,CONFIG:{SHEET_URL:'https://fixture.invalid'},document:{getElementById:()=>({addEventListener(){}})},fetch:async()=>{calls++;return {json:async()=>({ok:true,protocol:'haeon-images-v2',images:[{id:'fixture-image'}]})};}});
+  const ctx=vm.createContext({console,Date,Map,Set,Promise,URLSearchParams,AbortSignal,CONFIG:{STORE_URL:'https://fixture.invalid'},document:{getElementById:()=>({addEventListener(){}})},emrStoreRequest:async()=>{calls++;return {json:async()=>({ok:true,protocol:'haeon-images-v2',images:[{id:'fixture-image'}]})};}});
   for(const file of ['request-cache.js','images.js']) vm.runInContext(fs.readFileSync(path.join(__dirname,'../src/scripts',file),'utf8'),ctx);
   vm.runInContext("emrImagePassword='test-password'",ctx);
   await Promise.all([ctx.readEmrImages('record-a'),ctx.readEmrImages('record-a')]);
